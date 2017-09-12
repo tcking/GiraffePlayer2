@@ -1,0 +1,24 @@
+[
+  {
+    "name": "bunny",
+    "uri": "http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4"
+  },{
+    "name": "Apple ID3 metadata",
+    "uri": "http://devimages.apple.com/samplecode/adDemo/ad.m3u8"
+  },
+  {
+    "name": "Apple 4x3 basic stream",
+    "uri": "https://devimages.apple.com.edgekey.net/streaming/examples/bipbop_4x3/bipbop_4x3_variant.m3u8"
+  },{
+    "name": "cat",
+    "uri": "http://html5demos.com/assets/dizzy.mp4"
+  },
+  {
+    "name": "Apple TS media playlist",
+    "uri": "https://devimages.apple.com.edgekey.net/streaming/examples/bipbop_4x3/gear1/prog_index.m3u8"
+  },
+  {
+    "name": "dog",
+    "uri": "http://storage.googleapis.com/exoplayer-test-media-1/mkv/android-screens-lavf-56.36.100-aac-avc-main-1280x720.mkv"
+  }
+]

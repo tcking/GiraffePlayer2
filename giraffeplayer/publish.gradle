@@ -1,0 +1,145 @@
+//--------------------------------------------------------------------------------------------------
+// Scripts to install plugin to local repository [~/.m2/repository]
+// > ./gradlew install
+//
+// Scripts to upload plugin to Bintray/JCenter [https://bintray.com/]
+// > ./gradlew bintrayUpload
+//--------------------------------------------------------------------------------------------------
+//
+//
+//buildscript {
+//    repositories {
+//        jcenter()
+//    }
+//    dependencies {
+//        classpath 'com.android.tools.build:gradle:2.3.2'
+//
+//        classpath 'com.github.dcendents:android-maven-gradle-plugin:1.5'
+//        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7.3'
+//
+//        // NOTE: Do not place your application dependencies here; they belong
+//        // in the individual module build.gradle files
+//    }
+//}
+
+apply plugin: 'com.github.dcendents.android-maven'
+apply plugin: 'com.jfrog.bintray'
+
+// load properties
+Properties properties = new Properties()
+File localPropertiesFile = project.file("local.properties");
+if(localPropertiesFile.exists()){
+    properties.load(localPropertiesFile.newDataInputStream())
+}
+
+File projectPropertiesFile = project.file("project.properties");
+if(projectPropertiesFile.exists()){
+    properties.load(projectPropertiesFile.newDataInputStream())
+}
+
+Properties bintrayPro = new Properties()
+File propFile = "${System.properties['user.home']}${File.separator}.gradle${File.separator}bintray.properties" as File
+bintrayPro.load(propFile.newDataInputStream())
+
+//read properties
+def projectName = properties.getProperty("project.name")
+def projectDesc = properties.getProperty("project.desc")
+def projectGroupId = properties.getProperty("project.groupId")
+def projectArtifactId = properties.getProperty("project.artifactId")
+def projectVersionName = android.defaultConfig.versionName
+def projectPackaging = properties.getProperty("project.packaging")
+def projectSiteUrl = properties.getProperty("project.siteUrl")
+def projectGitUrl = properties.getProperty("project.gitUrl")
+def projectIssueTrackerUrl = properties.getProperty("project.issueTrackerUrl")
+
+def developerName = properties.getProperty("developer.name")
+def developerEmail = properties.getProperty("developer.email")
+
+def bintrayUser = bintrayPro.getProperty("bintray.user")
+def bintrayApikey = bintrayPro.getProperty("bintray.apikey")
+
+def javadocName = properties.getProperty("javadoc.name")
+
+version = projectVersionName
+group = projectGroupId
+
+install {
+    repositories.mavenInstaller {
+        pom {
+            project {
+                name projectName
+                groupId projectGroupId
+                artifactId projectArtifactId
+                version projectVersionName
+                packaging projectPackaging
+                url projectSiteUrl
+                licenses {
+                    license {
+                        name 'The Apache Software License, Version 2.0'
+                        url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    }
+                }
+                developers {
+                    developer {
+                        name developerName
+                        email developerEmail
+                    }
+                }
+                scm {
+                    connection projectGitUrl
+                    developerConnection projectGitUrl
+                    url projectSiteUrl
+                }
+            }
+        }
+    }
+}
+
+task sourcesJar(type: Jar) {
+    from android.sourceSets.main.java.srcDirs
+    classifier = 'sources'
+}
+
+task javadoc(type: Javadoc) {
+    source = android.sourceSets.main.java.srcDirs
+    classpath += rootProject.files(android.getBootClasspath().join(File.pathSeparator))
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+artifacts {
+    archives javadocJar
+    archives sourcesJar
+}
+
+javadoc {
+    failOnError false
+    options{
+        encoding 'UTF-8'
+        charSet 'UTF-8'
+        author true
+        version projectVersionName
+        links "http://docs.oracle.com/javase/7/docs/api"
+        title javadocName
+    }
+}
+
+bintray {
+    user = bintrayUser
+    key = bintrayApikey
+    configurations = ['archives']
+    pkg {
+        repo = "maven"
+        name = projectName
+        desc = projectDesc
+        websiteUrl = projectSiteUrl
+        issueTrackerUrl = projectIssueTrackerUrl
+        vcsUrl = projectGitUrl
+        labels = ['android', 'video', 'player','ffmpeg']
+        licenses = ["Apache-2.0"]
+        publish = true
+    }
+}
