@@ -14,7 +14,7 @@ this project is total refactor of [GiraffePlayer](https://github.com/tcking/Gira
 7. specify video scale type
 8. support in ListView/RecyclerView
 
-# how to import library
+# how to import library (not link to jcenter yet)
  ``` gradle
     //1. add jcenter repositories in your root poject build file
     repositories {
@@ -86,11 +86,6 @@ VideoInfo videoInfo = new VideoInfo("http://xxx.mp4")
 
 
 # API:
-*
+TODO
 # screencap
-
-![](https://github.com/tcking/GiraffePlayer/blob/master/screencap/device-2015-10-28-142934.png)
-![](https://github.com/tcking/GiraffePlayer/blob/master/screencap/device-2015-10-28-143207.png)
-![](https://github.com/tcking/GiraffePlayer/blob/master/screencap/device-2015-10-28-143304.png)
-![](https://github.com/tcking/GiraffePlayer/blob/master/screencap/device-2015-10-28-143343.png)
-![](https://github.com/tcking/GiraffePlayer/blob/master/screencap/device-2015-10-28-143722.png)
+TODO
