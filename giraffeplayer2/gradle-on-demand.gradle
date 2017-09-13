@@ -17,6 +17,7 @@
 gradle.startParameter.taskNames.each { task ->
     def taskName = task.split(":").last()
     switch (taskName) {
+        case "bU":
         case "bintrayUpload":
         case "install":
             apply from: new File(projectDir, 'publish.gradle')

@@ -1,1 +1,1 @@
-include ':app', ':giraffeplayer'//, ':ijkplayer-java'
+include ':app', ':giraffeplayer2'

@@ -38,7 +38,7 @@ dependencies {
     compile 'io.reactivex:rxjava:1.2.6'
     compile 'io.reactivex:rxandroid:1.2.1'
 
-    compile project(':giraffeplayer')
+    compile project(':giraffeplayer2')
 
     testCompile 'junit:junit:4.12'
 }
