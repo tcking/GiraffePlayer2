@@ -2,7 +2,6 @@ package tcking.github.com.giraffeplayer2;
 
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.support.annotation.NonNull;
@@ -22,6 +21,16 @@ public class VideoView extends FrameLayout{
 
 
     private MediaController mediaController;
+    private PlayerListener playerListener;
+
+    public PlayerListener getPlayerListener() {
+        return playerListener;
+    }
+
+    public VideoView setPlayerListener(PlayerListener playerListener) {
+        this.playerListener = playerListener;
+        return this;
+    }
 
     public VideoInfo getVideoInfo() {
         return videoInfo;
@@ -63,7 +72,7 @@ public class VideoView extends FrameLayout{
     private void init(Context context) {
         activity= (Activity) context;
         initMediaController();
-        setBackgroundColor(Color.DKGRAY);
+        setBackgroundColor(videoInfo.getBgColor());
     }
 
 
@@ -74,12 +83,12 @@ public class VideoView extends FrameLayout{
     }
 
 
-    public VideoView fingerprint(Object fingerprint) {
+    public VideoView setFingerprint(Object fingerprint) {
         videoInfo.setFingerprint(fingerprint);
         return this;
     }
 
-    public VideoView videoPath(String uri) {
+    public VideoView setVideoPath(String uri) {
         videoInfo.setUri(Uri.parse(uri));
         return this;
     }

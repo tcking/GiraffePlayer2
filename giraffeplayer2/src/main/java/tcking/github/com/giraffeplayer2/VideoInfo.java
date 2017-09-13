@@ -1,8 +1,10 @@
 package tcking.github.com.giraffeplayer2;
 
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.annotation.ColorInt;
 
 import java.util.HashSet;
 
@@ -29,6 +31,22 @@ public class VideoInfo implements Parcelable {
     private String lastFingerprint;
     private Uri lastUri;
     private int retryInterval=0;
+    private int bgColor = Color.DKGRAY;
+
+    public int getBgColor() {
+        return bgColor;
+    }
+
+    /**
+     * player background color default is Color.DKGRAY
+     * @param bgColor ColorInt
+     * @return
+     */
+    public VideoInfo setBgColor(@ColorInt int bgColor) {
+        this.bgColor = bgColor;
+        return this;
+    }
+
 
 
     public int getRetryInterval() {
@@ -129,6 +147,7 @@ public class VideoInfo implements Parcelable {
         options = (HashSet<Option>) in.readSerializable();
         showTopBar = in.readByte() != 0;
         retryInterval = in.readInt();
+        bgColor = in.readInt();
     }
 
     public static final Creator<VideoInfo> CREATOR = new Creator<VideoInfo>() {
@@ -156,7 +175,7 @@ public class VideoInfo implements Parcelable {
 
     /**
      * A Fingerprint represent a player
-     * @return fingerprint
+     * @return setFingerprint
      */
     public String getFingerprint() {
         return fingerprint;
@@ -200,5 +219,6 @@ public class VideoInfo implements Parcelable {
         dest.writeSerializable(options);
         dest.writeByte((byte) (showTopBar ? 1 : 0));
         dest.writeInt(retryInterval);
+        dest.writeInt(bgColor);
     }
 }

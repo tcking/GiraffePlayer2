@@ -495,6 +495,7 @@ public class GiraffePlayer implements MediaController.MediaPlayerControl {
         }
         FrameLayout displayGroup = new FrameLayout(container.getContext());
         displayGroup.setId(R.id.player_display_group);
+        displayGroup.setBackgroundColor(videoInfo.getBgColor());
         FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT,

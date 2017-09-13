@@ -62,11 +62,13 @@
                 android:text="play in standalone player"/>
 
             <TextView
+                android:visibility="gone"
                 android:text="aspect ratio："
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
 
             <RadioGroup
+                android:visibility="gone"
                 android:id="@+id/rg_ra"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
@@ -79,6 +81,7 @@
                 <RadioButton
                     android:id="@+id/rb_fit_parent"
                     android:text="fit parent"
+                    android:checked="true"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"/>
 

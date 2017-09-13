@@ -25,7 +25,14 @@ public class ProxyPlayerListener implements PlayerListener {
     }
 
     private PlayerListener outerListener() {
-        return outerListener == null ? DefaultPlayerListener.INSTANCE : outerListener;
+        if (outerListener != null) {
+            return outerListener;
+        }
+        VideoView videoView = PlayerManager.getInstance().getVideoView(videoInfo);
+        if (videoView != null && videoView.getPlayerListener() != null) {
+            return videoView.getPlayerListener();
+        }
+        return DefaultPlayerListener.INSTANCE;
     }
 
     private PlayerListener listener() {

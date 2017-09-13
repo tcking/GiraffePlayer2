@@ -41,7 +41,7 @@ public class MainFragment extends Fragment {
         //testUri = "file:///sdcard/tmp/o.mp4" //test local file;
 
         final VideoView videoView = $.id(R.id.video_view).view();
-        videoView.videoPath(testUrl);
+        videoView.setVideoPath(testUrl);
 
         $.id(R.id.et_url).text(testUrl);
         CheckBox cb = $.id(R.id.cb_pwf).view();

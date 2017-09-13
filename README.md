@@ -1,6 +1,6 @@
 # GiraffePlayer2
 
-Out of the box android video player base on [ijkplayer](https://github.com/Bilibili/ijkplayer)
+Out of the box android video player base on [ijkplayer 0.8.2](https://github.com/Bilibili/ijkplayer)
 
 this project is total refactor of [GiraffePlayer](https://github.com/tcking/GiraffePlayer/) to support in ListView/RecyclerView and improve the performance，all player tasks do in worker thread.
 
@@ -13,10 +13,10 @@ this project is total refactor of [GiraffePlayer](https://github.com/tcking/Gira
 5. fullscreen by manual or sensor
 6. try to replay when error(only for live video)
 7. specify video scale type
-8. support in ListView/RecyclerView
+8. support in ListView/RecyclerView (in Activity or Fragment)
 9. never block UI thread
 
-# how to import library (not link to jcenter yet)
+# how to import library
  ``` gradle
     //step 1: add jcenter repositories in your root poject build file
     repositories {
@@ -30,13 +30,18 @@ this project is total refactor of [GiraffePlayer](https://github.com/tcking/Gira
 
  ```
  
-## support more ABI:
-In most cases your app only need to support `armeabi-v7a`. A article about ABI :[How to use 32-bit native libaries on 64-bit Android device](http://stackoverflow.com/questions/30782848/how-to-use-32-bit-native-libaries-on-64-bit-android-device),[What you should know about .so files](http://ph0b.com/android-abis-and-so-files/),[关于Android的.so文件你所需要知道的](http://www.jianshu.com/p/cb05698a1968)
-there are some aars to support different ABI:
+ **support more ABI:** In most cases your app only need to support `armeabi-v7a`. A article about ABI :[How to use 32-bit native libaries on 64-bit Android device](http://stackoverflow.com/questions/30782848/how-to-use-32-bit-native-libaries-on-64-bit-android-device),[What you should know about .so files](http://ph0b.com/android-abis-and-so-files/),[关于Android的.so文件你所需要知道的](http://www.jianshu.com/p/cb05698a1968)
+
+to support different ABI:
+
+``` gradle
+
     compile 'com.github.tcking:ijkplayer-arm64:0.8.2' //support arm64
     compile 'com.github.tcking:ijkplayer-armv5:0.8.2' //support armv5
     compile 'com.github.tcking:ijkplayer-x86:0.8.2' //support x86
     compile 'com.github.tcking:ijkplayer-x86_64:0.8.2' //support x86_64
+
+```
 
 
 
@@ -59,13 +64,13 @@ just call `GiraffePlayer.play(getContext(), new VideoInfo("video url"));`,all is
 ``` java
 
 VideoView videoView = (VideoView) findViewById(R.id.video_view);
-videoView.videoPath(videoUri).getPlayer().start();
+videoView.setVideoPath(videoUri).getPlayer().start();
 
 
 ```
 
 # player in ListView or RecyclerView
-in ListView or RecyclerView,you need do one more thing: call `videoView.fingerprint()`,
+in ListView or RecyclerView,you need do one more thing: call `videoView.setFingerprint()`,
 the fingerprint is the key that player distinguish list items,you can using list `position` or list data's `hashcode` as `fingerprint`,eg:
 
 ``` java
@@ -73,25 +78,34 @@ public void onBindViewHolder(VideoItemHolder holder, int position) {
         VideoItem videoItem = data.get(position);
         holder.name.setText(videoItem.name);
         holder.url.setText(videoItem.uri);
-        holder.videoView.videoPath(videoItem.uri).fingerprint(position);// or using:fingerprint(videoItem.hashCode())
+        holder.videoView.setVideoPath(videoItem.uri).setFingerprint(position);// or using:setFingerprint(videoItem.hashCode())
     }
 
 ```
 
 # config player
-all the configurations in VideoInfo,eg:
+all the configurations in VideoInfo,you can get VideoInfo and then set configurations,eg:
 ``` java
+//standalone player
 VideoInfo videoInfo = new VideoInfo("http://xxx.mp4")
                             .setTitle("test video") //config title
                             .setAspectRatio(aspectRatio) //aspectRatio
                             .setShowTopBar(true) //show mediacontroller top bar
                             .setPortraitWhenFullScreen(true);//portrait when full screen
 
-                    GiraffePlayer.play(getContext(), videoInfo);
+GiraffePlayer.play(getContext(), videoInfo);
 
+//in RecyclerView or embed player
+public void onBindViewHolder(VideoItemHolder holder, int position) {
+        VideoItem videoItem = data.get(position);
+        holder.name.setText(videoItem.name);
+        holder.url.setText(videoItem.uri);
+        holder.videoView.getVideoInfo().setBgColor(Color.GRAY).setAspectRatio(VideoInfo.AR_MATCH_PARENT);//config player
+        holder.videoView.setVideoPath(videoItem.uri).setFingerprint(position);
+    }
 
 ```
-all the configurations:
+all the configurations on **VideoInfo** :
 
 1. `videoInfo.setAspectRatio()` set video view aspect radio
 1. `videoInfo.setFingerprint()` in list must call this to distinguish items
@@ -101,8 +115,61 @@ all the configurations:
 1. `videoInfo.setShowTopBar()` show top bar(back arrow and title) when user tap the view
 1. `videoInfo.VideoInfo()` set video title
 1. `videoInfo.setUri()` set video Uri
+1. `videoInfo.setBgColor()` set video background color
 
 # API:
-TODO
+**GiraffePlayer**
+1. `player.start()`
+1. `player.pause()`
+1. `player.seekTo()`
+1. `player.setPlayerListener()` // in RecyclerView,player will create and release on demand,set listener on videoView:`videoView.setPlayerListener()`
+1. `player.stop()` //same as release
+1. `player.release()` //release the player
+1. ... //more
+
+**PlayerManager** (manager all players,make sure only one player is active at a time)
+1. `PlayerManager.getInstance().getCurrentPlayer()`  return current active player, return null if there is no active player
+1. `PlayerManager.getInstance().releaseCurrent()`  release current active player
+1. `PlayerManager.getInstance().isCurrentPlayer(fingerprint)`  judge player is active by fingerprint
+1. `PlayerManager.getInstance().getPlayer(VideoView)`  get player by video view (will create if not exists)
+
+**PlayerListener** (player event callback)
+
+``` java
+
+void onPreparing();
+
+void onPrepared(GiraffePlayer giraffePlayer);
+
+void onBufferingUpdate(GiraffePlayer giraffePlayer, int percent);
+
+boolean onInfo(GiraffePlayer giraffePlayer, int what, int extra);
+
+void onCompletion(GiraffePlayer giraffePlayer);
+
+void onSeekComplete(GiraffePlayer giraffePlayer);
+
+boolean onError(GiraffePlayer giraffePlayer,int what, int extra);
+
+void onPause(GiraffePlayer giraffePlayer);
+
+void onRelease(GiraffePlayer giraffePlayer);
+
+void onStart(GiraffePlayer giraffePlayer);
+
+void onTargetStateChange(int oldState, int newState);
+
+void onCurrentStateChange(int oldState, int newState);
+
+void onDisplayModelChange(int oldModel, int newModel);
+
+```
+
 # screenshot
-TODO
+![](https://raw.githubusercontent.com/tcking/GiraffePlayer2/master/screencap/device-2017-09-13-174907.png)
+![](https://raw.githubusercontent.com/tcking/GiraffePlayer2/master/screencap/device-2017-09-13-175035.png)
+![](https://raw.githubusercontent.com/tcking/GiraffePlayer2/master/screencap/device-2017-09-13-180141.png)
+![](https://raw.githubusercontent.com/tcking/GiraffePlayer2/master/screencap/device-2017-09-13-180334.png)
+# TODO
+1. select stream (if stream is multiple stream)
+2. full screen animation

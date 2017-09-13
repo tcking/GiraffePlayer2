@@ -46,6 +46,7 @@ public class DefaultMediaController extends BaseMediaController {
 
     protected float brightness;
     private int status = STATUS_IDLE;
+    private int displayModel = GiraffePlayer.DISPLAY_NORMAL;
 
     private String generateTime(long time) {
         int totalSeconds = (int) (time / 1000);
@@ -146,7 +147,7 @@ public class DefaultMediaController extends BaseMediaController {
 
     protected void show(int timeout) {
         if (!isShowing) {
-            if (videoView.getVideoInfo().isShowTopBar()) {
+            if (videoView.getVideoInfo().isShowTopBar() || displayModel == GiraffePlayer.DISPLAY_FULL_WINDOW) {
                 $.id(R.id.app_video_top_box).visible().text(videoView.getVideoInfo().getTitle());
             } else {
                 $.id(R.id.app_video_top_box).gone();
@@ -562,6 +563,7 @@ public class DefaultMediaController extends BaseMediaController {
 
     @Override
     public void onDisplayModelChange(int oldModel, int newModel) {
+        this.displayModel = newModel;
         ((ViewGroup) controllerView.getParent()).removeView(controllerView);
         if (newModel == GiraffePlayer.DISPLAY_FULL_WINDOW) {
             ViewGroup top = (ViewGroup) ((Activity) videoView.getContext()).findViewById(android.R.id.content);
