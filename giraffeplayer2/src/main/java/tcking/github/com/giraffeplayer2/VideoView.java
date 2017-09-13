@@ -102,7 +102,7 @@ public class VideoView extends FrameLayout{
 
     /**
      * is current active player (in list controllerView there are many players)
-     * @return
+     * @return boolean
      */
     public boolean isCurrentActivePlayer() {
         return PlayerManager.getInstance().isCurrentPlayer(videoInfo.getFingerprint());

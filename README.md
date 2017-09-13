@@ -121,6 +121,7 @@ all the configurations on **VideoInfo** :
 1. `videoInfo.setBgColor()` set video background color
 
 # API:
+
 **GiraffePlayer**
 1. `player.start()`
 1. `player.pause()`
@@ -130,7 +131,17 @@ all the configurations on **VideoInfo** :
 1. `player.release()` //release the player
 1. ... //more
 
-**PlayerManager** (manager all players,make sure only one player is active at a time)
+**VideoView** (player's display container and media controller)
+1. `videoView.getPlayer()` get or create bind player
+1. `videoView.setFingerprint()` delegate of bind videoInfo setFingerprint
+1. `videoView.setVideoPath()` delegate of bind videoInfo setUri
+1. `videoView.isCurrentActivePlayer()` is bind player active
+1. `videoView.getMediaController()` return bind mediaController
+1. `videoView.inListView()` is video view in ListView or RecyclerView
+1. `videoView.setPlayerListener()` set player Listener (in ListView or RecyclerView you should call this method rather than player.setPlayerListener
+
+
+**PlayerManager** (manage all players,make sure only one player is active)
 1. `PlayerManager.getInstance().getCurrentPlayer()`  return current active player, return null if there is no active player
 1. `PlayerManager.getInstance().releaseCurrent()`  release current active player
 1. `PlayerManager.getInstance().isCurrentPlayer(fingerprint)`  judge player is active by fingerprint
