@@ -35,5 +35,5 @@ public interface PlayerListener {
 
     void onDisplayModelChange(int oldModel, int newModel);
 
-    void onPreparing();
+    void onPreparing(GiraffePlayer giraffePlayer);
 }

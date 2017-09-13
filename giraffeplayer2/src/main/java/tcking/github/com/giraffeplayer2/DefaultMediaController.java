@@ -557,7 +557,7 @@ public class DefaultMediaController extends BaseMediaController {
     }
 
     @Override
-    public void onPreparing() {
+    public void onPreparing(GiraffePlayer giraffePlayer) {
         statusChange(STATUS_LOADING);
     }
 

@@ -308,7 +308,7 @@ public class GiraffePlayer implements MediaController.MediaPlayerControl {
         uiHandler.post(new Runnable() {
             @Override
             public void run() {
-                proxyListener().onPreparing();
+                proxyListener().onPreparing(GiraffePlayer.this);
             }
         });
         releaseMediaPlayer();

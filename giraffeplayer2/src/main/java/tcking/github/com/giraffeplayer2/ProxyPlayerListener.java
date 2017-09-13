@@ -117,8 +117,8 @@ public class ProxyPlayerListener implements PlayerListener {
         outerListener().onDisplayModelChange(oldModel,newModel);
     }
 
-    public void onPreparing() {
-        listener().onPreparing();
-        outerListener().onPreparing();
+    public void onPreparing(GiraffePlayer giraffePlayer) {
+        listener().onPreparing(giraffePlayer);
+        outerListener().onPreparing(giraffePlayer);
     }
 }

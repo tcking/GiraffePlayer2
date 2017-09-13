@@ -69,7 +69,7 @@ public class DefaultPlayerListener implements PlayerListener {
     }
 
     @Override
-    public void onPreparing() {
+    public void onPreparing(GiraffePlayer giraffePlayer) {
 
     }
 }

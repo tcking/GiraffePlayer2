@@ -1,14 +1,19 @@
 package tcking.github.com.giraffeplayer.example;
 
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.LinkedList;
 import java.util.List;
 
+import tcking.github.com.giraffeplayer2.DefaultPlayerListener;
+import tcking.github.com.giraffeplayer2.GiraffePlayer;
+import tcking.github.com.giraffeplayer2.PlayerListener;
 import tcking.github.com.giraffeplayer2.VideoView;
 
 /**
@@ -17,9 +22,22 @@ import tcking.github.com.giraffeplayer2.VideoView;
 
 public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoItemHolder> {
     private List<VideoItem> data = new LinkedList<>();
+    private Context context;
+    private PlayerListener playerListener=new DefaultPlayerListener(){//example of using playerListener
+        @Override
+        public void onPreparing(GiraffePlayer giraffePlayer) {
+            Toast.makeText(context, "start playing:"+giraffePlayer.getVideoInfo().getUri(),Toast.LENGTH_SHORT).show();
+        }
+
+        @Override
+        public void onCompletion(GiraffePlayer giraffePlayer) {
+            Toast.makeText(context, "play completion:"+giraffePlayer.getVideoInfo().getUri(),Toast.LENGTH_SHORT).show();
+        }
+    };
 
     @Override
     public VideoItemHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        context=parent.getContext();
         if (viewType == VideoItem.TYPE_EMBED) {
             return new VideoItemHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.item_embed,parent,false));
         }else {
@@ -35,11 +53,6 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoItemHol
             holder.url.setText(videoItem.uri);
             holder.videoView.setVideoPath(videoItem.uri).setFingerprint(position);
         }
-    }
-
-    @Override
-    public void onViewRecycled(VideoItemHolder holder) {
-        super.onViewRecycled(holder);
     }
 
     @Override
@@ -67,6 +80,7 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoItemHol
             name = (TextView) itemView.findViewById(R.id.tv_name);
             url = (TextView) itemView.findViewById(R.id.tv_url);
             videoView = (VideoView) itemView.findViewById(R.id.video_view);
+            videoView.setPlayerListener(playerListener);
         }
     }
 
