@@ -30,7 +30,10 @@ this project is total refactor of [GiraffePlayer](https://github.com/tcking/Gira
 
  ```
  
- **support more ABI:** In most cases your app only need to support `armeabi-v7a`. A article about ABI :[How to use 32-bit native libaries on 64-bit Android device](http://stackoverflow.com/questions/30782848/how-to-use-32-bit-native-libaries-on-64-bit-android-device),[What you should know about .so files](http://ph0b.com/android-abis-and-so-files/),[关于Android的.so文件你所需要知道的](http://www.jianshu.com/p/cb05698a1968)
+ **support more ABI:** In most cases your app only need to support `armeabi-v7a`. some articles about ABI :
+ 1. [How to use 32-bit native libaries on 64-bit Android device](http://stackoverflow.com/questions/30782848/how-to-use-32-bit-native-libaries-on-64-bit-android-device)
+ 2. [What you should know about .so files](http://ph0b.com/android-abis-and-so-files/)
+ 3. [关于Android的.so文件你所需要知道的](http://www.jianshu.com/p/cb05698a1968)
 
 to support different ABI:
 
@@ -45,7 +48,7 @@ to support different ABI:
 
 
 
-# How to use ([example code](https://github.com/tcking/GiraffePlayer2/blob/master/app/src/main/java/tcking/github/com/giraffeplayer/example/MainFragment.javavideoInfo))
+# How to use ([example code](https://github.com/tcking/GiraffePlayer2/blob/master/app/src/main/java/tcking/github/com/giraffeplayer/example/MainFragment.java))
 ## case 1: only want to play a video fullscreen
 just call `GiraffePlayer.play(getContext(), new VideoInfo("video url"));`,all is done.
 
@@ -69,7 +72,7 @@ videoView.setVideoPath(videoUri).getPlayer().start();
 
 ```
 
-# player in ListView or RecyclerView
+# player in ListView or RecyclerView [example code](https://github.com/tcking/GiraffePlayer2/blob/master/app/src/main/java/tcking/github/com/giraffeplayer/example/ListExampleActivity.java)
 in ListView or RecyclerView,you need do one more thing: call `videoView.setFingerprint()`,
 the fingerprint is the key that player distinguish list items,you can using list `position` or list data's `hashcode` as `fingerprint`,eg:
 

@@ -25,7 +25,7 @@ import rx.schedulers.Schedulers;
 import tcking.github.com.giraffeplayer2.BasePlayerActivity;
 
 /**
- * Created by TangChao on 2017/9/12.
+ * Created by tcking on 2017
  */
 
 public class ListExampleActivity extends BasePlayerActivity {
