@@ -46,7 +46,8 @@ public class GiraffePlayer implements MediaController.MediaPlayerControl {
     private static final int MSG_CTRL_PLAYING = 1;
     private static final int MSG_CTRL_PAUSE = 2;
     private static final int MSG_CTRL_SEEK = 3;
-    private static final int MSG_CTRL_RELEASE = 9;
+    private static final int MSG_CTRL_RELEASE = 4;
+    private static final int MSG_CTRL_RETRY = 5;
 
 
     private static final int MSG_SET_DISPLAY = 12;
@@ -79,7 +80,7 @@ public class GiraffePlayer implements MediaController.MediaPlayerControl {
     private IMediaPlayer mediaPlayer;
     private volatile boolean released;
     private Handler handler;
-    private Handler uiHandler=new Handler(Looper.getMainLooper());
+    private Handler uiHandler = new Handler(Looper.getMainLooper());
     private ProxyPlayerListener proxyListener;
     private WeakReference<FrameLayout> displayGroupRef;
     private WeakReference<ViewGroup> containerRef;
@@ -95,13 +96,12 @@ public class GiraffePlayer implements MediaController.MediaPlayerControl {
     private VideoInfo videoInfo;
 
 
-    private ProxyPlayerListener proxyListener(){
+    private ProxyPlayerListener proxyListener() {
         return proxyListener;
     }
 
 
-
-    private GiraffePlayer(Context context,VideoInfo videoInfo) {
+    private GiraffePlayer(Context context, VideoInfo videoInfo) {
         this.context = context.getApplicationContext();
         this.videoInfo = videoInfo;
         log("new GiraffePlayer");
@@ -112,20 +112,23 @@ public class GiraffePlayer implements MediaController.MediaPlayerControl {
             @Override
             public boolean handleMessage(Message msg) {
                 //init mediaPlayer before any actions
+                log("handleMessage:" + msg.what);
                 if (mediaPlayer == null || released) {
                     handler.removeCallbacks(null);
-                    init();
+                    init(true);
                     handler.sendMessage(Message.obtain(msg));
                     return true;
                 }
                 switch (msg.what) {
                     case MSG_CTRL_PLAYING:
-                        if(currentState == STATE_PLAYBACK_COMPLETED){
+                        if (currentState == STATE_PLAYBACK_COMPLETED) {
                             mediaPlayer.seekTo(0);
                             mediaPlayer.start();
                             currentState(STATE_PLAYING);
                         } else {
-                            if (isInPlaybackState()) {
+                            if (currentState == STATE_ERROR) {
+                                handler.sendEmptyMessage(MSG_CTRL_RETRY);
+                            } else if (isInPlaybackState()) {
                                 mediaPlayer.start();
                                 currentState(STATE_PLAYING);
                             }
@@ -141,7 +144,7 @@ public class GiraffePlayer implements MediaController.MediaPlayerControl {
                     case MSG_SET_DISPLAY:
                         if (msg.obj == null) {
                             mediaPlayer.setDisplay(null);
-                        }else if (msg.obj instanceof SurfaceTexture) {
+                        } else if (msg.obj instanceof SurfaceTexture) {
                             mediaPlayer.setSurface(new Surface((SurfaceTexture) msg.obj));
                         } else if (msg.obj instanceof SurfaceView) {
                             mediaPlayer.setDisplay(((SurfaceView) msg.obj).getHolder());
@@ -151,6 +154,10 @@ public class GiraffePlayer implements MediaController.MediaPlayerControl {
                         handler.removeCallbacks(null);
                         doRelease(((String) msg.obj));
                         break;
+                    case MSG_CTRL_RETRY:
+                        init(false);
+                        handler.sendEmptyMessage(MSG_CTRL_PLAYING);
+                        break;
                     default:
                 }
                 return true;
@@ -158,8 +165,6 @@ public class GiraffePlayer implements MediaController.MediaPlayerControl {
         });
         PlayerManager.getInstance().setCurrentPlayer(this);
     }
-
-
 
 
     private boolean isInPlaybackState() {
@@ -177,13 +182,26 @@ public class GiraffePlayer implements MediaController.MediaPlayerControl {
         proxyListener().onStart(this);
     }
 
-    private void targetState(int newState) {
-        proxyListener().onTargetStateChange(targetState,newState);
+    private void targetState(final int newState) {
+        final int oldTargetState = targetState;
+        uiHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                proxyListener().onTargetStateChange(oldTargetState, newState);
+            }
+        });
         targetState = newState;
     }
 
-    private void currentState(int newState) {
-        proxyListener().onCurrentStateChange(currentState,newState);
+    private void currentState(final int newState) {
+        final int oldCurrentState = currentState;
+        uiHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                proxyListener().onCurrentStateChange(oldCurrentState, newState);
+
+            }
+        });
         currentState = newState;
     }
 
@@ -285,14 +303,15 @@ public class GiraffePlayer implements MediaController.MediaPlayerControl {
         return this;
     }
 
-    private void init() {
-        log("init");
+    private void init(boolean createDisplay) {
+        log("init createDisplay:" + createDisplay);
         uiHandler.post(new Runnable() {
             @Override
             public void run() {
                 proxyListener().onPreparing();
             }
         });
+        releaseMediaPlayer();
         mediaPlayer = new IjkMediaPlayer(Looper.getMainLooper());
         IjkMediaPlayer.native_setLogLevel(debug ? IjkMediaPlayer.IJK_LOG_DEBUG : IjkMediaPlayer.IJK_LOG_ERROR);
         released = false;
@@ -303,15 +322,16 @@ public class GiraffePlayer implements MediaController.MediaPlayerControl {
                 currentState(STATE_PREPARED);
                 proxyListener().onPrepared(GiraffePlayer.this);
                 if (targetState == STATE_PLAYING) {
-                    iMediaPlayer.start();
-                    currentState(STATE_PLAYING);
+                    handler.sendEmptyMessage(MSG_CTRL_PLAYING);
                 }
             }
         });
         initInternalListener();
-        VideoView videoView = PlayerManager.getInstance().getVideoView(videoInfo);
-        if (videoView != null) {
-            createDisplay(videoView);
+        if (createDisplay) {
+            VideoView videoView = PlayerManager.getInstance().getVideoView(videoInfo);
+            if (videoView != null) {
+                createDisplay(videoView);
+            }
         }
         try {
             uri = videoInfo.getUri();
@@ -319,7 +339,14 @@ public class GiraffePlayer implements MediaController.MediaPlayerControl {
             currentState(STATE_PREPARING);
             mediaPlayer.prepareAsync();
         } catch (IOException e) {
+            currentState(STATE_ERROR);
             e.printStackTrace();
+            uiHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    proxyListener().onError(GiraffePlayer.this, 0, 0);
+                }
+            });
         }
 
     }
@@ -329,7 +356,7 @@ public class GiraffePlayer implements MediaController.MediaPlayerControl {
         mediaPlayer.setOnBufferingUpdateListener(new IMediaPlayer.OnBufferingUpdateListener() {
             @Override
             public void onBufferingUpdate(IMediaPlayer iMediaPlayer, int percent) {
-                proxyListener().onBufferingUpdate(GiraffePlayer.this,percent);
+                proxyListener().onBufferingUpdate(GiraffePlayer.this, percent);
             }
         });
         mediaPlayer.setOnInfoListener(new IMediaPlayer.OnInfoListener() {
@@ -337,9 +364,9 @@ public class GiraffePlayer implements MediaController.MediaPlayerControl {
             @Override
             public boolean onInfo(IMediaPlayer iMediaPlayer, int what, int extra) {
                 if (debug) {
-                    log("onInfo:what:"+what+",extra:"+extra);
+                    log("onInfo:what:" + what + ",extra:" + extra);
                 }
-                return proxyListener().onInfo(GiraffePlayer.this,what,extra);
+                return proxyListener().onInfo(GiraffePlayer.this, what, extra);
             }
         });
         mediaPlayer.setOnCompletionListener(new IMediaPlayer.OnCompletionListener() {
@@ -353,9 +380,17 @@ public class GiraffePlayer implements MediaController.MediaPlayerControl {
             @Override
             public boolean onError(IMediaPlayer iMediaPlayer, int what, int extra) {
                 if (debug) {
-                    log("onError:what:"+what+",extra:"+extra);
+                    log("onError:what:" + what + ",extra:" + extra);
                 }
-                return proxyListener().onError(GiraffePlayer.this,what,extra);
+                currentState(STATE_ERROR);
+                boolean b = proxyListener().onError(GiraffePlayer.this, what, extra);
+                int retryInterval = videoInfo.getRetryInterval();
+                if (retryInterval > 0) {
+                    log("replay delay " + retryInterval + " seconds");
+                    handler.sendEmptyMessageDelayed(MSG_CTRL_RETRY, retryInterval * 1000);
+                }
+                return b;
+
             }
         });
         mediaPlayer.setOnSeekCompleteListener(new IMediaPlayer.OnSeekCompleteListener() {
@@ -368,7 +403,7 @@ public class GiraffePlayer implements MediaController.MediaPlayerControl {
             @Override
             public void onVideoSizeChanged(final IMediaPlayer mp, int width, int height, int sarNum, int sarDen) {
                 if (debug) {
-                    log("onVideoSizeChanged:width:"+width+",height:"+height);
+                    log("onVideoSizeChanged:width:" + width + ",height:" + height);
                 }
                 int videoWidth = mp.getVideoWidth();
                 int videoHeight = mp.getVideoHeight();
@@ -385,13 +420,14 @@ public class GiraffePlayer implements MediaController.MediaPlayerControl {
         });
     }
 
-    public static GiraffePlayer createPlayer(Context context,VideoInfo videoInfo) {
-        return new GiraffePlayer(context,videoInfo);
+    public static GiraffePlayer createPlayer(Context context, VideoInfo videoInfo) {
+        return new GiraffePlayer(context, videoInfo);
     }
 
     private GiraffePlayer displayOn(final TextureView textureView) {
         textureView.setSurfaceTextureListener(new TextureView.SurfaceTextureListener() {
             private SurfaceTexture surface;
+
             @Override
             public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
                 if (this.surface == null) {
@@ -434,6 +470,7 @@ public class GiraffePlayer implements MediaController.MediaPlayerControl {
 
     /**
      * create video display controllerView
+     *
      * @param container
      */
     public GiraffePlayer createDisplay(final ViewGroup container) {
@@ -464,10 +501,10 @@ public class GiraffePlayer implements MediaController.MediaPlayerControl {
                 Gravity.CENTER
         );
         ScalableTextureView textureView = new ScalableTextureView(container.getContext());
-        textureView.setAspectRatio(videoInfo.aspectRatio());
+        textureView.setAspectRatio(videoInfo.getAspectRatio());
         textureView.setId(R.id.player_display);
-        displayGroup.addView(textureView,lp);
-        container.addView(displayGroup,0,lp);
+        displayGroup.addView(textureView, lp);
+        container.addView(displayGroup, 0, lp);
         displayOn(textureView);
         displayGroupRef = new WeakReference<>(displayGroup);
         containerRef = new WeakReference<>(container);
@@ -475,70 +512,10 @@ public class GiraffePlayer implements MediaController.MediaPlayerControl {
 
     private void log(String msg) {
         if (debug) {
-            Log.d(TAG, String.format("[fingerprint:%s] %s",videoInfo.getFingerprint(),msg));
+            Log.d(TAG, String.format("[setFingerprint:%s] %s", videoInfo.getFingerprint(), msg));
         }
     }
 
-
-//    /**
-//     * Defines a message and a target {@link PlayerComponent} to receive it.
-//     */
-//    final class PlayerMessage {
-//
-//        /**
-//         * The target to receive the message.
-//         */
-//        public final PlayerComponent target;
-//        /**
-//         * The type of the message.
-//         */
-//        public final int messageType;
-//        /**
-//         * The message.
-//         */
-//        public final Object message;
-//
-//        /**
-//         * @param target      The target of the message.
-//         * @param messageType The message type.
-//         * @param message     The message.
-//         */
-//        public PlayerMessage(PlayerComponent target, int messageType, Object message) {
-//            this.target = target;
-//            this.messageType = messageType;
-//            this.message = message;
-//        }
-//
-//    }
-//
-//
-//    /**
-//     * A component of an {@link Player} that can receive messages on the playback thread.
-//     * <p>
-//     * Messages can be delivered to a component via {@link #sendMessages} and
-//     * {@link #blockingSendMessages}.
-//     */
-//    interface PlayerComponent {
-//
-//        /**
-//         * Handles a message delivered to the component. Called on the playback thread.
-//         *
-//         * @param messageType The message type.
-//         * @param message     The message.
-//         */
-//        void handleMessage(int messageType, Object message);
-//    }
-//
-//
-//    public GiraffePlayer sendMessages(PlayerMessage... messages) {
-//        if (released) {
-//            Log.w(TAG, "Ignoring messages sent after release.");
-//            return null;
-//        }
-//        customMessagesSent++;
-//        handler.obtainMessage(MSG_CUSTOM, messages).sendToTarget();
-//        return this;
-//    }
 
     private void doRelease(String fingerprint) {
         if (released) {
@@ -550,21 +527,25 @@ public class GiraffePlayer implements MediaController.MediaPlayerControl {
         internalPlaybackThread.quit();
         //2. remove display group
         removeDisplayGroupFromParent();
-        if (mediaPlayer != null) {
-            mediaPlayer.release();
-            mediaPlayer = null;
-        }
+        releaseMediaPlayer();
         released = true;
         //3. fire proxyListener
         proxyListener().onRelease(this);
     }
 
-    public GiraffePlayer release() {
+    private void releaseMediaPlayer() {
+        if (mediaPlayer != null) {
+            log("releaseMediaPlayer");
+            mediaPlayer.release();
+            mediaPlayer = null;
+        }
+    }
+
+    public void release() {
         log("try release");
         String fingerprint = videoInfo.getFingerprint();
         PlayerManager.getInstance().removePlayer(fingerprint);
         handler.obtainMessage(MSG_CTRL_RELEASE, fingerprint).sendToTarget();
-        return this;
     }
 
     private void removeDisplayGroupFromParent() {
@@ -581,7 +562,7 @@ public class GiraffePlayer implements MediaController.MediaPlayerControl {
     }
 
     private void doRemoveDisplayGroupFromParent() {
-        if (displayGroupRef !=null) {
+        if (displayGroupRef != null) {
             ViewGroup displayGroup = displayGroupRef.get();
             if (displayGroup != null) {
                 ViewParent parent = displayGroup.getParent();
@@ -601,7 +582,6 @@ public class GiraffePlayer implements MediaController.MediaPlayerControl {
     }
 
     /**
-     *
      * @return
      */
     public GiraffePlayer toggleFullScreen() {
@@ -705,12 +685,16 @@ public class GiraffePlayer implements MediaController.MediaPlayerControl {
         release();
     }
 
+    public void stop() {
+        release();
+    }
+
     public boolean isReleased() {
         return released;
     }
 
-    public static void play(Context context,VideoInfo videoInfo) {
-        Intent intent = new Intent(context,PlayerActivity.class);
+    public static void play(Context context, VideoInfo videoInfo) {
+        Intent intent = new Intent(context, PlayerActivity.class);
         if (!(context instanceof Activity)) {
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         }
@@ -720,8 +704,8 @@ public class GiraffePlayer implements MediaController.MediaPlayerControl {
     }
 
     public void aspectRatio(int aspectRatio) {
-        log("aspectRatio:"+aspectRatio);
-        videoInfo.aspectRatio(aspectRatio);
+        log("aspectRatio:" + aspectRatio);
+        videoInfo.setAspectRatio(aspectRatio);
         if (displayGroupRef != null) {
             FrameLayout group = displayGroupRef.get();
             if (group != null) {

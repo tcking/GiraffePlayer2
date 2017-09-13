@@ -48,7 +48,7 @@ public class MainFragment extends Fragment {
         cb.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                videoView.getVideoInfo().portraitWhenFullScreen(isChecked);
+                videoView.getVideoInfo().setPortraitWhenFullScreen(isChecked);
             }
         });
 
@@ -90,9 +90,9 @@ public class MainFragment extends Fragment {
                     startActivity(new Intent(getActivity(), ListExampleActivity.class));
                 } else if (v.getId() == R.id.btn_play_in_standalone) {
                     VideoInfo videoInfo = new VideoInfo(Uri.parse($.id(R.id.et_url).text()))
-                            .title("test video")
-                            .aspectRatio(aspectRatio)
-                            .showTopBar(true);
+                            .setTitle("test video")
+                            .setAspectRatio(aspectRatio)
+                            .setShowTopBar(true);
                     GiraffePlayer.play(getContext(), videoInfo);
                     getActivity().overridePendingTransition(0, 0);
                 }

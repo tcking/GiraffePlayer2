@@ -178,7 +178,7 @@ public class PlayerManager {
 
     private void log(String fingerprint,String msg) {
         if (GiraffePlayer.debug) {
-            Log.d(TAG, String.format("[fingerprint:%s] %s",fingerprint,msg));
+            Log.d(TAG, String.format("[setFingerprint:%s] %s",fingerprint,msg));
         }
     }
 }

@@ -19,31 +19,97 @@ public class VideoInfo implements Parcelable {
     public static final int AR_4_3_FIT_PARENT = 5;
     public static final String DEFAULT_FINGERPRINT = "-1";
 
-    public HashSet<Option> options() {
+    private HashSet<Option> options = new HashSet<>();
+    private boolean showTopBar = false;
+    private Uri uri;
+    private String fingerprint = DEFAULT_FINGERPRINT;
+    private boolean portraitWhenFullScreen = true;
+    private String title;
+    private int aspectRatio = AR_ASPECT_FIT_PARENT;
+    private String lastFingerprint;
+    private Uri lastUri;
+    private int retryInterval=0;
+
+
+    public int getRetryInterval() {
+        return retryInterval;
+    }
+
+    /**
+     * retry to play again interval (in second)
+     * @param retryInterval interval in second <=0 will disable retry
+     * @return VideoInfo
+     */
+    public VideoInfo setRetryInterval(int retryInterval) {
+        this.retryInterval = retryInterval;
+        return this;
+    }
+
+
+    public HashSet<Option> getOptions() {
         return options;
     }
 
-    public VideoInfo option(Option option) {
+    /**
+     * add player init option
+     * @param option option
+     * @return VideoInfo
+     */
+    public VideoInfo addOption(Option option) {
         this.options.add(option);
         return this;
     }
 
-    private HashSet<Option> options = new HashSet<>();
-
-    public boolean showTopBar() {
+    public boolean isShowTopBar() {
         return showTopBar;
     }
 
-    public VideoInfo showTopBar(boolean showTopBar) {
+    /**
+     * show top bar(back arrow and title) when user tap the view
+     * @param showTopBar true to show
+     * @return VideoInfo
+     */
+    public VideoInfo setShowTopBar(boolean showTopBar) {
         this.showTopBar = showTopBar;
         return this;
     }
 
-    private boolean showTopBar = false;
+    public boolean isPortraitWhenFullScreen() {
+        return portraitWhenFullScreen;
+    }
 
+    /**
+     * control Portrait when full screen
+     * @param portraitWhenFullScreen true portrait when full screen
+     * @return VideoInfo
+     */
+    public VideoInfo setPortraitWhenFullScreen(boolean portraitWhenFullScreen) {
+        this.portraitWhenFullScreen = portraitWhenFullScreen;
+        return this;
+    }
 
-    private String fingerprint = DEFAULT_FINGERPRINT;
-    private Uri uri;
+    public String getTitle() {
+        return title;
+    }
+
+    /**
+     * video title
+     * @param title title
+     * @return VideoInfo
+     */
+    public VideoInfo setTitle(String title) {
+        this.title = title;
+        return this;
+    }
+
+    public int getAspectRatio() {
+        return aspectRatio;
+    }
+
+    public VideoInfo setAspectRatio(int aspectRatio) {
+        this.aspectRatio = aspectRatio;
+        return this;
+    }
 
     public VideoInfo() {
     }
@@ -62,6 +128,7 @@ public class VideoInfo implements Parcelable {
         lastUri = in.readParcelable(Uri.class.getClassLoader());
         options = (HashSet<Option>) in.readSerializable();
         showTopBar = in.readByte() != 0;
+        retryInterval = in.readInt();
     }
 
     public static final Creator<VideoInfo> CREATOR = new Creator<VideoInfo>() {
@@ -76,44 +143,10 @@ public class VideoInfo implements Parcelable {
         }
     };
 
-    public String title() {
-        return title;
-    }
 
-    public VideoInfo title(String title) {
-        this.title = title;
-        return this;
-    }
-
-    private String title;
-
-    public boolean isPortraitWhenFullScreen() {
-        return portraitWhenFullScreen;
-    }
-
-    public VideoInfo portraitWhenFullScreen(boolean portraitWhenFullScreen) {
-        this.portraitWhenFullScreen = portraitWhenFullScreen;
-        return this;
-    }
-
-    private boolean portraitWhenFullScreen = true;
-
-    public int aspectRatio() {
-        return aspectRatio;
-    }
-
-    public VideoInfo aspectRatio(int aspectRatio) {
-        this.aspectRatio = aspectRatio;
-        return this;
-    }
-
-    private int aspectRatio = AR_ASPECT_FIT_PARENT;
-    private String lastFingerprint;
-    private Uri lastUri;
-
-    public VideoInfo fingerprint(Object fingerprint) {
+    public VideoInfo setFingerprint(Object fingerprint) {
         if (lastFingerprint!=null && !lastFingerprint.equals(fingerprint)) {
-            //different from last fingerprint, release last
+            //different from last setFingerprint, release last
             PlayerManager.getInstance().releaseByFingerprint(lastFingerprint);
         }
         this.fingerprint = ""+fingerprint;
@@ -121,29 +154,34 @@ public class VideoInfo implements Parcelable {
         return this;
     }
 
+    /**
+     * A Fingerprint represent a player
+     * @return fingerprint
+     */
+    public String getFingerprint() {
+        return fingerprint;
+    }
+
     public Uri getUri() {
         return uri;
     }
 
-    public void setUri(Uri uri) {
+    /**
+     * set video uri
+     * @param uri uri
+     * @return VideoInfo
+     */
+    public VideoInfo setUri(Uri uri) {
         if (lastUri!=null && !lastUri.equals(uri)) {
             //different from last uri, release last
             PlayerManager.getInstance().releaseByFingerprint(lastFingerprint);
         }
         this.uri = uri;
         this.lastUri = this.uri;
+        return this;
     }
 
-    /**
-     * A Fingerprint represent a player
-     * @return
-     */
-    public String getFingerprint() {
-//        if (listPosition == -1) {
-//            return "DEFAULT_FINGERPRINT";
-//        }
-        return fingerprint;
-    }
+
 
     @Override
     public int describeContents() {
@@ -161,5 +199,6 @@ public class VideoInfo implements Parcelable {
         dest.writeParcelable(lastUri, flags);
         dest.writeSerializable(options);
         dest.writeByte((byte) (showTopBar ? 1 : 0));
+        dest.writeInt(retryInterval);
     }
 }

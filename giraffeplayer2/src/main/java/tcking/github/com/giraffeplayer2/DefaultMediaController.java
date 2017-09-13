@@ -146,8 +146,8 @@ public class DefaultMediaController extends BaseMediaController {
 
     protected void show(int timeout) {
         if (!isShowing) {
-            if (videoView.getVideoInfo().showTopBar()) {
-                $.id(R.id.app_video_top_box).visible().text(videoView.getVideoInfo().title());
+            if (videoView.getVideoInfo().isShowTopBar()) {
+                $.id(R.id.app_video_top_box).visible().text(videoView.getVideoInfo().getTitle());
             } else {
                 $.id(R.id.app_video_top_box).gone();
             }

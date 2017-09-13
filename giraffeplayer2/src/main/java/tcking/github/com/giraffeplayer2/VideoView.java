@@ -75,7 +75,7 @@ public class VideoView extends FrameLayout{
 
 
     public VideoView fingerprint(Object fingerprint) {
-        videoInfo.fingerprint(fingerprint);
+        videoInfo.setFingerprint(fingerprint);
         return this;
     }
 
