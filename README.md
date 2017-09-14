@@ -1,6 +1,6 @@
 # GiraffePlayer2
 
-Out of the box android video player base on [ijkplayer 0.8.2](https://github.com/Bilibili/ijkplayer)
+Out of the box android video player base on [ijkplayer 0.8.3](https://github.com/Bilibili/ijkplayer)
 
 this project is total refactor of [GiraffePlayer](https://github.com/tcking/GiraffePlayer/) to support in ListView/RecyclerView and improve the performance，all player tasks do in worker thread.
 
@@ -25,7 +25,7 @@ this project is total refactor of [GiraffePlayer](https://github.com/tcking/Gira
     }
 
     //step 2: add dependency
-    compile 'com.github.tcking:giraffeplayer2:0.1.0'
+    compile 'com.github.tcking:giraffeplayer2:0.1.1'
 
 
  ```
@@ -39,10 +39,10 @@ to support different ABI:
 
 ``` gradle
 
-    compile 'com.github.tcking:ijkplayer-arm64:0.8.2' //support arm64
-    compile 'com.github.tcking:ijkplayer-armv5:0.8.2' //support armv5
-    compile 'com.github.tcking:ijkplayer-x86:0.8.2' //support x86
-    compile 'com.github.tcking:ijkplayer-x86_64:0.8.2' //support x86_64
+    compile 'com.github.tcking:ijkplayer-arm64:0.8.3' //support arm64
+    compile 'com.github.tcking:ijkplayer-armv5:0.8.3' //support armv5
+    compile 'com.github.tcking:ijkplayer-x86:0.8.3' //support x86
+    compile 'com.github.tcking:ijkplayer-x86_64:0.8.3' //support x86_64
 
 ```
 
