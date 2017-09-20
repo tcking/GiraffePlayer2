@@ -25,7 +25,7 @@ this project is total refactor of [GiraffePlayer](https://github.com/tcking/Gira
     }
 
     //step 2: add dependency
-    compile 'com.github.tcking:giraffeplayer2:0.1.1'
+    compile 'com.github.tcking:giraffeplayer2:0.1.2'
 
 
  ```
