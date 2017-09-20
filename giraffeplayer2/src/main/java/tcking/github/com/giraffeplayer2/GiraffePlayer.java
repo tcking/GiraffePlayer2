@@ -314,6 +314,7 @@ public class GiraffePlayer implements MediaController.MediaPlayerControl {
         releaseMediaPlayer();
         mediaPlayer = new IjkMediaPlayer(Looper.getMainLooper());
         IjkMediaPlayer.native_setLogLevel(debug ? IjkMediaPlayer.IJK_LOG_DEBUG : IjkMediaPlayer.IJK_LOG_ERROR);
+        setOptions();
         released = false;
         mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
         mediaPlayer.setOnPreparedListener(new IMediaPlayer.OnPreparedListener() {
@@ -349,6 +350,19 @@ public class GiraffePlayer implements MediaController.MediaPlayerControl {
             });
         }
 
+    }
+
+    private void setOptions() {
+        if (mediaPlayer instanceof IjkMediaPlayer && videoInfo.getOptions().size()>0) {
+            IjkMediaPlayer ijkMediaPlayer = (IjkMediaPlayer) mediaPlayer;
+            for (Option option : videoInfo.getOptions()) {
+                if (option.getValue() instanceof String) {
+                    ijkMediaPlayer.setOption(option.getCategory(),option.getName(),((String)option.getValue()));
+                }else if (option.getValue() instanceof Long) {
+                    ijkMediaPlayer.setOption(option.getCategory(),option.getName(),((Long)option.getValue()));
+                }
+            }
+        }
     }
 
     private void initInternalListener() {

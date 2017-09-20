@@ -148,7 +148,8 @@ public class DefaultMediaController extends BaseMediaController {
     protected void show(int timeout) {
         if (!isShowing) {
             if (videoView.getVideoInfo().isShowTopBar() || displayModel == GiraffePlayer.DISPLAY_FULL_WINDOW) {
-                $.id(R.id.app_video_top_box).visible().text(videoView.getVideoInfo().getTitle());
+                $.id(R.id.app_video_top_box).visible();
+                $.id(R.id.app_video_title).text(videoView.getVideoInfo().getTitle());
             } else {
                 $.id(R.id.app_video_top_box).gone();
             }
