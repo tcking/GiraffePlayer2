@@ -51,6 +51,7 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoItemHol
         if (videoItem.type == VideoItem.TYPE_EMBED) {
             holder.name.setText(videoItem.name);
             holder.url.setText(videoItem.uri);
+            holder.videoView.getVideoInfo().setPortraitWhenFullScreen(false);
             holder.videoView.setVideoPath(videoItem.uri).setFingerprint(position);
         }
     }

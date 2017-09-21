@@ -9,7 +9,6 @@ import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.SeekBar;
@@ -565,13 +564,13 @@ public class DefaultMediaController extends BaseMediaController {
     @Override
     public void onDisplayModelChange(int oldModel, int newModel) {
         this.displayModel = newModel;
-        ((ViewGroup) controllerView.getParent()).removeView(controllerView);
-        if (newModel == GiraffePlayer.DISPLAY_FULL_WINDOW) {
-            ViewGroup top = (ViewGroup) ((Activity) videoView.getContext()).findViewById(android.R.id.content);
-            top.addView(controllerView);
-        } else if (newModel == GiraffePlayer.DISPLAY_NORMAL) {
-            videoView.addView(controllerView);
-        }
+//        ((ViewGroup) controllerView.getParent()).removeView(controllerView);
+//        if (newModel == GiraffePlayer.DISPLAY_FULL_WINDOW) {
+//            ViewGroup top = (ViewGroup) ((Activity) videoView.getContext()).findViewById(android.R.id.content);
+//            top.addView(controllerView);
+//        } else if (newModel == GiraffePlayer.DISPLAY_NORMAL) {
+//            videoView.addView(controllerView);
+//        }
     }
 
 }

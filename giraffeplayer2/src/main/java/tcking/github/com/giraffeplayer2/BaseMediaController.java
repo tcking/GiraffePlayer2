@@ -48,7 +48,7 @@ public abstract class BaseMediaController extends DefaultPlayerListener implemen
         FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT);
-        this.videoView.addView(controllerView, layoutParams);
+        this.videoView.getContainer().addView(controllerView, layoutParams);
     }
 
     protected abstract View makeControllerView();

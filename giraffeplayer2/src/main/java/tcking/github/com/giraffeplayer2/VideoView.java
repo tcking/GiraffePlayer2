@@ -9,6 +9,7 @@ import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.v4.view.ScrollingView;
 import android.util.AttributeSet;
+import android.view.ViewGroup;
 import android.view.ViewParent;
 import android.widget.AbsListView;
 import android.widget.FrameLayout;
@@ -22,6 +23,7 @@ public class VideoView extends FrameLayout{
 
     private MediaController mediaController;
     private PlayerListener playerListener;
+    private ViewGroup container;
 
     public PlayerListener getPlayerListener() {
         return playerListener;
@@ -71,6 +73,8 @@ public class VideoView extends FrameLayout{
 
     private void init(Context context) {
         activity= (Activity) context;
+        container = new FrameLayout(context);
+        addView(container,new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         initMediaController();
         setBackgroundColor(videoInfo.getBgColor());
     }
@@ -123,5 +127,9 @@ public class VideoView extends FrameLayout{
             }
         }
         return false;
+    }
+
+    public ViewGroup getContainer() {
+        return container;
     }
 }

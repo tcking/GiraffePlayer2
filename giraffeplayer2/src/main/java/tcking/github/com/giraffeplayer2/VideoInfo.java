@@ -35,6 +35,16 @@ public class VideoInfo implements Parcelable {
     private int retryInterval=0;
     private int bgColor = Color.DKGRAY;
     private String playerImpl = PLAYER_IMPL_IJK;
+    private boolean fullScreenAnimation = true;
+
+    public boolean isFullScreenAnimation() {
+        return fullScreenAnimation;
+    }
+
+    public VideoInfo setFullScreenAnimation(boolean fullScreenAnimation) {
+        this.fullScreenAnimation = fullScreenAnimation;
+        return this;
+    }
 
     public String getPlayerImpl() {
         return playerImpl;
@@ -161,6 +171,7 @@ public class VideoInfo implements Parcelable {
         retryInterval = in.readInt();
         bgColor = in.readInt();
         playerImpl = in.readString();
+        fullScreenAnimation = in.readByte() != 0;
     }
 
     public static final Creator<VideoInfo> CREATOR = new Creator<VideoInfo>() {
@@ -234,6 +245,6 @@ public class VideoInfo implements Parcelable {
         dest.writeInt(retryInterval);
         dest.writeInt(bgColor);
         dest.writeString(playerImpl);
-
+        dest.writeByte((byte) (fullScreenAnimation ? 1 : 0));
     }
 }

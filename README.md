@@ -119,6 +119,10 @@ all the configurations on **VideoInfo** :
 1. `videoInfo.VideoInfo()` set video title
 1. `videoInfo.setUri()` set video Uri
 1. `videoInfo.setBgColor()` set video background color
+1. `videoInfo.setPlayerImpl()` VideoInfo.PLAYER_IMPL_IJK:using ijkplayer for decoder,VideoInfo.PLAYER_IMPL_SYSTEM:using android mediaplayer for decoder
+1. `videoInfo.addOption()` set extra options，only for ijkplayer，eg:addOption(Option.create(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "mediacodec", 1L))
+1. `videoInfo.setFullScreenAnimation()` true for play an animation when enter fullscreen or exit fullscreen,only for setPortraitWhenFullScreen(false) and API>=19
+
 
 # API:
 

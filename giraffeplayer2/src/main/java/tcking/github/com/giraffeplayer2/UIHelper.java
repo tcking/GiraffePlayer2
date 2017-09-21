@@ -38,6 +38,11 @@ public class UIHelper {
         if (activity instanceof AppCompatActivity) {
             ActionBar supportActionBar = ((AppCompatActivity) activity).getSupportActionBar();
             if (supportActionBar != null) {
+                try {
+                    supportActionBar.setShowHideAnimationEnabled(false);
+                } catch (Exception e) {
+
+                }
                 if (show) {
                     supportActionBar.show();
                 } else {
