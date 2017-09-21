@@ -20,6 +20,8 @@ public class VideoInfo implements Parcelable {
     public static final int AR_16_9_FIT_PARENT = 4;
     public static final int AR_4_3_FIT_PARENT = 5;
     public static final String DEFAULT_FINGERPRINT = "-1";
+    public static final String PLAYER_IMPL_IJK = "ijk";
+    public static final String PLAYER_IMPL_SYSTEM = "system";
 
     private HashSet<Option> options = new HashSet<>();
     private boolean showTopBar = false;
@@ -32,6 +34,16 @@ public class VideoInfo implements Parcelable {
     private Uri lastUri;
     private int retryInterval=0;
     private int bgColor = Color.DKGRAY;
+    private String playerImpl = PLAYER_IMPL_IJK;
+
+    public String getPlayerImpl() {
+        return playerImpl;
+    }
+
+    public VideoInfo setPlayerImpl(String playerImpl) {
+        this.playerImpl = playerImpl;
+        return this;
+    }
 
     public int getBgColor() {
         return bgColor;
@@ -148,6 +160,7 @@ public class VideoInfo implements Parcelable {
         showTopBar = in.readByte() != 0;
         retryInterval = in.readInt();
         bgColor = in.readInt();
+        playerImpl = in.readString();
     }
 
     public static final Creator<VideoInfo> CREATOR = new Creator<VideoInfo>() {
@@ -220,5 +233,7 @@ public class VideoInfo implements Parcelable {
         dest.writeByte((byte) (showTopBar ? 1 : 0));
         dest.writeInt(retryInterval);
         dest.writeInt(bgColor);
+        dest.writeString(playerImpl);
+
     }
 }

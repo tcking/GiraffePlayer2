@@ -30,6 +30,7 @@ import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.Map;
 
+import tv.danmaku.ijk.media.player.AndroidMediaPlayer;
 import tv.danmaku.ijk.media.player.IMediaPlayer;
 import tv.danmaku.ijk.media.player.IjkMediaPlayer;
 
@@ -312,8 +313,10 @@ public class GiraffePlayer implements MediaController.MediaPlayerControl {
             }
         });
         releaseMediaPlayer();
-        mediaPlayer = new IjkMediaPlayer(Looper.getMainLooper());
-        IjkMediaPlayer.native_setLogLevel(debug ? IjkMediaPlayer.IJK_LOG_DEBUG : IjkMediaPlayer.IJK_LOG_ERROR);
+        mediaPlayer = createMediaPlayer();
+        if (mediaPlayer instanceof IjkMediaPlayer) {
+            IjkMediaPlayer.native_setLogLevel(debug ? IjkMediaPlayer.IJK_LOG_DEBUG : IjkMediaPlayer.IJK_LOG_ERROR);
+        }
         setOptions();
         released = false;
         mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
@@ -352,6 +355,13 @@ public class GiraffePlayer implements MediaController.MediaPlayerControl {
 
     }
 
+    private IMediaPlayer createMediaPlayer() {
+        if (VideoInfo.PLAYER_IMPL_SYSTEM.equals(videoInfo.getPlayerImpl())) {
+            return new AndroidMediaPlayer();
+        }
+        return new IjkMediaPlayer(Looper.getMainLooper());
+    }
+
     private void setOptions() {
         if (mediaPlayer instanceof IjkMediaPlayer && videoInfo.getOptions().size()>0) {
             IjkMediaPlayer ijkMediaPlayer = (IjkMediaPlayer) mediaPlayer;
@@ -377,9 +387,6 @@ public class GiraffePlayer implements MediaController.MediaPlayerControl {
             //https://developer.android.com/reference/android/media/MediaPlayer.OnInfoListener.html
             @Override
             public boolean onInfo(IMediaPlayer iMediaPlayer, int what, int extra) {
-                if (debug) {
-                    log("onInfo:what:" + what + ",extra:" + extra);
-                }
                 return proxyListener().onInfo(GiraffePlayer.this, what, extra);
             }
         });
@@ -393,9 +400,6 @@ public class GiraffePlayer implements MediaController.MediaPlayerControl {
         mediaPlayer.setOnErrorListener(new IMediaPlayer.OnErrorListener() {
             @Override
             public boolean onError(IMediaPlayer iMediaPlayer, int what, int extra) {
-                if (debug) {
-                    log("onError:what:" + what + ",extra:" + extra);
-                }
                 currentState(STATE_ERROR);
                 boolean b = proxyListener().onError(GiraffePlayer.this, what, extra);
                 int retryInterval = videoInfo.getRetryInterval();
@@ -527,7 +531,7 @@ public class GiraffePlayer implements MediaController.MediaPlayerControl {
 
     private void log(String msg) {
         if (debug) {
-            Log.d(TAG, String.format("[setFingerprint:%s] %s", videoInfo.getFingerprint(), msg));
+            Log.d(TAG, String.format("[fingerprint:%s] %s", videoInfo.getFingerprint(), msg));
         }
     }
 

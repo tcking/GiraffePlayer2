@@ -16,10 +16,8 @@ import android.widget.RadioGroup;
 import com.github.tcking.viewquery.ViewQuery;
 
 import tcking.github.com.giraffeplayer2.GiraffePlayer;
-import tcking.github.com.giraffeplayer2.Option;
 import tcking.github.com.giraffeplayer2.VideoInfo;
 import tcking.github.com.giraffeplayer2.VideoView;
-import tv.danmaku.ijk.media.player.IjkMediaPlayer;
 
 /**
  * Created by TangChao on 2017/6/15.
@@ -94,7 +92,9 @@ public class MainFragment extends Fragment {
                     VideoInfo videoInfo = new VideoInfo(Uri.parse($.id(R.id.et_url).text()))
                             .setTitle("test video")
                             .setAspectRatio(aspectRatio)
-                            .addOption(Option.create(IjkMediaPlayer.OPT_CATEGORY_FORMAT, "timeout", 30000000L))
+//                            .addOption(Option.create(IjkMediaPlayer.OPT_CATEGORY_FORMAT, "timeout", 30000000L))
+//                            .addOption(Option.create(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "mediacodec", 1L))
+//                            .setPlayerImpl(VideoInfo.PLAYER_IMPL_SYSTEM) //using android media player
                             .setShowTopBar(true);
 
                     GiraffePlayer.play(getContext(), videoInfo);
