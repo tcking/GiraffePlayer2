@@ -13,6 +13,9 @@ import android.view.ViewGroup;
 import android.view.ViewParent;
 import android.widget.AbsListView;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
+
+import com.github.tcking.giraffeplayer2.R;
 
 /**
  * Created by tcking on 2017
@@ -131,5 +134,9 @@ public class VideoView extends FrameLayout{
 
     public ViewGroup getContainer() {
         return container;
+    }
+
+    public ImageView getCoverView() {
+        return (ImageView) findViewById(R.id.app_video_cover);
     }
 }

@@ -107,7 +107,7 @@ public class GiraffePlayer implements MediaController.MediaPlayerControl {
         this.context = context.getApplicationContext();
         this.videoInfo = videoInfo;
         VideoView videoView = PlayerManager.getInstance().getVideoView(videoInfo);
-        videoViewContainerRef = new WeakReference<>(videoView!=null?videoView.getContainer():null);
+        videoViewContainerRef = new WeakReference<>(videoView != null ? videoView.getContainer() : null);
         log("new GiraffePlayer");
         this.proxyListener = new ProxyPlayerListener(videoInfo);
         internalPlaybackThread = new HandlerThread("GiraffePlayerInternal:Handler", Process.THREAD_PRIORITY_AUDIO);
@@ -366,13 +366,13 @@ public class GiraffePlayer implements MediaController.MediaPlayerControl {
     }
 
     private void setOptions() {
-        if (mediaPlayer instanceof IjkMediaPlayer && videoInfo.getOptions().size()>0) {
+        if (mediaPlayer instanceof IjkMediaPlayer && videoInfo.getOptions().size() > 0) {
             IjkMediaPlayer ijkMediaPlayer = (IjkMediaPlayer) mediaPlayer;
             for (Option option : videoInfo.getOptions()) {
                 if (option.getValue() instanceof String) {
-                    ijkMediaPlayer.setOption(option.getCategory(),option.getName(),((String)option.getValue()));
-                }else if (option.getValue() instanceof Long) {
-                    ijkMediaPlayer.setOption(option.getCategory(),option.getName(),((Long)option.getValue()));
+                    ijkMediaPlayer.setOption(option.getCategory(), option.getName(), ((String) option.getValue()));
+                } else if (option.getValue() instanceof Long) {
+                    ijkMediaPlayer.setOption(option.getCategory(), option.getName(), ((Long) option.getValue()));
                 }
             }
         }
@@ -570,24 +570,26 @@ public class GiraffePlayer implements MediaController.MediaPlayerControl {
 
     private void removeDisplayGroupFromParent() {
         if (Looper.myLooper() == Looper.getMainLooper()) {
-            doRemoveVideoViewContainerFromParent();
+            doRemoveDisplayGroupFromParent();
         } else {
             uiHandler.post(new Runnable() {
                 @Override
                 public void run() {
-                    doRemoveVideoViewContainerFromParent();
+                    doRemoveDisplayGroupFromParent();
                 }
             });
         }
     }
 
-    private void doRemoveVideoViewContainerFromParent() {
+    private void doRemoveDisplayGroupFromParent() {
         ViewGroup videoViewContainer = videoViewContainerRef.get();
         if (videoViewContainer != null) {
             ViewGroup parent = (ViewGroup) videoViewContainer.getParent();
             if (parent != null) {
-                removeFloorView(videoViewContainer);
-                parent.removeView(videoViewContainer);
+                View group = parent.findViewById(R.id.player_display_group);
+                if (group != null) {
+                    parent.removeView(group);
+                }
             }
         }
     }
@@ -632,7 +634,7 @@ public class GiraffePlayer implements MediaController.MediaPlayerControl {
         //ready for anim
         boolean usingAnim = usingAnim();
         FrameLayout.LayoutParams videoViewLayoutParams = new FrameLayout.LayoutParams(videoView.getLayoutParams());
-        int[] xy= new int[]{0,0};
+        int[] xy = new int[]{0, 0};
         videoView.getLocationOnScreen(xy);
         videoViewLayoutParams.leftMargin = xy[0];
         videoViewLayoutParams.topMargin = xy[1];
@@ -645,16 +647,16 @@ public class GiraffePlayer implements MediaController.MediaPlayerControl {
             }
             uiHelper.showActionBar(false).fullScreen(true);
 
-            removeDisplayGroupFromParent();
+            removeVideoViewContainerFromParent();
 
             //add floor
             View view = new View(activity);
             view.setId(R.id.player_display_floor);
             view.setBackgroundColor(videoInfo.getBgColor());
-            top.addView(view,new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+            top.addView(view, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
 
             if (usingAnim) {
-                top.addView(videoViewContainer,videoViewLayoutParams);
+                top.addView(videoViewContainer, videoViewLayoutParams);
             } else {
                 top.addView(videoViewContainer);
             }
@@ -666,7 +668,7 @@ public class GiraffePlayer implements MediaController.MediaPlayerControl {
                         TransitionManager.beginDelayedTransition(videoViewContainer);
                         videoViewContainer.setLayoutParams(new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT));
                     }
-                },200);
+                }, 200);
             }
 
 
@@ -688,14 +690,14 @@ public class GiraffePlayer implements MediaController.MediaPlayerControl {
                 uiHandler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        removeDisplayGroupFromParent();
+                        removeVideoViewContainerFromParent();
                         videoView.addView(videoViewContainer, 0, new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT));
                         proxyListener().onDisplayModelChange(displayModel, DISPLAY_NORMAL);
                         displayModel = DISPLAY_NORMAL;
                     }
                 }, 200);
             } else {
-                removeDisplayGroupFromParent();
+                removeVideoViewContainerFromParent();
                 videoView.addView(videoViewContainer, 0, new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT));
                 proxyListener().onDisplayModelChange(displayModel, DISPLAY_NORMAL);
                 displayModel = DISPLAY_NORMAL;
@@ -703,6 +705,17 @@ public class GiraffePlayer implements MediaController.MediaPlayerControl {
 
         }
         return this;
+    }
+
+    private void removeVideoViewContainerFromParent() {
+        ViewGroup videoViewContainer = videoViewContainerRef.get();
+        if (videoViewContainer != null) {
+            ViewGroup parent = (ViewGroup) videoViewContainer.getParent();
+            if (parent != null) {
+                removeFloorView(videoViewContainer);
+                parent.removeView(videoViewContainer);
+            }
+        }
     }
 
     private void removeFloorView(ViewGroup videoViewContainer) {

@@ -573,4 +573,10 @@ public class DefaultMediaController extends BaseMediaController {
 //        }
     }
 
+    @Override
+    public void onTargetStateChange(int oldState, int newState) {
+        if (newState != GiraffePlayer.STATE_IDLE) {
+            $.id(R.id.app_video_cover).gone();
+        }
+    }
 }
