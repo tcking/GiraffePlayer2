@@ -3,4 +3,6 @@
     <string name="giraffe_player_url_empty">Please specify the address of the video playback</string>
     <string name="small_problem">Player encountered a small problem</string>
     <string name="not_support">player not support this device</string>
+    <string name="giraffe_player_track_type_audio">audio</string>
+    <string name="giraffe_player_track_type_video">video</string>
 </resources>

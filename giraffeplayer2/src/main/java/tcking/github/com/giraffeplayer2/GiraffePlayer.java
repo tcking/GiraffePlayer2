@@ -35,6 +35,7 @@ import java.util.Map;
 import tv.danmaku.ijk.media.player.AndroidMediaPlayer;
 import tv.danmaku.ijk.media.player.IMediaPlayer;
 import tv.danmaku.ijk.media.player.IjkMediaPlayer;
+import tv.danmaku.ijk.media.player.misc.ITrackInfo;
 
 
 /**
@@ -51,6 +52,7 @@ public class GiraffePlayer implements MediaController.MediaPlayerControl {
     private static final int MSG_CTRL_SEEK = 3;
     private static final int MSG_CTRL_RELEASE = 4;
     private static final int MSG_CTRL_RETRY = 5;
+    private static final int MSG_CTRL_SELECT_TRACK = 6;
 
 
     private static final int MSG_SET_DISPLAY = 12;
@@ -326,6 +328,9 @@ public class GiraffePlayer implements MediaController.MediaPlayerControl {
         mediaPlayer.setOnPreparedListener(new IMediaPlayer.OnPreparedListener() {
             @Override
             public void onPrepared(IMediaPlayer iMediaPlayer) {
+                for (ITrackInfo trackInfo : mediaPlayer.getTrackInfo()) {
+                    log("====:"+trackInfo);
+                }
                 currentState(STATE_PREPARED);
                 proxyListener().onPrepared(GiraffePlayer.this);
                 if (targetState == STATE_PLAYING) {
@@ -812,6 +817,36 @@ public class GiraffePlayer implements MediaController.MediaPlayerControl {
             if (display != null) {
                 display.setAspectRatio(aspectRatio);
             }
+        }
+    }
+
+    public ITrackInfo[] getTrackInfo(){
+        if (mediaPlayer == null || released) {
+            return new ITrackInfo[0];
+        }
+        return mediaPlayer.getTrackInfo();
+    }
+
+    public int getSelectedTrack(int trackType) {
+        if (mediaPlayer == null || released) {
+            return -1;
+        }
+        if (mediaPlayer instanceof IjkMediaPlayer) {
+            return ((IjkMediaPlayer) mediaPlayer).getSelectedTrack(trackType);
+        } else if (mediaPlayer instanceof AndroidMediaPlayer) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                return ((AndroidMediaPlayer) mediaPlayer).getInternalMediaPlayer().getSelectedTrack(trackType);
+            }
+        }
+        return -1;
+    }
+
+    public void selectTrack(int track) {
+        if (mediaPlayer == null || released) {
+            return;
+        }
+        if (mediaPlayer instanceof IjkMediaPlayer) {
+            ((IjkMediaPlayer) mediaPlayer).selectTrack(track);
         }
     }
 }

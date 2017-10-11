@@ -3,7 +3,10 @@ package tcking.github.com.giraffeplayer2;
 import android.app.Activity;
 import android.content.Context;
 import android.media.AudioManager;
+import android.os.Bundle;
 import android.os.Message;
+import android.support.v4.app.FragmentManager;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
@@ -16,6 +19,7 @@ import android.widget.Toast;
 
 import com.github.tcking.giraffeplayer2.R;
 
+import tcking.github.com.giraffeplayer2.trackselector.TrackSelectorFragment;
 import tv.danmaku.ijk.media.player.IMediaPlayer;
 
 /**
@@ -166,11 +170,12 @@ public class DefaultMediaController extends BaseMediaController {
 
 
     protected void showBottomControl(boolean show) {
-        $.id(R.id.app_video_play).visibility(show ? View.VISIBLE : View.GONE);
-        $.id(R.id.app_video_currentTime).visibility(show ? View.VISIBLE : View.GONE);
-        $.id(R.id.app_video_endTime).visibility(show ? View.VISIBLE : View.GONE);
-        $.id(R.id.app_video_seekBar).visibility(show ? View.VISIBLE : View.GONE);
-        $.id(R.id.app_video_fullscreen).visibility(show ? View.VISIBLE : View.GONE);
+//        $.id(R.id.app_video_play).visibility(show ? View.VISIBLE : View.GONE);
+//        $.id(R.id.app_video_currentTime).visibility(show ? View.VISIBLE : View.GONE);
+//        $.id(R.id.app_video_endTime).visibility(show ? View.VISIBLE : View.GONE);
+//        $.id(R.id.app_video_seekBar).visibility(show ? View.VISIBLE : View.GONE);
+//        $.id(R.id.app_video_fullscreen).visibility(show ? View.VISIBLE : View.GONE);
+        $.id(R.id.app_video_bottom_box).visibility(show ? View.VISIBLE : View.GONE);
 
     }
 
@@ -179,7 +184,7 @@ public class DefaultMediaController extends BaseMediaController {
             handler.removeMessages(MESSAGE_SHOW_PROGRESS);
             showBottomControl(false);
             $.id(R.id.app_video_top_box).gone();
-            $.id(R.id.app_video_fullscreen).invisible();
+//            $.id(R.id.app_video_fullscreen).invisible();
             isShowing = false;
         }
 
@@ -217,6 +222,17 @@ public class DefaultMediaController extends BaseMediaController {
                 if (!player.onBackPressed()) {
                     ((Activity) videoView.getContext()).finish();
                 }
+            }else if (v.getId() == R.id.app_video_clarity) {
+                Activity activity = (Activity) videoView.getContext();
+                if (activity instanceof AppCompatActivity) {
+                    TrackSelectorFragment trackSelectorFragment = new TrackSelectorFragment();
+                    Bundle bundle = new Bundle();
+                    bundle.putString("fingerprint",videoView.getVideoInfo().getFingerprint());
+                    trackSelectorFragment.setArguments(bundle);
+                    FragmentManager supportFragmentManager = ((AppCompatActivity) activity).getSupportFragmentManager();
+                    trackSelectorFragment.show(supportFragmentManager,"player_track");
+                }
+
             }
         }
     };
@@ -230,6 +246,7 @@ public class DefaultMediaController extends BaseMediaController {
         $.id(R.id.app_video_fullscreen).clicked(onClickListener);
         $.id(R.id.app_video_finish).clicked(onClickListener);
         $.id(R.id.app_video_replay_icon).clicked(onClickListener);
+        $.id(R.id.app_video_clarity).clicked(onClickListener);
 //
 
 
@@ -554,6 +571,15 @@ public class DefaultMediaController extends BaseMediaController {
     public boolean onError(GiraffePlayer giraffePlayer, int what, int extra) {
         statusChange(STATUS_ERROR);
         return true;
+    }
+
+    @Override
+    public void onPrepared(GiraffePlayer giraffePlayer) {
+        if (giraffePlayer.getTrackInfo().length > 0) {
+            $.id(R.id.app_video_clarity).visible();
+        } else {
+            $.id(R.id.app_video_clarity).gone();
+        }
     }
 
     @Override

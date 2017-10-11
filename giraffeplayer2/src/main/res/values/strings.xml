@@ -4,4 +4,7 @@
     <string name="small_problem">something error</string>
     <string name="can_not_play">can not play this video</string>
     <string name="not_support">player not support this device</string>
+    <string name="giraffe_player_track_type_unknown">unknown</string>
+    <string name="giraffe_player_track_type_audio">audio</string>
+    <string name="giraffe_player_track_type_video">video</string>
 </resources>

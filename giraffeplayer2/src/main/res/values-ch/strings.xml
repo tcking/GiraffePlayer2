@@ -4,4 +4,7 @@
     <string name="small_problem">发送了点小问题,稍后重试</string>
     <string name="can_not_play">不能播放此视频</string>
     <string name="not_support">播放器不支持此设备</string>
+    <string name="giraffe_player_track_type_unknown">未知</string>
+    <string name="giraffe_player_track_type_audio">声道</string>
+    <string name="giraffe_player_track_type_video">视频</string>
 </resources>

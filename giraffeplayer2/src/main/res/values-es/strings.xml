@@ -3,4 +3,7 @@
     <string name="giraffe_player_url_empty">Porfavor introduce la direccion de streaming</string>
     <string name="small_problem">El Player tiene una problema</string>
     <string name="not_support">player not support this device</string>
+    <string name="giraffe_player_track_type_unknown">unknown</string>
+    <string name="giraffe_player_track_type_audio">audio</string>
+    <string name="giraffe_player_track_type_video">video</string>
 </resources>

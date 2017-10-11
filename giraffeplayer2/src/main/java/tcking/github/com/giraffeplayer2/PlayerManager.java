@@ -164,6 +164,10 @@ public class PlayerManager {
         return player;
     }
 
+    public GiraffePlayer getPlayerByFingerprint(String fingerprint) {
+        return playersRef.get(fingerprint);
+    }
+
     public PlayerManager releaseByFingerprint(String fingerprint) {
         GiraffePlayer player = playersRef.get(fingerprint);
         if (player != null) {
