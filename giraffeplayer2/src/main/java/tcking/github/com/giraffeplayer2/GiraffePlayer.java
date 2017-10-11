@@ -147,6 +147,14 @@ public class GiraffePlayer implements MediaController.MediaPlayerControl {
                     case MSG_CTRL_SEEK:
                         mediaPlayer.seekTo((int) msg.obj);
                         break;
+                    case MSG_CTRL_SELECT_TRACK:
+                        int track = (int) msg.obj;
+                        if (mediaPlayer instanceof IjkMediaPlayer) {
+                            ((IjkMediaPlayer) mediaPlayer).selectTrack(track);
+                        } else if (mediaPlayer instanceof AndroidMediaPlayer) {
+                            ((AndroidMediaPlayer) mediaPlayer).getInternalMediaPlayer().selectTrack(track);
+                        }
+                        break;
                     case MSG_SET_DISPLAY:
                         if (msg.obj == null) {
                             mediaPlayer.setDisplay(null);
@@ -164,6 +172,7 @@ public class GiraffePlayer implements MediaController.MediaPlayerControl {
                         init(false);
                         handler.sendEmptyMessage(MSG_CTRL_PLAYING);
                         break;
+
                     default:
                 }
                 return true;
@@ -845,8 +854,7 @@ public class GiraffePlayer implements MediaController.MediaPlayerControl {
         if (mediaPlayer == null || released) {
             return;
         }
-        if (mediaPlayer instanceof IjkMediaPlayer) {
-            ((IjkMediaPlayer) mediaPlayer).selectTrack(track);
-        }
+        handler.removeMessages(MSG_CTRL_SELECT_TRACK);
+        handler.obtainMessage(MSG_CTRL_SELECT_TRACK,track).sendToTarget();
     }
 }

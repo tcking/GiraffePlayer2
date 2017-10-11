@@ -55,7 +55,7 @@ public class TracksAdapter extends BaseExpandableListAdapter {
 
     @Override
     public long getChildId(int groupPosition, int childPosition) {
-        return getChild(groupPosition,childPosition).hashCode();
+        return getChild(groupPosition, childPosition).hashCode();
     }
 
     @Override
@@ -84,16 +84,21 @@ public class TracksAdapter extends BaseExpandableListAdapter {
                 @Override
                 public void onClick(View v) {
                     TrackInfoWrapper track = (TrackInfoWrapper) v.getTag();
-                    GiraffePlayer player = PlayerManager.getInstance().getPlayerByFingerprint(track.getFingerprint());
-                    if (player != null) {
-                        player.selectTrack(track.getIndex());
+                    TrackGroup trackGroup = dataIndex.get(track.getTrackType());
+                    if (trackGroup.getSelectedTrackIndex() != track.getIndex()) {
+                        trackGroup.setSelectedTrackIndex(track.getIndex());
                         notifyDataSetChanged();
+
+                        GiraffePlayer player = PlayerManager.getInstance().getPlayerByFingerprint(track.getFingerprint());
+                        if (player != null) {
+                            player.selectTrack(track.getIndex());
+                        }
                     }
                 }
             });
         }
         ViewQuery $ = new ViewQuery(convertView);
-        $.id(R.id.app_video_track_group_child).text(child.getInfo()).checked(child.selected()).view().setTag(child);
+        $.id(R.id.app_video_track_group_child).text(child.getInfo()).checked(group.getSelectedTrackIndex() == child.getIndex()).view().setTag(child);
         return convertView;
     }
 
@@ -115,17 +120,19 @@ public class TracksAdapter extends BaseExpandableListAdapter {
 
         this.fingerprint = fingerprint;
         ITrackInfo[] tracks = player.getTrackInfo();
-        for (int i=0;i<tracks.length;i++) {
+        for (int i = 0; i < tracks.length; i++) {
             ITrackInfo track = tracks[i];
             int trackType = track.getTrackType();
             if (trackType == ITrackInfo.MEDIA_TRACK_TYPE_AUDIO || trackType == ITrackInfo.MEDIA_TRACK_TYPE_VIDEO) {
                 TrackGroup trackGroup = dataIndex.get(trackType);
                 if (trackGroup == null) {
-                    trackGroup = new TrackGroup(trackType);
+                    int selectedTrack = player.getSelectedTrack(trackType);
+                    trackGroup = new TrackGroup(trackType, selectedTrack);
                     dataIndex.put(trackType, trackGroup);
                     data.add(trackGroup);
                 }
-                trackGroup.getTracks().add(new TrackInfoWrapper(fingerprint,track,i,trackType));
+                TrackInfoWrapper e = new TrackInfoWrapper(fingerprint, track, i, trackType);
+                trackGroup.getTracks().add(e);
             }
         }
         notifyDataSetChanged();

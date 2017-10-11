@@ -14,8 +14,24 @@ import tv.danmaku.ijk.media.player.misc.ITrackInfo;
 public class TrackGroup {
     private int trackType;
 
-    public TrackGroup(int trackType) {
+    public int getSelectedTrackIndex() {
+        return selectedTrackIndex;
+    }
+
+    public void setSelectedTrackIndex(int selectedTrackIndex) {
+        this.selectedTrackIndex = selectedTrackIndex;
+    }
+
+    private int selectedTrackIndex=-1;
+
+    public int getTrackType() {
+        return trackType;
+    }
+
+
+    public TrackGroup(int trackType,int selectedTrackIndex) {
         this.trackType = trackType;
+        this.selectedTrackIndex = selectedTrackIndex;
     }
 
     public List<TrackInfoWrapper> getTracks() {

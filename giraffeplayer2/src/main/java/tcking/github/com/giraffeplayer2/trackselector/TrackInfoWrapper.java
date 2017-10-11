@@ -1,9 +1,5 @@
 package tcking.github.com.giraffeplayer2.trackselector;
 
-import android.text.TextUtils;
-
-import tcking.github.com.giraffeplayer2.GiraffePlayer;
-import tcking.github.com.giraffeplayer2.PlayerManager;
 import tv.danmaku.ijk.media.player.misc.ITrackInfo;
 
 /**
@@ -38,16 +34,5 @@ public class TrackInfoWrapper {
 
     public String getInfo() {
         return innerTrack.getInfoInline();
-    }
-
-    public boolean selected() {
-        if (TextUtils.isEmpty(fingerprint)) {
-            return false;
-        }
-        GiraffePlayer player = PlayerManager.getInstance().getPlayerByFingerprint(fingerprint);
-        if (player == null) {
-            return false;
-        }
-        return player.getSelectedTrack(trackType) == index;
     }
 }
