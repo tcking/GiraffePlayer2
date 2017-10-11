@@ -10,11 +10,12 @@ this project is total refactor of [GiraffePlayer](https://github.com/tcking/Gira
 2. gestures for volume control
 3. gestures for brightness control
 4. gestures for forward or backward
-5. fullscreen by manual or sensor
+5. fullscreen by manual or sensor (with animation)
 6. try to replay when error(only for live video)
 7. specify video scale type
 8. support in ListView/RecyclerView (in Activity or Fragment)
 9. never block UI thread
+10. support select track
 
 # how to import library
  ``` gradle
@@ -25,7 +26,7 @@ this project is total refactor of [GiraffePlayer](https://github.com/tcking/Gira
     }
 
     //step 2: add dependency
-    compile 'com.github.tcking:giraffeplayer2:0.1.4'
+    compile 'com.github.tcking:giraffeplayer2:0.1.5'
 
 
  ```
@@ -185,6 +186,7 @@ void onDisplayModelChange(int oldModel, int newModel);
 
 # screenshot
 ![](https://raw.githubusercontent.com/tcking/GiraffePlayer2/master/screencap/s1.gif)
+![](https://raw.githubusercontent.com/tcking/GiraffePlayer2/master/screencap/s2.gif)
 ![](https://raw.githubusercontent.com/tcking/GiraffePlayer2/master/screencap/device-2017-09-13-174907.png)
 ![](https://raw.githubusercontent.com/tcking/GiraffePlayer2/master/screencap/device-2017-09-13-175035.png)
 ![](https://raw.githubusercontent.com/tcking/GiraffePlayer2/master/screencap/device-2017-09-13-180141.png)
