@@ -37,6 +37,24 @@ public class VideoInfo implements Parcelable {
     private String playerImpl = PLAYER_IMPL_IJK;
     private boolean fullScreenAnimation = true;
 
+    public VideoInfo(VideoInfo defaultVideoInfo) {
+        title = defaultVideoInfo.title;
+        portraitWhenFullScreen = defaultVideoInfo.portraitWhenFullScreen;
+        aspectRatio = defaultVideoInfo.aspectRatio;
+        for (Option op : defaultVideoInfo.options) {
+            try {
+                options.add(op.clone());
+            } catch (CloneNotSupportedException e) {
+                e.printStackTrace();
+            }
+        }
+        showTopBar = defaultVideoInfo.showTopBar;
+        retryInterval = defaultVideoInfo.retryInterval;
+        bgColor = defaultVideoInfo.bgColor;
+        playerImpl = defaultVideoInfo.playerImpl;
+        fullScreenAnimation = defaultVideoInfo.fullScreenAnimation;
+    }
+
     public boolean isFullScreenAnimation() {
         return fullScreenAnimation;
     }
@@ -246,5 +264,9 @@ public class VideoInfo implements Parcelable {
         dest.writeInt(bgColor);
         dest.writeString(playerImpl);
         dest.writeByte((byte) (fullScreenAnimation ? 1 : 0));
+    }
+
+    public static VideoInfo createFromDefault(){
+        return new VideoInfo(PlayerManager.getInstance().getDefaultVideoInfo());
     }
 }

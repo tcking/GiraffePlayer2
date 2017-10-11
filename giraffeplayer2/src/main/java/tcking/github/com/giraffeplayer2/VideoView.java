@@ -49,7 +49,7 @@ public class VideoView extends FrameLayout{
         return this;
     }
 
-    private VideoInfo videoInfo=new VideoInfo();
+    private VideoInfo videoInfo = VideoInfo.createFromDefault();
 
     public VideoView(@NonNull Context context) {
         super(context);

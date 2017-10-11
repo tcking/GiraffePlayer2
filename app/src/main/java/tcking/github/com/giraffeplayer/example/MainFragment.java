@@ -16,8 +16,11 @@ import android.widget.RadioGroup;
 import com.github.tcking.viewquery.ViewQuery;
 
 import tcking.github.com.giraffeplayer2.GiraffePlayer;
+import tcking.github.com.giraffeplayer2.Option;
+import tcking.github.com.giraffeplayer2.PlayerManager;
 import tcking.github.com.giraffeplayer2.VideoInfo;
 import tcking.github.com.giraffeplayer2.VideoView;
+import tv.danmaku.ijk.media.player.IjkMediaPlayer;
 
 /**
  * Created by TangChao on 2017/6/15.
@@ -39,6 +42,9 @@ public class MainFragment extends Fragment {
 
         String testUrl = "http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4";
         //testUri = "file:///sdcard/tmp/o.mp4" //test local file;
+
+        //set global configuration: turn on multiple_requests
+        PlayerManager.getInstance().getDefaultVideoInfo().addOption(Option.create(IjkMediaPlayer.OPT_CATEGORY_FORMAT, "multiple_requests", 1L));
 
         final VideoView videoView = $.id(R.id.video_view).view();
         videoView.setVideoPath(testUrl);

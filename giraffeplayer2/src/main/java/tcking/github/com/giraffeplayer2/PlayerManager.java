@@ -20,6 +20,15 @@ public class PlayerManager {
     private volatile String currentPlayerFingerprint;
     private Application.ActivityLifecycleCallbacks activityLifecycleCallbacks;
 
+    public VideoInfo getDefaultVideoInfo() {
+        return defaultVideoInfo;
+    }
+
+    /**
+     * default config for all
+     */
+    private final VideoInfo defaultVideoInfo = new VideoInfo();
+
     private WeakHashMap<String, VideoView> videoViewsRef = new WeakHashMap<>();
     private Map<String, GiraffePlayer> playersRef = new ConcurrentHashMap<>();
 
@@ -185,4 +194,5 @@ public class PlayerManager {
             Log.d(TAG, String.format("[setFingerprint:%s] %s",fingerprint,msg));
         }
     }
+
 }

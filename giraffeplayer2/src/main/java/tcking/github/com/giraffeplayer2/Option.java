@@ -6,7 +6,7 @@ import java.io.Serializable;
  * Created by tcking on 2017
  */
 
-public class Option implements Serializable {
+public class Option implements Serializable,Cloneable {
     private int category;
     private String name;
     private Object value;
@@ -56,5 +56,10 @@ public class Option implements Serializable {
         result = 31 * result + (name != null ? name.hashCode() : 0);
         result = 31 * result + (value != null ? value.hashCode() : 0);
         return result;
+    }
+
+    @Override
+    public Option clone() throws CloneNotSupportedException {
+        return (Option) super.clone();
     }
 }
