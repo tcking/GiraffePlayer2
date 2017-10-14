@@ -4,6 +4,18 @@ Out of the box android video player base on [ijkplayer 0.8.3](https://github.com
 
 this project is total refactor of [GiraffePlayer](https://github.com/tcking/GiraffePlayer/) to support in ListView/RecyclerView and improve the performance，all player tasks do in worker thread.
 
+# release note:
+0.1.6
+disable seek when playing live stream
+
+0.1.5
+support select track
+
+0.1.4
+add animation for enter/exit full screen
+
+0.1.3
+bug fix
 
 # features
 1. base on ijkplayer,support RTMP , HLS (http & https) , MP4,M4A etc.
@@ -26,7 +38,7 @@ this project is total refactor of [GiraffePlayer](https://github.com/tcking/Gira
     }
 
     //step 2: add dependency
-    compile 'com.github.tcking:giraffeplayer2:0.1.5'
+    compile 'com.github.tcking:giraffeplayer2:0.1.6'
 
 
  ```
@@ -191,5 +203,6 @@ void onDisplayModelChange(int oldModel, int newModel);
 ![](https://raw.githubusercontent.com/tcking/GiraffePlayer2/master/screencap/device-2017-09-13-175035.png)
 ![](https://raw.githubusercontent.com/tcking/GiraffePlayer2/master/screencap/device-2017-09-13-180141.png)
 ![](https://raw.githubusercontent.com/tcking/GiraffePlayer2/master/screencap/device-2017-09-13-180334.png)
+
 # TODO
-1. select stream (if stream is multiple stream)
+1. playing in float window
