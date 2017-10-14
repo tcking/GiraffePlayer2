@@ -5,16 +5,21 @@ Out of the box android video player base on [ijkplayer 0.8.3](https://github.com
 this project is total refactor of [GiraffePlayer](https://github.com/tcking/GiraffePlayer/) to support in ListView/RecyclerView and improve the performance，all player tasks do in worker thread.
 
 # release note:
-0.1.6
+
+**0.1.6**
+
 disable seek when playing live stream
 
-0.1.5
+**0.1.5**
+
 support select track
 
-0.1.4
+**0.1.4**
+
 add animation for enter/exit full screen
 
-0.1.3
+**0.1.3**
+
 bug fix
 
 # features
