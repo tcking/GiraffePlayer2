@@ -6,4 +6,5 @@
     <string name="giraffe_player_track_type_unknown">unknown</string>
     <string name="giraffe_player_track_type_audio">audio</string>
     <string name="giraffe_player_track_type_video">video</string>
+    <string name="giraffe_player_live">live</string>
 </resources>

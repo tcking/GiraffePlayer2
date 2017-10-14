@@ -145,7 +145,11 @@ public class GiraffePlayer implements MediaController.MediaPlayerControl {
                         currentState = STATE_PAUSED;
                         break;
                     case MSG_CTRL_SEEK:
-                        mediaPlayer.seekTo((int) msg.obj);
+                        if (!canSeekForward) {
+                            break;
+                        }
+                        int position = (int) msg.obj;
+                        mediaPlayer.seekTo(position);
                         break;
                     case MSG_CTRL_SELECT_TRACK:
                         int track = (int) msg.obj;
@@ -337,9 +341,9 @@ public class GiraffePlayer implements MediaController.MediaPlayerControl {
         mediaPlayer.setOnPreparedListener(new IMediaPlayer.OnPreparedListener() {
             @Override
             public void onPrepared(IMediaPlayer iMediaPlayer) {
-                for (ITrackInfo trackInfo : mediaPlayer.getTrackInfo()) {
-                    log("====:"+trackInfo);
-                }
+                boolean live = mediaPlayer.getDuration() == 0;
+                canSeekBackward = !live;
+                canSeekForward = !live;
                 currentState(STATE_PREPARED);
                 proxyListener().onPrepared(GiraffePlayer.this);
                 if (targetState == STATE_PLAYING) {

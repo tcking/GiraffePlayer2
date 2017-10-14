@@ -131,7 +131,7 @@ public class DefaultMediaController extends BaseMediaController {
         GiraffePlayer player = videoView.getPlayer();
 
         long position = player.getCurrentPosition();
-        long duration = player.getDuration();
+        int duration = player.getDuration();
 
         if (seekBar != null) {
             if (duration > 0) {
@@ -143,7 +143,11 @@ public class DefaultMediaController extends BaseMediaController {
         }
 
         $.id(R.id.app_video_currentTime).text(generateTime(position));
-        $.id(R.id.app_video_endTime).text(generateTime(player.getDuration()));
+        if (duration == 0) {
+            $.id(R.id.app_video_endTime).text(R.string.giraffe_player_live);
+        } else {
+            $.id(R.id.app_video_endTime).text(generateTime(duration));
+        }
         return position;
     }
 
@@ -575,6 +579,8 @@ public class DefaultMediaController extends BaseMediaController {
 
     @Override
     public void onPrepared(GiraffePlayer giraffePlayer) {
+        boolean live = giraffePlayer.getDuration() == 0;
+        $.id(R.id.app_video_seekBar).enabled(!live);
         if (giraffePlayer.getTrackInfo().length > 0) {
             $.id(R.id.app_video_clarity).visible();
         } else {

@@ -41,7 +41,8 @@ public class MainFragment extends Fragment {
         $ = new ViewQuery(view);
 
         String testUrl = "http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4";
-        //testUri = "file:///sdcard/tmp/o.mp4" //test local file;
+//        testUrl = "file:///sdcard/tmp/o.mp4" //test local file;
+        testUrl = "http://live.hkstv.hk.lxdns.com/live/hks/playlist.m3u8"; //test local file;
 
         //set global configuration: turn on multiple_requests
         PlayerManager.getInstance().getDefaultVideoInfo().addOption(Option.create(IjkMediaPlayer.OPT_CATEGORY_FORMAT, "multiple_requests", 1L));
@@ -100,7 +101,9 @@ public class MainFragment extends Fragment {
                             .setAspectRatio(aspectRatio)
 //                            .addOption(Option.create(IjkMediaPlayer.OPT_CATEGORY_FORMAT, "timeout", 30000000L))
 //                            .addOption(Option.create(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "mediacodec", 1L))
-//                            .addOption(Option.create(IjkMediaPlayer.OPT_CATEGORY_FORMAT, "multiple_requests", 1L))
+                            .addOption(Option.create(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "infbuf", 1L))
+                            .addOption(Option.create(IjkMediaPlayer.OPT_CATEGORY_FORMAT, "multiple_requests", 1L))
+//                            .addOption(Option.create(IjkMediaPlayer.OPT_CATEGORY_FORMAT, "headers", "Connection: keep-alive\r\n"))
 //                            .addOption(Option.create(IjkMediaPlayer.OPT_CATEGORY_FORMAT, "reconnect", 1L))
 //                            .addOption(Option.create(IjkMediaPlayer.OPT_CATEGORY_FORMAT, "reconnect_at_eof", 1L))
 //                            .addOption(Option.create(IjkMediaPlayer.OPT_CATEGORY_FORMAT, "reconnect_streamed", 1L))
