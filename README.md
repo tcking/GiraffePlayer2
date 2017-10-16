@@ -6,6 +6,11 @@ this project is total refactor of [GiraffePlayer](https://github.com/tcking/Gira
 
 # release note:
 
+**0.1.7**
+
+1. FIX:seekbar secondary progress always 0
+2. FIX:log error when using android android media player impl
+
 **0.1.6**
 
 disable seek when playing live stream
@@ -43,7 +48,7 @@ bug fix
     }
 
     //step 2: add dependency
-    compile 'com.github.tcking:giraffeplayer2:0.1.6'
+    compile 'com.github.tcking:giraffeplayer2:0.1.7'
 
 
  ```
