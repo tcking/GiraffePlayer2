@@ -15,7 +15,6 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.SeekBar;
-import android.widget.Toast;
 
 import com.github.tcking.giraffeplayer2.R;
 
@@ -123,12 +122,19 @@ public class DefaultMediaController extends BaseMediaController {
         if (isDragging) {
             return 0;
         }
+        //check player is active
         boolean currentPlayer = videoView.isCurrentActivePlayer();
         if (!currentPlayer) {
             seekBar.setProgress(0);
             return 0;
         }
+
+        //check player is ready
         GiraffePlayer player = videoView.getPlayer();
+        int currentState = player.getCurrentState();
+        if (currentState == GiraffePlayer.STATE_IDLE || currentState == GiraffePlayer.STATE_PREPARING) {
+            return 0;
+        }
 
         long position = player.getCurrentPosition();
         int duration = player.getDuration();
@@ -143,7 +149,7 @@ public class DefaultMediaController extends BaseMediaController {
         }
 
         $.id(R.id.app_video_currentTime).text(generateTime(position));
-        if (duration == 0) {
+        if (duration == 0) {//live stream
             $.id(R.id.app_video_endTime).text(R.string.giraffe_player_live);
         } else {
             $.id(R.id.app_video_endTime).text(generateTime(duration));
@@ -367,7 +373,7 @@ public class DefaultMediaController extends BaseMediaController {
          */
         @Override
         public boolean onDoubleTap(MotionEvent e) {
-            Toast.makeText(context, "onDoubleTap", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(context, "onDoubleTap", Toast.LENGTH_SHORT).show();
             return true;
         }
 

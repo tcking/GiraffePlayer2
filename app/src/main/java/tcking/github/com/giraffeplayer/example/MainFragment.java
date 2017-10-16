@@ -30,6 +30,13 @@ public class MainFragment extends Fragment {
     private ViewQuery $;
     private int aspectRatio = VideoInfo.AR_ASPECT_FIT_PARENT;
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        //set global configuration: turn on multiple_requests
+        PlayerManager.getInstance().getDefaultVideoInfo().addOption(Option.create(IjkMediaPlayer.OPT_CATEGORY_FORMAT, "multiple_requests", 1L));
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -42,10 +49,7 @@ public class MainFragment extends Fragment {
 
         String testUrl = "http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4";
 //        testUrl = "file:///sdcard/tmp/o.mp4" //test local file;
-        testUrl = "http://live.hkstv.hk.lxdns.com/live/hks/playlist.m3u8"; //test local file;
-
-        //set global configuration: turn on multiple_requests
-        PlayerManager.getInstance().getDefaultVideoInfo().addOption(Option.create(IjkMediaPlayer.OPT_CATEGORY_FORMAT, "multiple_requests", 1L));
+        testUrl = "http://live.hkstv.hk.lxdns.com/live/hks/playlist.m3u8"; //test live stream;
 
         final VideoView videoView = $.id(R.id.video_view).view();
         videoView.setVideoPath(testUrl);

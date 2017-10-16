@@ -75,7 +75,6 @@ public class GiraffePlayer implements MediaController.MediaPlayerControl {
     private int audioSessionId;
     private int seekWhenPrepared;
 
-
     private int currentState = STATE_IDLE;
     private int targetState = STATE_IDLE;
     private Uri uri;
@@ -128,7 +127,9 @@ public class GiraffePlayer implements MediaController.MediaPlayerControl {
                 switch (msg.what) {
                     case MSG_CTRL_PLAYING:
                         if (currentState == STATE_PLAYBACK_COMPLETED) {
-                            mediaPlayer.seekTo(0);
+                            if (canSeekBackward) {
+                                mediaPlayer.seekTo(0);
+                            }
                             mediaPlayer.start();
                             currentState(STATE_PLAYING);
                         } else {
@@ -401,6 +402,7 @@ public class GiraffePlayer implements MediaController.MediaPlayerControl {
         mediaPlayer.setOnBufferingUpdateListener(new IMediaPlayer.OnBufferingUpdateListener() {
             @Override
             public void onBufferingUpdate(IMediaPlayer iMediaPlayer, int percent) {
+                currentBufferPercentage = percent;
                 proxyListener().onBufferingUpdate(GiraffePlayer.this, percent);
             }
         });
@@ -861,4 +863,14 @@ public class GiraffePlayer implements MediaController.MediaPlayerControl {
         handler.removeMessages(MSG_CTRL_SELECT_TRACK);
         handler.obtainMessage(MSG_CTRL_SELECT_TRACK,track).sendToTarget();
     }
+
+    /**
+     * get current player state
+     * @return state
+     */
+    public int getCurrentState() {
+        return currentState;
+    }
+
+
 }
