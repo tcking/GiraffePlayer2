@@ -1,5 +1,7 @@
 package tcking.github.com.giraffeplayer2;
 
+import tv.danmaku.ijk.media.player.IjkTimedText;
+
 /**
  * Created by tcking on 2017
  */
@@ -36,4 +38,11 @@ public interface PlayerListener {
     void onDisplayModelChange(int oldModel, int newModel);
 
     void onPreparing(GiraffePlayer giraffePlayer);
+
+    /**
+     * render subtitle
+     * @param giraffePlayer
+     * @param text
+     */
+    void onTimedText(GiraffePlayer giraffePlayer,IjkTimedText text);
 }

@@ -35,6 +35,7 @@ import java.util.Map;
 import tv.danmaku.ijk.media.player.AndroidMediaPlayer;
 import tv.danmaku.ijk.media.player.IMediaPlayer;
 import tv.danmaku.ijk.media.player.IjkMediaPlayer;
+import tv.danmaku.ijk.media.player.IjkTimedText;
 import tv.danmaku.ijk.media.player.misc.ITrackInfo;
 
 
@@ -457,6 +458,12 @@ public class GiraffePlayer implements MediaController.MediaPlayerControl {
                         scalableDisplay.setVideoSize(videoWidth, videoHeight);
                     }
                 }
+            }
+        });
+        mediaPlayer.setOnTimedTextListener(new IMediaPlayer.OnTimedTextListener() {
+            @Override
+            public void onTimedText(IMediaPlayer mp, IjkTimedText text) {
+                proxyListener().onTimedText(GiraffePlayer.this,text);
             }
         });
     }

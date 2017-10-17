@@ -1,5 +1,7 @@
 package tcking.github.com.giraffeplayer2;
 
+import tv.danmaku.ijk.media.player.IjkTimedText;
+
 /**
  * Created by tcking on 2017
  */
@@ -70,6 +72,11 @@ public class DefaultPlayerListener implements PlayerListener {
 
     @Override
     public void onPreparing(GiraffePlayer giraffePlayer) {
+
+    }
+
+    @Override
+    public void onTimedText(GiraffePlayer giraffePlayer, IjkTimedText text) {
 
     }
 }

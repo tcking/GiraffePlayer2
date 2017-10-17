@@ -8,4 +8,6 @@
     <string name="giraffe_player_track_type_audio">声道</string>
     <string name="giraffe_player_track_type_video">视频</string>
     <string name="giraffe_player_live">直播</string>
+    <string name="giraffe_player_track_type_subtitle">字幕</string>
+    <string name="giraffe_player_track_type_timed_text">timed text</string>
 </resources>

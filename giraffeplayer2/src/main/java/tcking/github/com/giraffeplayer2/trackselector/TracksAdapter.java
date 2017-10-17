@@ -123,7 +123,11 @@ public class TracksAdapter extends BaseExpandableListAdapter {
         for (int i = 0; i < tracks.length; i++) {
             ITrackInfo track = tracks[i];
             int trackType = track.getTrackType();
-            if (trackType == ITrackInfo.MEDIA_TRACK_TYPE_AUDIO || trackType == ITrackInfo.MEDIA_TRACK_TYPE_VIDEO) {
+            System.out.println("======:"+trackType);
+            if (trackType == ITrackInfo.MEDIA_TRACK_TYPE_AUDIO ||
+                    trackType == ITrackInfo.MEDIA_TRACK_TYPE_VIDEO ||
+                    trackType == ITrackInfo.MEDIA_TRACK_TYPE_SUBTITLE ||
+                    trackType == ITrackInfo.MEDIA_TRACK_TYPE_TIMEDTEXT) {
                 TrackGroup trackGroup = dataIndex.get(trackType);
                 if (trackGroup == null) {
                     int selectedTrack = player.getSelectedTrack(trackType);

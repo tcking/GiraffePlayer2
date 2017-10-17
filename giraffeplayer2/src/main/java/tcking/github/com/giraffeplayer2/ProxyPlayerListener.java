@@ -2,6 +2,8 @@ package tcking.github.com.giraffeplayer2;
 
 import android.util.Log;
 
+import tv.danmaku.ijk.media.player.IjkTimedText;
+
 
 /**
  * Created by tcking on 2017
@@ -149,6 +151,15 @@ public class ProxyPlayerListener implements PlayerListener {
         log("onPreparing");
         listener().onPreparing(giraffePlayer);
         outerListener().onPreparing(giraffePlayer);
+    }
+
+    @Override
+    public void onTimedText(GiraffePlayer giraffePlayer, IjkTimedText text) {
+        if (GiraffePlayer.debug) {
+            log("onTimedText:"+(text!=null?text.getText():"null"));
+        }
+        listener().onTimedText(giraffePlayer,text);
+        outerListener().onTimedText(giraffePlayer,text);
     }
 
     private void log(String msg) {

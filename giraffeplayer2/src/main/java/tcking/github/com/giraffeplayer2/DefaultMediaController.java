@@ -20,6 +20,7 @@ import com.github.tcking.giraffeplayer2.R;
 
 import tcking.github.com.giraffeplayer2.trackselector.TrackSelectorFragment;
 import tv.danmaku.ijk.media.player.IMediaPlayer;
+import tv.danmaku.ijk.media.player.IjkTimedText;
 
 /**
  * media controller for ListView or RecyclerView
@@ -132,7 +133,9 @@ public class DefaultMediaController extends BaseMediaController {
         //check player is ready
         GiraffePlayer player = videoView.getPlayer();
         int currentState = player.getCurrentState();
-        if (currentState == GiraffePlayer.STATE_IDLE || currentState == GiraffePlayer.STATE_PREPARING) {
+        if (currentState == GiraffePlayer.STATE_IDLE ||
+                currentState == GiraffePlayer.STATE_PREPARING ||
+                currentState == GiraffePlayer.STATE_ERROR) {
             return 0;
         }
 
@@ -232,15 +235,15 @@ public class DefaultMediaController extends BaseMediaController {
                 if (!player.onBackPressed()) {
                     ((Activity) videoView.getContext()).finish();
                 }
-            }else if (v.getId() == R.id.app_video_clarity) {
+            } else if (v.getId() == R.id.app_video_clarity) {
                 Activity activity = (Activity) videoView.getContext();
                 if (activity instanceof AppCompatActivity) {
                     TrackSelectorFragment trackSelectorFragment = new TrackSelectorFragment();
                     Bundle bundle = new Bundle();
-                    bundle.putString("fingerprint",videoView.getVideoInfo().getFingerprint());
+                    bundle.putString("fingerprint", videoView.getVideoInfo().getFingerprint());
                     trackSelectorFragment.setArguments(bundle);
                     FragmentManager supportFragmentManager = ((AppCompatActivity) activity).getSupportFragmentManager();
-                    trackSelectorFragment.show(supportFragmentManager,"player_track");
+                    trackSelectorFragment.show(supportFragmentManager, "player_track");
                 }
 
             }
@@ -529,7 +532,7 @@ public class DefaultMediaController extends BaseMediaController {
 
     @Override
     public boolean onInfo(GiraffePlayer giraffePlayer, int what, int extra) {
-        switch (what){
+        switch (what) {
             case IMediaPlayer.MEDIA_INFO_BUFFERING_START:
                 statusChange(STATUS_LOADING);
                 break;
@@ -552,7 +555,7 @@ public class DefaultMediaController extends BaseMediaController {
 
     private void statusChange(int status) {
         this.status = status;
-        switch (status){
+        switch (status) {
             case STATUS_LOADING:
                 $.id(R.id.app_video_loading).visible();
                 $.id(R.id.app_video_status).gone();
@@ -615,6 +618,15 @@ public class DefaultMediaController extends BaseMediaController {
     public void onTargetStateChange(int oldState, int newState) {
         if (newState != GiraffePlayer.STATE_IDLE) {
             $.id(R.id.app_video_cover).gone();
+        }
+    }
+
+    @Override
+    public void onTimedText(GiraffePlayer giraffePlayer, IjkTimedText text) {
+        if (text == null) {
+            $.id(R.id.app_video_subtitle).gone();
+        } else {
+            $.id(R.id.app_video_subtitle).visible().text(text.getText());
         }
     }
 }

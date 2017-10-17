@@ -45,6 +45,10 @@ public class TrackGroup {
             return R.string.giraffe_player_track_type_audio;
         } else if (trackType == ITrackInfo.MEDIA_TRACK_TYPE_VIDEO) {
             return R.string.giraffe_player_track_type_video;
+        } else if (trackType == ITrackInfo.MEDIA_TRACK_TYPE_TIMEDTEXT) {
+            return R.string.giraffe_player_track_type_timed_text;
+        } else if (trackType == ITrackInfo.MEDIA_TRACK_TYPE_SUBTITLE) {
+            return R.string.giraffe_player_track_type_subtitle;
         } else {
             return R.string.giraffe_player_track_type_unknown;
 

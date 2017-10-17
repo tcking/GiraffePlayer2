@@ -237,6 +237,14 @@
 
         </RelativeLayout>
 
+        <TextView
+            android:visibility="gone"
+            android:textColor="#FFF"
+            android:id="@+id/app_video_subtitle"
+            android:layout_above="@+id/app_video_bottom_box"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
     </RelativeLayout>
 
     <RelativeLayout
