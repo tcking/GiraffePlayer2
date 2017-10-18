@@ -2,6 +2,7 @@
 # 0.1.8
 
 1.ijkplayer update to 0.8.4
+
 2.support more decoder: using `compile 'com.github.tcking:giraffeplayer2:0.1.8-full'`
 
 # 0.1.7
