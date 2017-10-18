@@ -22,7 +22,6 @@ import android.view.SurfaceView;
 import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewParent;
 import android.widget.FrameLayout;
 import android.widget.MediaController;
 
@@ -91,6 +90,7 @@ public class GiraffePlayer implements MediaController.MediaPlayerControl {
 
     public static final int DISPLAY_NORMAL = 0;
     public static final int DISPLAY_FULL_WINDOW = 1;
+    private volatile int startPosition = -1;
 
     public int getDisplayModel() {
         return displayModel;
@@ -127,19 +127,20 @@ public class GiraffePlayer implements MediaController.MediaPlayerControl {
                 }
                 switch (msg.what) {
                     case MSG_CTRL_PLAYING:
-                        if (currentState == STATE_PLAYBACK_COMPLETED) {
-                            if (canSeekBackward) {
-                                mediaPlayer.seekTo(0);
+                        if (currentState == STATE_ERROR) {
+                            handler.sendEmptyMessage(MSG_CTRL_RETRY);
+                        } else if (isInPlaybackState()) {
+                            if (canSeekForward) {
+                                if (currentState == STATE_PLAYBACK_COMPLETED) {
+                                    startPosition = 0;
+                                }
+                                if (startPosition >= 0) {
+                                    mediaPlayer.seekTo(startPosition);
+                                    startPosition = -1;
+                                }
                             }
                             mediaPlayer.start();
                             currentState(STATE_PLAYING);
-                        } else {
-                            if (currentState == STATE_ERROR) {
-                                handler.sendEmptyMessage(MSG_CTRL_RETRY);
-                            } else if (isInPlaybackState()) {
-                                mediaPlayer.start();
-                                currentState(STATE_PLAYING);
-                            }
                         }
                         break;
                     case MSG_CTRL_PAUSE:
@@ -801,6 +802,13 @@ public class GiraffePlayer implements MediaController.MediaPlayerControl {
 
     public void onActivityResumed() {
         log("onActivityResumed");
+        if (targetState == STATE_PLAYING) {
+            start();
+        } else if (targetState == STATE_PAUSED) {
+            if (canSeekForward && startPosition >= 0) {
+                seekTo(startPosition);
+            }
+        }
 
 //        if (targetState == STATE_PLAYING) {
 //            start();
@@ -809,8 +817,13 @@ public class GiraffePlayer implements MediaController.MediaPlayerControl {
 
     public void onActivityPaused() {
         log("onActivityPaused");
-        if (targetState == STATE_PLAYING || currentState == STATE_PLAYING) {
-            pause();
+        if (targetState == STATE_PLAYING
+                || currentState == STATE_PLAYING
+                || targetState == STATE_PAUSED
+                || currentState == STATE_PAUSED) {
+
+            startPosition = (int) mediaPlayer.getCurrentPosition();
+            releaseMediaPlayer();
         }
     }
 

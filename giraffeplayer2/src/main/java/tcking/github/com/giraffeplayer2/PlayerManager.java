@@ -2,6 +2,7 @@ package tcking.github.com.giraffeplayer2;
 
 import android.app.Activity;
 import android.app.Application;
+import android.content.Context;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.util.Log;
@@ -31,6 +32,7 @@ public class PlayerManager {
 
     private WeakHashMap<String, VideoView> videoViewsRef = new WeakHashMap<>();
     private Map<String, GiraffePlayer> playersRef = new ConcurrentHashMap<>();
+    private WeakHashMap<Context, String> activity2playersRef = new WeakHashMap<>();
 
 
 
@@ -52,6 +54,7 @@ public class PlayerManager {
         registerActivityLifecycleCallbacks(((Activity) videoView.getContext()).getApplication());
         GiraffePlayer player = GiraffePlayer.createPlayer(videoView.getContext(), videoInfo);
         playersRef.put(videoInfo.getFingerprint(), player);
+        activity2playersRef.put(videoView.getContext(), videoInfo.getFingerprint());
         return player;
     }
 
@@ -60,7 +63,6 @@ public class PlayerManager {
             return;
         }
         activityLifecycleCallbacks = new Application.ActivityLifecycleCallbacks() {
-            String fingerprint;
             @Override
             public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
 
@@ -73,10 +75,7 @@ public class PlayerManager {
 
             @Override
             public void onActivityResumed(Activity activity) {
-                if (fingerprint == null) {
-                    return;
-                }
-                GiraffePlayer currentPlayer = getPlayerByFingerprint(fingerprint);
+                GiraffePlayer currentPlayer = getPlayerByFingerprint(activity2playersRef.get(activity));
                 if (currentPlayer != null) {
                     currentPlayer.onActivityResumed();
                 }
@@ -84,16 +83,14 @@ public class PlayerManager {
 
             @Override
             public void onActivityPaused(Activity activity) {
-                GiraffePlayer currentPlayer = getCurrentPlayer();
+                GiraffePlayer currentPlayer = getPlayerByFingerprint(activity2playersRef.get(activity));
                 if (currentPlayer != null) {
                     currentPlayer.onActivityPaused();
-                    fingerprint=currentPlayer.getVideoInfo().getFingerprint();
                 }
             }
 
             @Override
             public void onActivityStopped(Activity activity) {
-
             }
 
             @Override
@@ -107,6 +104,7 @@ public class PlayerManager {
                 if (currentPlayer != null) {
                     currentPlayer.onActivityDestroyed();
                 }
+                activity2playersRef.remove(activity);
             }
         };
         context.registerActivityLifecycleCallbacks(activityLifecycleCallbacks);
@@ -179,6 +177,9 @@ public class PlayerManager {
     }
 
     public GiraffePlayer getPlayerByFingerprint(String fingerprint) {
+        if (fingerprint == null) {
+            return null;
+        }
         return playersRef.get(fingerprint);
     }
 

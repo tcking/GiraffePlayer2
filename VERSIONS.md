@@ -1,4 +1,10 @@
 
+# 0.1.9 (to release)
+
+1. stop network request when app go to background
+2. keep play status when activity resume
+
+q
 # 0.1.8
 
 1.ijkplayer update to 0.8.4
