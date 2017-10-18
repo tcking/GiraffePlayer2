@@ -60,6 +60,7 @@ public class PlayerManager {
             return;
         }
         activityLifecycleCallbacks = new Application.ActivityLifecycleCallbacks() {
+            String fingerprint;
             @Override
             public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
 
@@ -72,7 +73,10 @@ public class PlayerManager {
 
             @Override
             public void onActivityResumed(Activity activity) {
-                GiraffePlayer currentPlayer = getCurrentPlayer();
+                if (fingerprint == null) {
+                    return;
+                }
+                GiraffePlayer currentPlayer = getPlayerByFingerprint(fingerprint);
                 if (currentPlayer != null) {
                     currentPlayer.onActivityResumed();
                 }
@@ -83,6 +87,7 @@ public class PlayerManager {
                 GiraffePlayer currentPlayer = getCurrentPlayer();
                 if (currentPlayer != null) {
                     currentPlayer.onActivityPaused();
+                    fingerprint=currentPlayer.getVideoInfo().getFingerprint();
                 }
             }
 

@@ -205,25 +205,29 @@ public class GiraffePlayer implements MediaController.MediaPlayerControl {
 
     private void targetState(final int newState) {
         final int oldTargetState = targetState;
-        uiHandler.post(new Runnable() {
-            @Override
-            public void run() {
-                proxyListener().onTargetStateChange(oldTargetState, newState);
-            }
-        });
         targetState = newState;
+        if (oldTargetState != newState) {
+            uiHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    proxyListener().onTargetStateChange(oldTargetState, newState);
+                }
+            });
+        }
     }
 
     private void currentState(final int newState) {
         final int oldCurrentState = currentState;
-        uiHandler.post(new Runnable() {
-            @Override
-            public void run() {
-                proxyListener().onCurrentStateChange(oldCurrentState, newState);
-
-            }
-        });
         currentState = newState;
+        if (oldCurrentState != newState) {
+            uiHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    proxyListener().onCurrentStateChange(oldCurrentState, newState);
+
+                }
+            });
+        }
     }
 
     @Override
@@ -463,7 +467,7 @@ public class GiraffePlayer implements MediaController.MediaPlayerControl {
         mediaPlayer.setOnTimedTextListener(new IMediaPlayer.OnTimedTextListener() {
             @Override
             public void onTimedText(IMediaPlayer mp, IjkTimedText text) {
-                proxyListener().onTimedText(GiraffePlayer.this,text);
+                proxyListener().onTimedText(GiraffePlayer.this, text);
             }
         });
     }
@@ -478,6 +482,7 @@ public class GiraffePlayer implements MediaController.MediaPlayerControl {
 
             @Override
             public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
+                log("onSurfaceTextureAvailable");
                 if (this.surface == null) {
                     handler.obtainMessage(MSG_SET_DISPLAY, surface).sendToTarget();
                     this.surface = surface;
@@ -493,6 +498,7 @@ public class GiraffePlayer implements MediaController.MediaPlayerControl {
 
             @Override
             public boolean onSurfaceTextureDestroyed(SurfaceTexture surface) {
+                log("onSurfaceTextureDestroyed");
                 return false;//全屏时会发生view的移动，会触发此回调，必须为false（true表示系统负责销毁，此view将不再可用）
             }
 
@@ -609,6 +615,7 @@ public class GiraffePlayer implements MediaController.MediaPlayerControl {
     }
 
     private void doRemoveDisplayGroupFromParent() {
+        log("doRemoveDisplayGroupFromParent");
         ViewGroup videoViewContainer = videoViewContainerRef.get();
         if (videoViewContainer != null) {
             ViewGroup parent = (ViewGroup) videoViewContainer.getParent();
@@ -842,7 +849,7 @@ public class GiraffePlayer implements MediaController.MediaPlayerControl {
         }
     }
 
-    public ITrackInfo[] getTrackInfo(){
+    public ITrackInfo[] getTrackInfo() {
         if (mediaPlayer == null || released) {
             return new ITrackInfo[0];
         }
@@ -868,11 +875,12 @@ public class GiraffePlayer implements MediaController.MediaPlayerControl {
             return;
         }
         handler.removeMessages(MSG_CTRL_SELECT_TRACK);
-        handler.obtainMessage(MSG_CTRL_SELECT_TRACK,track).sendToTarget();
+        handler.obtainMessage(MSG_CTRL_SELECT_TRACK, track).sendToTarget();
     }
 
     /**
      * get current player state
+     *
      * @return state
      */
     public int getCurrentState() {

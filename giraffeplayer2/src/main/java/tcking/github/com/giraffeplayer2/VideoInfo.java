@@ -19,14 +19,13 @@ public class VideoInfo implements Parcelable {
     public static final int AR_MATCH_PARENT = 3;
     public static final int AR_16_9_FIT_PARENT = 4;
     public static final int AR_4_3_FIT_PARENT = 5;
-    public static final String DEFAULT_FINGERPRINT = "-1";
     public static final String PLAYER_IMPL_IJK = "ijk";
     public static final String PLAYER_IMPL_SYSTEM = "system";
 
     private HashSet<Option> options = new HashSet<>();
     private boolean showTopBar = false;
     private Uri uri;
-    private String fingerprint = DEFAULT_FINGERPRINT;
+    private String fingerprint = Integer.toHexString(hashCode());
     private boolean portraitWhenFullScreen = true;
     private String title;
     private int aspectRatio = AR_ASPECT_FIT_PARENT;
