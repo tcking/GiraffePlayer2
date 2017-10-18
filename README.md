@@ -1,29 +1,11 @@
 # GiraffePlayer2
 
-Out of the box android video player base on [ijkplayer 0.8.3](https://github.com/Bilibili/ijkplayer)
+Out of the box android video player base on [ijkplayer 0.8.4](https://github.com/Bilibili/ijkplayer)
 
 this project is total refactor of [GiraffePlayer](https://github.com/tcking/GiraffePlayer/) to support in ListView/RecyclerView and improve the performance，all player tasks do in worker thread.
 
-# release note:
+[release history](https://github.com/tcking/GiraffePlayer2/blob/master/VERSIONS.md)
 
-**0.1.7**
-
-1. FIX:seekbar secondary progress always 0
-2. FIX:log error when using android android media player impl
-
-**0.1.6**
-
-disable seek when playing live stream
-
-**0.1.5**
-
-support select track
-
-**0.1.4**
-
-add animation for enter/exit full screen
-
-**0.1.3**
 
 bug fix
 
@@ -48,7 +30,9 @@ bug fix
     }
 
     //step 2: add dependency
-    compile 'com.github.tcking:giraffeplayer2:0.1.7'
+    compile 'com.github.tcking:giraffeplayer2:0.1.8'
+
+    // if need more decoder using: compile 'com.github.tcking:giraffeplayer2:0.1.8-full'
 
 
  ```
