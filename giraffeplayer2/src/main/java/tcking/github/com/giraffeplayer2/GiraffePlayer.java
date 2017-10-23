@@ -937,14 +937,5 @@ public class GiraffePlayer implements MediaController.MediaPlayerControl {
         return this;
     }
 
-    /**
-     * is mute
-     * @return true if mute
-     */
-    public boolean isMute(){
-        AudioManager audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
-        return audioManager.isStreamMute(AudioManager.STREAM_MUSIC);
-    }
-
 
 }
