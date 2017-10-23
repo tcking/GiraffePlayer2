@@ -33,6 +33,10 @@ public class TrackInfoWrapper {
     }
 
     public String getInfo() {
-        return innerTrack.getInfoInline();
+        return innerTrack == null ? "OFF" : innerTrack.getInfoInline();
+    }
+
+    public static TrackInfoWrapper OFF(String fingerprint, int trackType) {
+        return new TrackInfoWrapper(fingerprint,null,-1,trackType);
     }
 }

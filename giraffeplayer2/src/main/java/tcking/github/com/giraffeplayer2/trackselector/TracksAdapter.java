@@ -91,7 +91,11 @@ public class TracksAdapter extends BaseExpandableListAdapter {
 
                         GiraffePlayer player = PlayerManager.getInstance().getPlayerByFingerprint(track.getFingerprint());
                         if (player != null) {
-                            player.selectTrack(track.getIndex());
+                            if (track.getIndex() >= 0) {
+                                player.selectTrack(track.getIndex());
+                            } else {
+                                player.deselectTrack(player.getSelectedTrack(track.getTrackType()));
+                            }
                         }
                     }
                 }
@@ -123,7 +127,6 @@ public class TracksAdapter extends BaseExpandableListAdapter {
         for (int i = 0; i < tracks.length; i++) {
             ITrackInfo track = tracks[i];
             int trackType = track.getTrackType();
-            System.out.println("======:"+trackType);
             if (trackType == ITrackInfo.MEDIA_TRACK_TYPE_AUDIO ||
                     trackType == ITrackInfo.MEDIA_TRACK_TYPE_VIDEO ||
                     trackType == ITrackInfo.MEDIA_TRACK_TYPE_SUBTITLE ||
@@ -132,6 +135,9 @@ public class TracksAdapter extends BaseExpandableListAdapter {
                 if (trackGroup == null) {
                     int selectedTrack = player.getSelectedTrack(trackType);
                     trackGroup = new TrackGroup(trackType, selectedTrack);
+//                    if (trackType == ITrackInfo.MEDIA_TRACK_TYPE_AUDIO) {
+//                        trackGroup.getTracks().add(TrackInfoWrapper.OFF(fingerprint,trackType));
+//                    }
                     dataIndex.put(trackType, trackGroup);
                     data.add(trackGroup);
                 }

@@ -138,7 +138,12 @@ all the configurations on **VideoInfo** :
 1. `player.setPlayerListener()` // in RecyclerView,player will create and release on demand,set listener on videoView:`videoView.setPlayerListener()`
 1. `player.stop()` //same as release
 1. `player.release()` //release the player
-1. ... //more
+1. `player.setVolume()` //set volume
+1. `player.getTrackInfo()` //get all tracks
+1. `player.selectTrack()` //select track by track index
+1. `player.deselectTrack()` // deselect track by track index
+1. `player.setMute()`
+1. `player.isMute()`
 
 **VideoView** (player's display container and media controller)
 1. `videoView.getPlayer()` get or create bind player

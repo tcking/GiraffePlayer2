@@ -46,15 +46,16 @@ import tv.danmaku.ijk.media.player.misc.ITrackInfo;
 public class GiraffePlayer implements MediaController.MediaPlayerControl {
     public static final String TAG = "GiraffePlayer";
     public static boolean debug = false;
-
     // Internal messages
     private static final int MSG_CTRL_PLAYING = 1;
+
     private static final int MSG_CTRL_PAUSE = 2;
     private static final int MSG_CTRL_SEEK = 3;
     private static final int MSG_CTRL_RELEASE = 4;
     private static final int MSG_CTRL_RETRY = 5;
     private static final int MSG_CTRL_SELECT_TRACK = 6;
-    private static final int MSG_CTRL_SET_VOLUME = 7;
+    private static final int MSG_CTRL_DESELECT_TRACK = 7;
+    private static final int MSG_CTRL_SET_VOLUME = 8;
 
 
     private static final int MSG_SET_DISPLAY = 12;
@@ -93,6 +94,7 @@ public class GiraffePlayer implements MediaController.MediaPlayerControl {
     public static final int DISPLAY_NORMAL = 0;
     public static final int DISPLAY_FULL_WINDOW = 1;
     private volatile int startPosition = -1;
+    private boolean mute = false;
 
     public int getDisplayModel() {
         return displayModel;
@@ -121,6 +123,13 @@ public class GiraffePlayer implements MediaController.MediaPlayerControl {
             public boolean handleMessage(Message msg) {
                 //init mediaPlayer before any actions
                 log("handleMessage:" + msg.what);
+                if (msg.what == MSG_CTRL_RELEASE) {
+                    if (!released) {
+                        handler.removeCallbacks(null);
+                        doRelease(((String) msg.obj));
+                    }
+                    return true;
+                }
                 if (mediaPlayer == null || released) {
                     handler.removeCallbacks(null);
                     init(true);
@@ -164,6 +173,14 @@ public class GiraffePlayer implements MediaController.MediaPlayerControl {
                             ((AndroidMediaPlayer) mediaPlayer).getInternalMediaPlayer().selectTrack(track);
                         }
                         break;
+                    case MSG_CTRL_DESELECT_TRACK:
+                        int deselectTrack = (int) msg.obj;
+                        if (mediaPlayer instanceof IjkMediaPlayer) {
+                            ((IjkMediaPlayer) mediaPlayer).deselectTrack(deselectTrack);
+                        } else if (mediaPlayer instanceof AndroidMediaPlayer) {
+                            ((AndroidMediaPlayer) mediaPlayer).getInternalMediaPlayer().deselectTrack(deselectTrack);
+                        }
+                        break;
                     case MSG_SET_DISPLAY:
                         if (msg.obj == null) {
                             mediaPlayer.setDisplay(null);
@@ -172,10 +189,6 @@ public class GiraffePlayer implements MediaController.MediaPlayerControl {
                         } else if (msg.obj instanceof SurfaceView) {
                             mediaPlayer.setDisplay(((SurfaceView) msg.obj).getHolder());
                         }
-                        break;
-                    case MSG_CTRL_RELEASE:
-                        handler.removeCallbacks(null);
-                        doRelease(((String) msg.obj));
                         break;
                     case MSG_CTRL_RETRY:
                         init(false);
@@ -625,6 +638,10 @@ public class GiraffePlayer implements MediaController.MediaPlayerControl {
         log("doRemoveDisplayGroupFromParent");
         ViewGroup videoViewContainer = videoViewContainerRef.get();
         if (videoViewContainer != null) {
+            ScalableTextureView currentDisplay = getCurrentDisplay();
+            if (currentDisplay != null) {
+                currentDisplay.setSurfaceTextureListener(null);
+            }
             ViewGroup parent = (ViewGroup) videoViewContainer.getParent();
             if (parent != null) {
                 View group = parent.findViewById(R.id.player_display_group);
@@ -635,10 +652,10 @@ public class GiraffePlayer implements MediaController.MediaPlayerControl {
         }
     }
 
-    private View getCurrentDisplay() {
+    private ScalableTextureView getCurrentDisplay() {
         ViewGroup container = videoViewContainerRef.get();
         if (container != null) {
-            return container.findViewById(R.id.player_display);
+            return (ScalableTextureView) container.findViewById(R.id.player_display);
         }
         return null;
     }
@@ -859,12 +876,9 @@ public class GiraffePlayer implements MediaController.MediaPlayerControl {
     public void aspectRatio(int aspectRatio) {
         log("aspectRatio:" + aspectRatio);
         videoInfo.setAspectRatio(aspectRatio);
-        ViewGroup group = videoViewContainerRef.get();
-        if (group != null) {
-            ScalableDisplay display = (ScalableDisplay) group.findViewById(R.id.player_display);
-            if (display != null) {
-                display.setAspectRatio(aspectRatio);
-            }
+        ScalableDisplay display=getCurrentDisplay();
+        if (display != null) {
+            display.setAspectRatio(aspectRatio);
         }
     }
 
@@ -895,6 +909,15 @@ public class GiraffePlayer implements MediaController.MediaPlayerControl {
         }
         handler.removeMessages(MSG_CTRL_SELECT_TRACK);
         handler.obtainMessage(MSG_CTRL_SELECT_TRACK, track).sendToTarget();
+        return this;
+    }
+
+    public GiraffePlayer deselectTrack(int selectedTrack) {
+        if (mediaPlayer == null || released) {
+            return this;
+        }
+        handler.removeMessages(MSG_CTRL_DESELECT_TRACK);
+        handler.obtainMessage(MSG_CTRL_DESELECT_TRACK, selectedTrack).sendToTarget();
         return this;
     }
 
@@ -932,10 +955,23 @@ public class GiraffePlayer implements MediaController.MediaPlayerControl {
      * @return GiraffePlayer
      */
     public GiraffePlayer setMute(boolean mute){
+        this.mute = mute;
         AudioManager audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
         audioManager.setStreamMute(AudioManager.STREAM_MUSIC,true);
         return this;
     }
 
+    /**
+     * is mute
+     * @return true if mute
+     */
+    public boolean isMute(){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            AudioManager audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
+            return audioManager.isStreamMute(AudioManager.STREAM_MUSIC);
+        } else {
+            return mute;
+        }
+    }
 
 }
