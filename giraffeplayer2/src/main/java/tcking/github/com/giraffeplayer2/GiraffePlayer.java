@@ -29,6 +29,7 @@ import com.github.tcking.giraffeplayer2.R;
 
 import java.io.IOException;
 import java.lang.ref.WeakReference;
+import java.util.HashMap;
 import java.util.Map;
 
 import tv.danmaku.ijk.media.player.AndroidMediaPlayer;
@@ -53,6 +54,7 @@ public class GiraffePlayer implements MediaController.MediaPlayerControl {
     private static final int MSG_CTRL_RELEASE = 4;
     private static final int MSG_CTRL_RETRY = 5;
     private static final int MSG_CTRL_SELECT_TRACK = 6;
+    private static final int MSG_CTRL_SET_VOLUME = 7;
 
 
     private static final int MSG_SET_DISPLAY = 12;
@@ -178,6 +180,10 @@ public class GiraffePlayer implements MediaController.MediaPlayerControl {
                     case MSG_CTRL_RETRY:
                         init(false);
                         handler.sendEmptyMessage(MSG_CTRL_PLAYING);
+                        break;
+                    case MSG_CTRL_SET_VOLUME:
+                        Map<String, Float> pram = (Map<String, Float>) msg.obj;
+                        mediaPlayer.setVolume(pram.get("left"),pram.get("right"));
                         break;
 
                     default:
@@ -883,12 +889,13 @@ public class GiraffePlayer implements MediaController.MediaPlayerControl {
         return -1;
     }
 
-    public void selectTrack(int track) {
+    public GiraffePlayer selectTrack(int track) {
         if (mediaPlayer == null || released) {
-            return;
+            return this;
         }
         handler.removeMessages(MSG_CTRL_SELECT_TRACK);
         handler.obtainMessage(MSG_CTRL_SELECT_TRACK, track).sendToTarget();
+        return this;
     }
 
     /**
@@ -898,6 +905,45 @@ public class GiraffePlayer implements MediaController.MediaPlayerControl {
      */
     public int getCurrentState() {
         return currentState;
+    }
+
+
+    /**
+     * set volume
+     * @param left [0,1]
+     * @param right [0,1]
+     * @return GiraffePlayer
+     */
+    public GiraffePlayer setVolume(float left, float right) {
+        if (mediaPlayer == null || released) {
+            return this;
+        }
+        HashMap<String, Float> pram = new HashMap<>();
+        pram.put("left", left);
+        pram.put("right", right);
+        handler.removeMessages(MSG_CTRL_SET_VOLUME);
+        handler.obtainMessage(MSG_CTRL_SET_VOLUME,pram).sendToTarget();
+        return this;
+    }
+
+    /**
+     * set mute
+     * @param mute
+     * @return GiraffePlayer
+     */
+    public GiraffePlayer setMute(boolean mute){
+        AudioManager audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
+        audioManager.setStreamMute(AudioManager.STREAM_MUSIC,true);
+        return this;
+    }
+
+    /**
+     * is mute
+     * @return true if mute
+     */
+    public boolean isMute(){
+        AudioManager audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
+        return audioManager.isStreamMute(AudioManager.STREAM_MUSIC);
     }
 
 
