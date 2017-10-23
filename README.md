@@ -28,9 +28,9 @@ this project is total refactor of [GiraffePlayer](https://github.com/tcking/Gira
     }
 
     //step 2: add dependency
-    compile 'com.github.tcking:giraffeplayer2:0.1.8'
+    compile 'com.github.tcking:giraffeplayer2:0.1.9'
 
-    // if need more decoder using: compile 'com.github.tcking:giraffeplayer2:0.1.8-full'
+    // if need more decoder using: compile 'com.github.tcking:giraffeplayer2:0.1.9-full'
 
 
  ```
@@ -44,10 +44,10 @@ to support different ABI:
 
 ``` gradle
 
-    compile 'com.github.tcking:ijkplayer-arm64:0.8.3' //support arm64
-    compile 'com.github.tcking:ijkplayer-armv5:0.8.3' //support armv5
-    compile 'com.github.tcking:ijkplayer-x86:0.8.3' //support x86
-    compile 'com.github.tcking:ijkplayer-x86_64:0.8.3' //support x86_64
+    compile 'com.github.tcking:ijkplayer-arm64:0.8.4' //support arm64
+    compile 'com.github.tcking:ijkplayer-armv5:0.8.4' //support armv5
+    compile 'com.github.tcking:ijkplayer-x86:0.8.4' //support x86
+    compile 'com.github.tcking:ijkplayer-x86_64:0.8.4' //support x86_64
 
 ```
 
@@ -144,6 +144,7 @@ all the configurations on **VideoInfo** :
 1. `player.deselectTrack()` // deselect track by track index
 1. `player.setMute()`
 1. `player.isMute()`
+1. `player.getCurrentState()` //get current player state
 
 **VideoView** (player's display container and media controller)
 1. `videoView.getPlayer()` get or create bind player
