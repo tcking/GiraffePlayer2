@@ -1,3 +1,6 @@
+# 0.1.10
+1. bug fix: crash when call `videoView.setVideoPath（）` to change video path [issues15](https://github.com/tcking/GiraffePlayer2/issues/15)
+
 
 # 0.1.9
 

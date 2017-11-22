@@ -8,8 +8,8 @@ android {
     defaultConfig {
         minSdkVersion MINSDKVERSION
         targetSdkVersion TARGETSDKVERSION
-        versionCode 12
-        versionName "0.1.9-full"
+        versionCode 14
+        versionName "0.1.10-full"
     }
     buildTypes {
         release {
@@ -28,4 +28,4 @@ dependencies {
     compile 'com.github.tcking:ijkplayer-java:0.8.4-full'
     compile 'com.github.tcking:ijkplayer-armv7a:0.8.4-full'
 }
-apply from: new File(projectDir, "gradle-on-demand.gradle");
+apply from: new File(projectDir, "gradle-on-demand.gradle")
