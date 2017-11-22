@@ -234,7 +234,7 @@ public class VideoInfo implements Parcelable {
     public VideoInfo setUri(Uri uri) {
         if (lastUri!=null && !lastUri.equals(uri)) {
             //different from last uri, release last
-            PlayerManager.getInstance().releaseByFingerprint(lastFingerprint);
+            PlayerManager.getInstance().releaseByFingerprint(fingerprint);
         }
         this.uri = uri;
         this.lastUri = this.uri;
