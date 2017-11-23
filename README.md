@@ -18,6 +18,7 @@ this project is total refactor of [GiraffePlayer](https://github.com/tcking/Gira
 8. support in ListView/RecyclerView (in Activity or Fragment)
 9. never block UI thread
 10. support select track
+10. support float window
 
 # how to import library
  ``` gradle
