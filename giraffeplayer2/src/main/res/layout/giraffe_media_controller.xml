@@ -269,11 +269,29 @@
             android:layout_height="wrap_content"
             android:ellipsize="marquee"
             android:padding="8dp"
-            android:maxLines="1"
             android:textColor="@android:color/white"
             android:textSize="12dp"
             android:visibility="visible"
-            />
+            android:singleLine="true"/>
 
     </RelativeLayout>
+
+    <ImageView
+        android:visibility="gone"
+        android:layout_alignParentRight="true"
+        android:padding="3dp"
+        android:id="@+id/app_video_float_close"
+        android:src="@drawable/ic_close_white_24dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <ImageView
+        android:visibility="gone"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:padding="3dp"
+        android:id="@+id/app_video_float_full"
+        android:src="@drawable/ic_fullscreen_white_24dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
 </RelativeLayout>

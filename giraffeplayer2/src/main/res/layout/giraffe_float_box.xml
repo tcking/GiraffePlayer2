@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:id="@id/player_display_float_box"
+              android:layout_width="160dp"
+              android:layout_height="120dp">
+
+</RelativeLayout>

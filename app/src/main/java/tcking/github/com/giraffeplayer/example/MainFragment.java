@@ -99,6 +99,8 @@ public class MainFragment extends Fragment {
                     }
                 } else if (v.getId() == R.id.btn_full) {
                     videoView.getPlayer().toggleFullScreen();
+                } else if (v.getId() == R.id.btn_play_float) {
+                    videoView.getPlayer().setDisplayModel(GiraffePlayer.DISPLAY_FLOAT);
                 } else if (v.getId() == R.id.btn_list) {
                     startActivity(new Intent(getActivity(), ListExampleActivity.class));
                 } else if (v.getId() == R.id.btn_play_in_standalone) {
@@ -123,6 +125,7 @@ public class MainFragment extends Fragment {
             }
         };
         $.id(R.id.btn_play).view().setOnClickListener(onClickListener);
+        $.id(R.id.btn_play_float).view().setOnClickListener(onClickListener);
         $.id(R.id.btn_full).view().setOnClickListener(onClickListener);
         $.id(R.id.btn_play_in_standalone).view().setOnClickListener(onClickListener);
         $.id(R.id.btn_list).view().setOnClickListener(onClickListener);

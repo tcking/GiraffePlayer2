@@ -28,9 +28,9 @@ this project is total refactor of [GiraffePlayer](https://github.com/tcking/Gira
     }
 
     //step 2: add dependency
-    compile 'com.github.tcking:giraffeplayer2:0.1.10'
+    compile 'com.github.tcking:giraffeplayer2:0.1.11'
 
-    // if need more decoder using: compile 'com.github.tcking:giraffeplayer2:0.1.10-full'
+    // if need more decoder using: compile 'com.github.tcking:giraffeplayer2:0.1.11-full'
 
 
  ```
@@ -145,6 +145,7 @@ all the configurations on **VideoInfo** :
 1. `player.setMute()`
 1. `player.isMute()`
 1. `player.getCurrentState()` //get current player state
+1. `player.setDisplayModel()` //set display model:GiraffePlayer.DISPLAY_NORMAL | GiraffePlayer.DISPLAY_FULL_WINDOW | GiraffePlayer.DISPLAY_FLOAT
 
 **VideoView** (player's display container and media controller)
 1. `videoView.getPlayer()` get or create bind player
@@ -197,6 +198,7 @@ void onDisplayModelChange(int oldModel, int newModel);
 # screenshot
 ![](https://raw.githubusercontent.com/tcking/GiraffePlayer2/master/screencap/s1.gif)
 ![](https://raw.githubusercontent.com/tcking/GiraffePlayer2/master/screencap/s2.gif)
+![](https://raw.githubusercontent.com/tcking/GiraffePlayer2/master/screencap/device-2017-11-23-202731.png)
 ![](https://raw.githubusercontent.com/tcking/GiraffePlayer2/master/screencap/device-2017-09-13-174907.png)
 ![](https://raw.githubusercontent.com/tcking/GiraffePlayer2/master/screencap/device-2017-09-13-175035.png)
 ![](https://raw.githubusercontent.com/tcking/GiraffePlayer2/master/screencap/device-2017-09-13-180141.png)

@@ -183,6 +183,9 @@ public class DefaultMediaController extends BaseMediaController {
 
 
     protected void showBottomControl(boolean show) {
+        if (displayModel==GiraffePlayer.DISPLAY_FLOAT) {
+            show = false;
+        }
 //        $.id(R.id.app_video_play).visibility(show ? View.VISIBLE : View.GONE);
 //        $.id(R.id.app_video_currentTime).visibility(show ? View.VISIBLE : View.GONE);
 //        $.id(R.id.app_video_endTime).visibility(show ? View.VISIBLE : View.GONE);
@@ -235,6 +238,11 @@ public class DefaultMediaController extends BaseMediaController {
                 if (!player.onBackPressed()) {
                     ((Activity) videoView.getContext()).finish();
                 }
+            }   else if (v.getId() == R.id.app_video_float_close) {
+                player.stop();
+                player.setDisplayModel(GiraffePlayer.DISPLAY_NORMAL);
+            } else if (v.getId() == R.id.app_video_float_full) {
+                player.setDisplayModel(GiraffePlayer.DISPLAY_FULL_WINDOW);
             } else if (v.getId() == R.id.app_video_clarity) {
                 Activity activity = (Activity) videoView.getContext();
                 if (activity instanceof AppCompatActivity) {
@@ -260,6 +268,8 @@ public class DefaultMediaController extends BaseMediaController {
         $.id(R.id.app_video_finish).clicked(onClickListener);
         $.id(R.id.app_video_replay_icon).clicked(onClickListener);
         $.id(R.id.app_video_clarity).clicked(onClickListener);
+        $.id(R.id.app_video_float_close).clicked(onClickListener);
+        $.id(R.id.app_video_float_full).clicked(onClickListener);
 //
 
 
@@ -269,6 +279,11 @@ public class DefaultMediaController extends BaseMediaController {
         view.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
+
+                if (displayModel==GiraffePlayer.DISPLAY_FLOAT) {
+                    return false;
+                }
+
                 if (gestureDetector.onTouchEvent(event)) {
                     return true;
                 }
@@ -605,6 +620,17 @@ public class DefaultMediaController extends BaseMediaController {
     @Override
     public void onDisplayModelChange(int oldModel, int newModel) {
         this.displayModel = newModel;
+        if (displayModel == GiraffePlayer.DISPLAY_FLOAT) {
+            $.id(R.id.app_video_float_close).visible();
+            $.id(R.id.app_video_float_full).visible();
+            $.id(R.id.app_video_bottom_box).gone();
+
+        } else {
+            $.id(R.id.app_video_float_close).gone();
+            $.id(R.id.app_video_float_full).gone();
+            $.id(R.id.app_video_bottom_box).visible();
+
+        }
 //        ((ViewGroup) controllerView.getParent()).removeView(controllerView);
 //        if (newModel == GiraffePlayer.DISPLAY_FULL_WINDOW) {
 //            ViewGroup top = (ViewGroup) ((Activity) videoView.getContext()).findViewById(android.R.id.content);
