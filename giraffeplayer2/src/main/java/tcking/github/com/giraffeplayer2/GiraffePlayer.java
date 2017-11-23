@@ -1,5 +1,6 @@
 package tcking.github.com.giraffeplayer2;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -14,6 +15,8 @@ import android.os.HandlerThread;
 import android.os.Looper;
 import android.os.Message;
 import android.os.Process;
+import android.transition.ChangeBounds;
+import android.transition.Transition;
 import android.transition.TransitionManager;
 import android.util.Log;
 import android.view.Gravity;
@@ -22,6 +25,7 @@ import android.view.SurfaceView;
 import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewParent;
 import android.widget.FrameLayout;
 import android.widget.MediaController;
 
@@ -89,12 +93,12 @@ public class GiraffePlayer implements MediaController.MediaPlayerControl {
     private Handler handler;
     private Handler uiHandler = new Handler(Looper.getMainLooper());
     private ProxyPlayerListener proxyListener;
-    private WeakReference<ViewGroup> videoViewContainerRef;
 
     public static final int DISPLAY_NORMAL = 0;
     public static final int DISPLAY_FULL_WINDOW = 1;
     private volatile int startPosition = -1;
     private boolean mute = false;
+    private WeakReference<? extends ViewGroup> displayBoxRef;
 
     public int getDisplayModel() {
         return displayModel;
@@ -102,6 +106,7 @@ public class GiraffePlayer implements MediaController.MediaPlayerControl {
 
     private int displayModel = DISPLAY_NORMAL;
     private VideoInfo videoInfo;
+    private WeakReference<? extends ViewGroup> boxContainerRef;
 
 
     private ProxyPlayerListener proxyListener() {
@@ -112,9 +117,9 @@ public class GiraffePlayer implements MediaController.MediaPlayerControl {
     private GiraffePlayer(Context context, VideoInfo videoInfo) {
         this.context = context.getApplicationContext();
         this.videoInfo = videoInfo;
-        VideoView videoView = PlayerManager.getInstance().getVideoView(videoInfo);
-        videoViewContainerRef = new WeakReference<>(videoView != null ? videoView.getContainer() : null);
         log("new GiraffePlayer");
+        VideoView videoView = PlayerManager.getInstance().getVideoView(videoInfo);
+        boxContainerRef = new WeakReference<>(videoView!=null?videoView.getContainer():null);
         this.proxyListener = new ProxyPlayerListener(videoInfo);
         internalPlaybackThread = new HandlerThread("GiraffePlayerInternal:Handler", Process.THREAD_PRIORITY_AUDIO);
         internalPlaybackThread.start();
@@ -496,7 +501,7 @@ public class GiraffePlayer implements MediaController.MediaPlayerControl {
         return new GiraffePlayer(context, videoInfo);
     }
 
-    private GiraffePlayer displayOn(final TextureView textureView) {
+    private GiraffePlayer bindDisplay(final TextureView textureView) {
         textureView.setSurfaceTextureListener(new TextureView.SurfaceTextureListener() {
             private SurfaceTexture surface;
 
@@ -563,13 +568,10 @@ public class GiraffePlayer implements MediaController.MediaPlayerControl {
 
     private void doCreateDisplay(ViewGroup container) {
         log("doCreateDisplay");
-        View old = container.findViewById(R.id.player_display_group);
-        if (old != null) {
-            container.removeView(old);
-        }
-        FrameLayout displayGroup = new FrameLayout(container.getContext());
-        displayGroup.setId(R.id.player_display_group);
-        displayGroup.setBackgroundColor(videoInfo.getBgColor());
+        isolateDisplayBox();
+        FrameLayout displayBox = new FrameLayout(container.getContext());
+        displayBox.setId(R.id.player_display_box);
+        displayBox.setBackgroundColor(videoInfo.getBgColor());
         FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT,
@@ -578,9 +580,44 @@ public class GiraffePlayer implements MediaController.MediaPlayerControl {
         ScalableTextureView textureView = new ScalableTextureView(container.getContext());
         textureView.setAspectRatio(videoInfo.getAspectRatio());
         textureView.setId(R.id.player_display);
-        displayGroup.addView(textureView, lp);
-        container.addView(displayGroup, 0, lp);
-        displayOn(textureView);
+        displayBox.addView(textureView, lp);
+        container.addView(displayBox, 0, lp);
+        bindDisplay(textureView);
+        displayBoxRef = new WeakReference<>(displayBox);
+    }
+
+    /**
+     * isolate display box from parent
+     * @return
+     */
+    private GiraffePlayer isolateDisplayBoxContainer() {
+        if (boxContainerRef!=null) {
+            ViewGroup box = boxContainerRef.get();
+            if (box != null) {
+                ViewParent parent = box.getParent();
+                if (parent != null) {
+                    ((ViewGroup) parent).removeView(box);
+                }
+            }
+        }
+        return this;
+    }
+
+    /**
+     * isolate display box from parent
+     * @return
+     */
+    private GiraffePlayer isolateDisplayBox() {
+        if (displayBoxRef!=null) {
+            ViewGroup box = displayBoxRef.get();
+            if (box != null) {
+                ViewParent parent = box.getParent();
+                if (parent != null) {
+                    ((ViewGroup) parent).removeView(box);
+                }
+            }
+        }
+        return this;
     }
 
     private void log(String msg) {
@@ -599,7 +636,7 @@ public class GiraffePlayer implements MediaController.MediaPlayerControl {
         //1. quit handler thread
         internalPlaybackThread.quit();
         //2. remove display group
-        removeDisplayGroupFromParent();
+        releaseDisplayBox();
         releaseMediaPlayer();
         released = true;
         //3. fire proxyListener
@@ -621,41 +658,32 @@ public class GiraffePlayer implements MediaController.MediaPlayerControl {
         handler.obtainMessage(MSG_CTRL_RELEASE, fingerprint).sendToTarget();
     }
 
-    private void removeDisplayGroupFromParent() {
+    private void releaseDisplayBox() {
         if (Looper.myLooper() == Looper.getMainLooper()) {
-            doRemoveDisplayGroupFromParent();
+            doReleaseDisplayBox();
         } else {
             uiHandler.post(new Runnable() {
                 @Override
                 public void run() {
-                    doRemoveDisplayGroupFromParent();
+                    doReleaseDisplayBox();
                 }
             });
         }
     }
 
-    private void doRemoveDisplayGroupFromParent() {
-        log("doRemoveDisplayGroupFromParent");
-        ViewGroup videoViewContainer = videoViewContainerRef.get();
-        if (videoViewContainer != null) {
-            ScalableTextureView currentDisplay = getCurrentDisplay();
-            if (currentDisplay != null) {
-                currentDisplay.setSurfaceTextureListener(null);
-            }
-            ViewGroup parent = (ViewGroup) videoViewContainer.getParent();
-            if (parent != null) {
-                View group = parent.findViewById(R.id.player_display_group);
-                if (group != null) {
-                    parent.removeView(group);
-                }
-            }
+    private void doReleaseDisplayBox() {
+        log("doReleaseDisplayBox");
+        ScalableTextureView currentDisplay = getCurrentDisplay();
+        if (currentDisplay != null) {
+            currentDisplay.setSurfaceTextureListener(null);
         }
+        isolateDisplayBox();
     }
 
     private ScalableTextureView getCurrentDisplay() {
-        ViewGroup container = videoViewContainerRef.get();
-        if (container != null) {
-            return (ScalableTextureView) container.findViewById(R.id.player_display);
+        ViewGroup box = displayBoxRef.get();
+        if (box != null) {
+            return (ScalableTextureView) box.findViewById(R.id.player_display);
         }
         return null;
     }
@@ -672,117 +700,264 @@ public class GiraffePlayer implements MediaController.MediaPlayerControl {
         return this;
     }
 
+    @TargetApi(Build.VERSION_CODES.KITKAT)
     private GiraffePlayer setDisplayModel(int targetDisplayModel) {
-        if (videoViewContainerRef == null || videoViewContainerRef.get() == null) {
+
+        //if no display box container,nothing can do
+        if (boxContainerRef == null || boxContainerRef.get() == null) {
             return this;
         }
+        final ViewGroup displayBoxContainer = boxContainerRef.get();
+        final boolean usingAnim = usingAnim();
 
-
-        final VideoView videoView = PlayerManager.getInstance().getVideoView(videoInfo);
-        if (videoView == null) {
-            return this;
-        }
-
-        final ViewGroup videoViewContainer = videoViewContainerRef.get();
-
-
-        Activity activity = (Activity) videoView.getContext();
-        ViewGroup top = (ViewGroup) activity.findViewById(android.R.id.content);
-
-        //ready for anim
-        boolean usingAnim = usingAnim();
-        FrameLayout.LayoutParams videoViewLayoutParams = new FrameLayout.LayoutParams(videoView.getLayoutParams());
-        int[] xy = new int[]{0, 0};
-        videoView.getLocationOnScreen(xy);
-        videoViewLayoutParams.leftMargin = xy[0];
-        videoViewLayoutParams.topMargin = xy[1];
 
         if (targetDisplayModel == DISPLAY_FULL_WINDOW) {
+            Activity activity = getActivity();
+            if (activity == null) {
+                return this;
+            }
 
-            UIHelper uiHelper = UIHelper.with(getActivity());
+            //orientation & action bar
+            UIHelper uiHelper = UIHelper.with(activity);
             if (videoInfo.isPortraitWhenFullScreen()) {
                 uiHelper.requestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
             }
             uiHelper.showActionBar(false).fullScreen(true);
 
-            removeVideoViewContainerFromParent();
+            //isolate display box
+            isolateDisplayBoxContainer();
 
-            //add floor
-            View view = new View(activity);
-            view.setId(R.id.player_display_floor);
-            view.setBackgroundColor(videoInfo.getBgColor());
-            top.addView(view, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-
+            //add to activity's content layout
+            ViewGroup activityBox = (ViewGroup) activity.findViewById(android.R.id.content);
             if (usingAnim) {
-                top.addView(videoViewContainer, videoViewLayoutParams);
-            } else {
-                top.addView(videoViewContainer);
-            }
+                VideoView videoView = PlayerManager.getInstance().getVideoView(videoInfo);
+                FrameLayout.LayoutParams videoViewLayoutParams = new FrameLayout.LayoutParams(videoView.getLayoutParams());
+                int[] xy = new int[]{0, 0};
+                videoView.getLocationOnScreen(xy);
+                videoViewLayoutParams.leftMargin = xy[0];
+                videoViewLayoutParams.topMargin = xy[1];
 
-            if (usingAnim) {
-                uiHandler.postDelayed(new Runnable() {
+                activityBox.addView(displayBoxContainer, videoViewLayoutParams);
+
+                final Transition transition = new ChangeBounds();
+                transition.setStartDelay(200);
+                transition.addListener(new Transition.TransitionListener() {
+
+                    private void afterTransition() {
+                        //fire listener
+                        proxyListener().onDisplayModelChange(displayModel, DISPLAY_FULL_WINDOW);
+                        displayModel = DISPLAY_FULL_WINDOW;
+                    }
+
+                    @Override
+                    public void onTransitionStart(Transition transition) {
+                    }
+
+
+
+                    @Override
+                    public void onTransitionEnd(Transition transition) {
+                        afterTransition();
+                    }
+
+                    @Override
+                    public void onTransitionCancel(Transition transition) {
+                        afterTransition();
+                    }
+
+                    @Override
+                    public void onTransitionPause(Transition transition) {
+
+                    }
+
+                    @Override
+                    public void onTransitionResume(Transition transition) {
+
+                    }
+                });
+
+                //must put the action to queue so the beginDelayedTransition can take effect
+                uiHandler.post(new Runnable() {
                     @Override
                     public void run() {
-                        TransitionManager.beginDelayedTransition(videoViewContainer);
-                        videoViewContainer.setLayoutParams(new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT));
+                        TransitionManager.beginDelayedTransition(displayBoxContainer, transition);
+                        displayBoxContainer.setLayoutParams(new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT));
                     }
-                }, 200);
+                });
+
+
+            } else {
+                activityBox.addView(displayBoxContainer);
+                //fire listener
+                proxyListener().onDisplayModelChange(displayModel, DISPLAY_FULL_WINDOW);
+                displayModel = DISPLAY_FULL_WINDOW;
+            }
+        }else if (targetDisplayModel == DISPLAY_NORMAL){
+            Activity activity = getActivity();
+            if (activity == null) {
+                return this;
+            }
+            final VideoView videoView = PlayerManager.getInstance().getVideoView(videoInfo);
+            if (videoView==null) {
+                return this;
             }
 
-
-            proxyListener().onDisplayModelChange(displayModel, DISPLAY_FULL_WINDOW);
-            displayModel = DISPLAY_FULL_WINDOW;
-        } else if (targetDisplayModel == DISPLAY_NORMAL) {
-            UIHelper uiHelper = UIHelper.with(getActivity());
+            //change orientation & action bar
+            UIHelper uiHelper = UIHelper.with(activity);
             if (videoInfo.isPortraitWhenFullScreen()) {
                 uiHelper.requestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
             }
             uiHelper.showActionBar(true).fullScreen(false);
-            if (usingAnim) {
-                TransitionManager.beginDelayedTransition(videoViewContainer);
-                videoViewContainer.setLayoutParams(videoViewLayoutParams);
-            }
-            removeFloorView(videoViewContainer);
+
+            //
 
             if (usingAnim) {
-                uiHandler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        removeVideoViewContainerFromParent();
-                        videoView.addView(videoViewContainer, 0, new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT));
+                final FrameLayout.LayoutParams videoViewLayoutParams = new FrameLayout.LayoutParams(videoView.getLayoutParams());
+                int[] xy = new int[]{0, 0};
+                videoView.getLocationOnScreen(xy);
+                videoViewLayoutParams.leftMargin = xy[0];
+                videoViewLayoutParams.topMargin = xy[1];
+
+                final Transition transition = new ChangeBounds();
+                transition.addListener(new Transition.TransitionListener() {
+                    private void afterTransition() {
+                        isolateDisplayBoxContainer();
+                        videoView.addView(displayBoxContainer, 0, new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT));
                         proxyListener().onDisplayModelChange(displayModel, DISPLAY_NORMAL);
                         displayModel = DISPLAY_NORMAL;
                     }
-                }, 200);
+
+                    @Override
+                    public void onTransitionStart(Transition transition) {
+                    }
+
+
+                    @Override
+                    public void onTransitionEnd(Transition transition) {
+                        afterTransition();
+                    }
+
+                    @Override
+                    public void onTransitionCancel(Transition transition) {
+                        afterTransition();
+                    }
+
+                    @Override
+                    public void onTransitionPause(Transition transition) {
+
+                    }
+
+                    @Override
+                    public void onTransitionResume(Transition transition) {
+
+                    }
+                });
+                uiHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        TransitionManager.beginDelayedTransition(displayBoxContainer, transition);
+                        displayBoxContainer.setLayoutParams(videoViewLayoutParams);
+                    }
+                });
             } else {
-                removeVideoViewContainerFromParent();
-                videoView.addView(videoViewContainer, 0, new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT));
+                isolateDisplayBoxContainer();
+                videoView.addView(displayBoxContainer, 0, new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT));
                 proxyListener().onDisplayModelChange(displayModel, DISPLAY_NORMAL);
                 displayModel = DISPLAY_NORMAL;
             }
-
         }
+
+//        //--------
+//
+//
+//
+//        final VideoView videoView = PlayerManager.getInstance().getVideoView(videoInfo);
+//        if (videoView == null) {
+//            return this;
+//        }
+//
+//        final ViewGroup videoViewContainer = videoViewContainerRef.get();
+//
+//
+//        Activity activity = (Activity) videoView.getContext();
+//        ViewGroup top = (ViewGroup) activity.findViewById(android.R.id.content);
+//
+//        //ready for anim
+//        boolean usingAnim = usingAnim();
+//        FrameLayout.LayoutParams videoViewLayoutParams = new FrameLayout.LayoutParams(videoView.getLayoutParams());
+//        int[] xy = new int[]{0, 0};
+//        videoView.getLocationOnScreen(xy);
+//        videoViewLayoutParams.leftMargin = xy[0];
+//        videoViewLayoutParams.topMargin = xy[1];
+//
+//        if (targetDisplayModel == DISPLAY_FULL_WINDOW) {
+//
+//            UIHelper uiHelper = UIHelper.with(getActivity());
+//            if (videoInfo.isPortraitWhenFullScreen()) {
+//                uiHelper.requestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+//            }
+//            uiHelper.showActionBar(false).fullScreen(true);
+//
+//            removeVideoViewContainerFromParent();
+//
+//            //add floor
+//            View view = new View(activity);
+//            view.setId(R.id.player_display_floor);
+//            view.setBackgroundColor(videoInfo.getBgColor());
+//            top.addView(view, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+//
+//            if (usingAnim) {
+//                top.addView(videoViewContainer, videoViewLayoutParams);
+//            } else {
+//                top.addView(videoViewContainer);
+//            }
+//
+//            if (usingAnim) {
+//                uiHandler.postDelayed(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        TransitionManager.beginDelayedTransition(videoViewContainer);
+//                        videoViewContainer.setLayoutParams(new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT));
+//                    }
+//                }, 200);
+//            }
+//
+//
+//            proxyListener().onDisplayModelChange(displayModel, DISPLAY_FULL_WINDOW);
+//            displayModel = DISPLAY_FULL_WINDOW;
+//        } else if (targetDisplayModel == DISPLAY_NORMAL) {
+//            UIHelper uiHelper = UIHelper.with(getActivity());
+//            if (videoInfo.isPortraitWhenFullScreen()) {
+//                uiHelper.requestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+//            }
+//            uiHelper.showActionBar(true).fullScreen(false);
+//            if (usingAnim) {
+//                TransitionManager.beginDelayedTransition(videoViewContainer);
+//                videoViewContainer.setLayoutParams(videoViewLayoutParams);
+//            }
+//            removeFloorView(videoViewContainer);
+//
+//            if (usingAnim) {
+//                uiHandler.postDelayed(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        removeVideoViewContainerFromParent();
+//                        videoView.addView(videoViewContainer, 0, new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT));
+//                        proxyListener().onDisplayModelChange(displayModel, DISPLAY_NORMAL);
+//                        displayModel = DISPLAY_NORMAL;
+//                    }
+//                }, 200);
+//            } else {
+//                removeVideoViewContainerFromParent();
+//                videoView.addView(videoViewContainer, 0, new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT));
+//                proxyListener().onDisplayModelChange(displayModel, DISPLAY_NORMAL);
+//                displayModel = DISPLAY_NORMAL;
+//            }
+
+//        }
         return this;
     }
 
-    private void removeVideoViewContainerFromParent() {
-        ViewGroup videoViewContainer = videoViewContainerRef.get();
-        if (videoViewContainer != null) {
-            ViewGroup parent = (ViewGroup) videoViewContainer.getParent();
-            if (parent != null) {
-                removeFloorView(videoViewContainer);
-                parent.removeView(videoViewContainer);
-            }
-        }
-    }
-
-    private void removeFloorView(ViewGroup videoViewContainer) {
-        ViewGroup parent = (ViewGroup) videoViewContainer.getParent();
-        View floor = parent.findViewById(R.id.player_display_floor);
-        if (floor != null) {
-            parent.removeView(floor);
-        }
-    }
 
     private boolean usingAnim() {
         return videoInfo.isFullScreenAnimation() && !videoInfo.isPortraitWhenFullScreen() && Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT;
@@ -795,11 +970,11 @@ public class GiraffePlayer implements MediaController.MediaPlayerControl {
 
 
     private Activity getActivity() {
-        ViewGroup viewGroup = videoViewContainerRef.get();
-        if (viewGroup == null) {
-            return null;
+        VideoView videoView = PlayerManager.getInstance().getVideoView(videoInfo);
+        if (videoView != null) {
+            return (Activity) videoView.getContext();
         }
-        return (Activity) viewGroup.getContext();
+        return null;
     }
 
     public GiraffePlayer onConfigurationChanged(Configuration newConfig) {

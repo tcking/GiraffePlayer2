@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <item name="player_display" type="id">player_display</item>
-    <item name="player_display_floor" type="id">player_display_floor</item>
-    <item name="player_display_group" type="id">player_display_group</item>
+    <item name="player_display_box" type="id">player_display_group</item>
 </resources>
