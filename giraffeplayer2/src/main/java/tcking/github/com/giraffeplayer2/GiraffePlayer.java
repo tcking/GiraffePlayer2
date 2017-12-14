@@ -585,7 +585,11 @@ public class GiraffePlayer implements MediaController.MediaPlayerControl {
         ScalableTextureView textureView = new ScalableTextureView(container.getContext());
         textureView.setAspectRatio(videoInfo.getAspectRatio());
         textureView.setId(R.id.player_display);
-        displayBox.addView(textureView, lp);
+        displayBox.addView(textureView, new FrameLayout.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                Gravity.CENTER
+        ));
         container.addView(displayBox, 0, lp);
         bindDisplay(textureView);
         displayBoxRef = new WeakReference<>(displayBox);
