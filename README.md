@@ -29,9 +29,9 @@ this project is total refactor of [GiraffePlayer](https://github.com/tcking/Gira
     }
 
     //step 2: add dependency
-    compile 'com.github.tcking:giraffeplayer2:0.1.11'
+    compile 'com.github.tcking:giraffeplayer2:0.1.12'
 
-    // if need more decoder using: compile 'com.github.tcking:giraffeplayer2:0.1.11-full'
+    // if need more decoder using: compile 'com.github.tcking:giraffeplayer2:0.1.12-full'
 
 
  ```

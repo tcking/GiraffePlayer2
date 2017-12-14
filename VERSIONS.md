@@ -1,6 +1,7 @@
-# 0.1.12 (to release)
+# 0.1.12
 1. fix [#21](https://github.com/tcking/GiraffePlayer2/issues/21)
-2. fxi [#19](https://github.com/tcking/GiraffePlayer2/issues/19)
+2. fix [#19](https://github.com/tcking/GiraffePlayer2/issues/19)
+2. fix [#16](https://github.com/tcking/GiraffePlayer2/issues/16)
 
 
 # 0.1.11
