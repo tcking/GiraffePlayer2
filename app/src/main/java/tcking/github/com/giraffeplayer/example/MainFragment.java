@@ -52,6 +52,7 @@ public class MainFragment extends Fragment {
 //        testUrl = "https://tungsten.aaplimg.com/VOD/bipbop_adv_example_v2/master.m3u8"; //test live stream;
 //        testUrl = "http://playertest.longtailvideo.com/adaptive/oceans_aes/oceans_aes.m3u8"; //test live stream;
         testUrl = "http://live.hkstv.hk.lxdns.com/live/hks/playlist.m3u8"; //test live stream;
+        testUrl = "file:///sdcard/dcim/camera/20171214_145250.mp4"; //test local file;
 
         final VideoView videoView = $.id(R.id.video_view).view();
         videoView.setVideoPath(testUrl);
@@ -110,6 +111,7 @@ public class MainFragment extends Fragment {
 //                            .addOption(Option.create(IjkMediaPlayer.OPT_CATEGORY_FORMAT, "timeout", 30000000L))
 //                            .addOption(Option.create(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "mediacodec", 1L))
                             .addOption(Option.create(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "infbuf", 1L))
+                            .addOption(Option.create(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "mediacodec-auto-rotate", 1L))
                             .addOption(Option.create(IjkMediaPlayer.OPT_CATEGORY_FORMAT, "multiple_requests", 1L))
 //                            .addOption(Option.create(IjkMediaPlayer.OPT_CATEGORY_FORMAT, "headers", "Connection: keep-alive\r\n"))
 //                            .addOption(Option.create(IjkMediaPlayer.OPT_CATEGORY_FORMAT, "reconnect", 1L))

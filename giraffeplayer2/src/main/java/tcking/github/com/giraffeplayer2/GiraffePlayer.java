@@ -445,6 +445,12 @@ public class GiraffePlayer implements MediaController.MediaPlayerControl {
             //https://developer.android.com/reference/android/media/MediaPlayer.OnInfoListener.html
             @Override
             public boolean onInfo(IMediaPlayer iMediaPlayer, int what, int extra) {
+                if (what == IMediaPlayer.MEDIA_INFO_VIDEO_ROTATION_CHANGED) {
+                    ScalableTextureView currentDisplay = getCurrentDisplay();
+                    if (currentDisplay != null) {
+                        currentDisplay.setRotation(extra);
+                    }
+                }
                 return proxyListener().onInfo(GiraffePlayer.this, what, extra);
             }
         });
