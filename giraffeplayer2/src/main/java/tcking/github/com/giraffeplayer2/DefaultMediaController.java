@@ -407,7 +407,6 @@ public class DefaultMediaController extends BaseMediaController {
          */
         @Override
         public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-
             //1. if not the active player,ignore
             boolean currentPlayer = videoView.isCurrentActivePlayer();
             if (!currentPlayer) {
@@ -429,7 +428,7 @@ public class DefaultMediaController extends BaseMediaController {
                 }
             } else {
                 //if player in list controllerView,ignore
-                if (videoView.inListView()) {
+                if (displayModel==GiraffePlayer.DISPLAY_NORMAL && videoView.inListView()) {
                     return true;
                 }
                 float percent = deltaY / videoView.getHeight();
