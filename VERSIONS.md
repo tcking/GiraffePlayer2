@@ -1,3 +1,8 @@
+# 0.1.12 (to release)
+1. fix [#21](https://github.com/tcking/GiraffePlayer2/issues/21)
+2. fxi [#19](https://github.com/tcking/GiraffePlayer2/issues/19)
+
+
 # 0.1.11
 1. support float window: `player.setDisplayModel(GiraffePlayer.DISPLAY_FLOAT)`
 
