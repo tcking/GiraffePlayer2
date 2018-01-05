@@ -125,6 +125,9 @@ public class GiraffePlayer implements MediaController.MediaPlayerControl {
         log("new GiraffePlayer");
         VideoView videoView = PlayerManager.getInstance().getVideoView(videoInfo);
         boxContainerRef = new WeakReference<>(videoView!=null?videoView.getContainer():null);
+        if (boxContainerRef.get() != null) {
+            boxContainerRef.get().setBackgroundColor(videoInfo.getBgColor());
+        }
         this.proxyListener = new ProxyPlayerListener(videoInfo);
         internalPlaybackThread = new HandlerThread("GiraffePlayerInternal:Handler", Process.THREAD_PRIORITY_AUDIO);
         internalPlaybackThread.start();
