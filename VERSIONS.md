@@ -1,3 +1,8 @@
+# 0.1.13
+1. fix [#28](https://github.com/tcking/GiraffePlayer2/issues/28)
+1. fix [#32](https://github.com/tcking/GiraffePlayer2/issues/32)
+1. keep screen on while playing
+
 # 0.1.12
 1. fix [#21](https://github.com/tcking/GiraffePlayer2/issues/21)
 2. fix [#19](https://github.com/tcking/GiraffePlayer2/issues/19)

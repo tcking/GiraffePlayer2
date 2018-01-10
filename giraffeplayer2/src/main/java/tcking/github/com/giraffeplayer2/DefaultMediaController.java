@@ -361,6 +361,16 @@ public class DefaultMediaController extends BaseMediaController {
     @Override
     public void onRelease(GiraffePlayer giraffePlayer) {
         handler.removeCallbacksAndMessages(null);
+        //1.set the cover view visible
+        $.id(R.id.app_video_cover).visible();
+        //2.set current view as cover
+        if (giraffePlayer.getCurrentState()!=GiraffePlayer.STATE_ERROR) {
+            ScalableTextureView currentDisplay = giraffePlayer.getCurrentDisplay();
+            if (currentDisplay!=null) {
+                $.id(R.id.app_video_cover).imageView().setImageBitmap(currentDisplay.getBitmap());
+            }
+        }
+
     }
 
     @Override
@@ -567,8 +577,21 @@ public class DefaultMediaController extends BaseMediaController {
         return true;
     }
 
+    @Override
+    public void onCurrentStateChange(int oldState, int newState) {
+        if (context instanceof  Activity) {
+            if (newState == GiraffePlayer.STATE_PLAYING) {
+                //set SCREEN_ON
+                ((Activity) context).getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+            } else {
+                ((Activity) context).getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+            }
+        }
+    }
+
     private void statusChange(int status) {
         this.status = status;
+
         switch (status) {
             case STATUS_LOADING:
                 $.id(R.id.app_video_loading).visible();
@@ -645,6 +668,7 @@ public class DefaultMediaController extends BaseMediaController {
             $.id(R.id.app_video_cover).gone();
         }
     }
+
 
     @Override
     public void onTimedText(GiraffePlayer giraffePlayer, IjkTimedText text) {

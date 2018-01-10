@@ -48,7 +48,7 @@ public class MainFragment extends Fragment {
         $ = new ViewQuery(view);
 
         String testUrl = "http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4";
-//        testUrl = "file:///sdcard/tmp/o.mp4" //test local file;
+//        testUrl = "file:///sdcard/tmp/o.mp4"; //test local file;
 //        testUrl = "https://tungsten.aaplimg.com/VOD/bipbop_adv_example_v2/master.m3u8"; //test live stream;
 //        testUrl = "http://playertest.longtailvideo.com/adaptive/oceans_aes/oceans_aes.m3u8"; //test live stream;
         testUrl = "http://live.hkstv.hk.lxdns.com/live/hks/playlist.m3u8"; //test live stream;

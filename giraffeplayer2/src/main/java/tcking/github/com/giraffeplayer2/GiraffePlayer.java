@@ -75,6 +75,7 @@ public class GiraffePlayer implements MediaController.MediaPlayerControl {
     public static final int STATE_PLAYING = 3;
     public static final int STATE_PAUSED = 4;
     public static final int STATE_PLAYBACK_COMPLETED = 5;
+    public static final int STATE_RELEASE = 6;
     private final HandlerThread internalPlaybackThread;
 
     private int currentBufferPercentage = 0;
@@ -139,6 +140,7 @@ public class GiraffePlayer implements MediaController.MediaPlayerControl {
                 if (msg.what == MSG_CTRL_RELEASE) {
                     if (!released) {
                         handler.removeCallbacks(null);
+                        currentState(STATE_RELEASE);
                         doRelease(((String) msg.obj));
                     }
                     return true;
@@ -169,7 +171,7 @@ public class GiraffePlayer implements MediaController.MediaPlayerControl {
                         break;
                     case MSG_CTRL_PAUSE:
                         mediaPlayer.pause();
-                        currentState = STATE_PAUSED;
+                        currentState(STATE_PAUSED);
                         break;
                     case MSG_CTRL_SEEK:
                         if (!canSeekForward) {
@@ -460,7 +462,7 @@ public class GiraffePlayer implements MediaController.MediaPlayerControl {
         mediaPlayer.setOnCompletionListener(new IMediaPlayer.OnCompletionListener() {
             @Override
             public void onCompletion(IMediaPlayer iMediaPlayer) {
-                currentState = STATE_PLAYBACK_COMPLETED;
+                currentState(STATE_PLAYBACK_COMPLETED);
                 proxyListener().onCompletion(GiraffePlayer.this);
             }
         });
@@ -647,8 +649,6 @@ public class GiraffePlayer implements MediaController.MediaPlayerControl {
         releaseDisplayBox();
         releaseMediaPlayer();
         released = true;
-        //3. fire proxyListener
-        proxyListener().onRelease(this);
     }
 
     private void releaseMediaPlayer() {
@@ -663,6 +663,7 @@ public class GiraffePlayer implements MediaController.MediaPlayerControl {
         log("try release");
         String fingerprint = videoInfo.getFingerprint();
         PlayerManager.getInstance().removePlayer(fingerprint);
+        proxyListener().onRelease(this);
         handler.obtainMessage(MSG_CTRL_RELEASE, fingerprint).sendToTarget();
     }
 
@@ -688,7 +689,7 @@ public class GiraffePlayer implements MediaController.MediaPlayerControl {
         isolateDisplayBox();
     }
 
-    private ScalableTextureView getCurrentDisplay() {
+    public ScalableTextureView getCurrentDisplay() {
         if (displayBoxRef != null) {
             ViewGroup box = displayBoxRef.get();
             if (box != null) {
