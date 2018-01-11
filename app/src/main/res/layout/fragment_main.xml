@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
@@ -18,115 +19,122 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 
-    <LinearLayout
-        android:orientation="vertical"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <Button
-            android:id="@+id/btn_play"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="play/pause in embed player"
-            android:textAllCaps="false"/>
-
+        android:layout_height="match_parent">
 
         <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
-            <Button
-                android:id="@+id/btn_full"
-                android:textAllCaps="false"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="toggle full screen"/>
-
-            <CheckBox
-                android:text="portrait when fullScreen"
-                android:id="@+id/cb_pwf"
-                android:checked="true"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
-        </LinearLayout>
-
-        <Button
-            android:id="@+id/btn_play_float"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="play in float window"
-            android:textAllCaps="false"/>
-
-        <LinearLayout
-            android:gravity="center_vertical"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
             <Button
-                android:id="@+id/btn_play_in_standalone"
-                android:textAllCaps="false"
+                android:id="@+id/btn_play"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="play in standalone player"/>
+                android:text="play/pause in embed player"
+                android:textAllCaps="false"/>
 
-            <TextView
-                android:visibility="gone"
-                android:text="aspect ratio："
+
+            <LinearLayout
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
 
-            <RadioGroup
-                android:id="@+id/rg_ra"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-                <RadioButton
-                    android:id="@+id/rb_fill_parent"
-                    android:text="fill parent"
+                <Button
+                    android:id="@+id/btn_full"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
+                    android:layout_height="wrap_content"
+                    android:text="toggle full screen"
+                    android:textAllCaps="false"/>
 
-                <RadioButton
-                    android:id="@+id/rb_fit_parent"
-                    android:text="fit parent"
+                <CheckBox
+                    android:id="@+id/cb_pwf"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:checked="true"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
+                    android:text="portrait when fullScreen"/>
+            </LinearLayout>
 
-                <RadioButton
-                    android:id="@+id/rb_wrap_content"
-                    android:text="wrap content"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
+            <Button
+                android:id="@+id/btn_play_float"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="play in float window"
+                android:textAllCaps="false"/>
 
-                <RadioButton
-                    android:id="@+id/rb_match_parent"
-                    android:text="match parent"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical">
 
-                <RadioButton
-                    android:id="@+id/rb_16_9"
-                    android:text="16:9"
+                <Button
+                    android:id="@+id/btn_play_in_standalone"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
+                    android:layout_height="wrap_content"
+                    android:text="play in standalone player"
+                    android:textAllCaps="false"/>
 
-                <RadioButton
-                    android:id="@+id/rb_4_3"
-                    android:text="4:3"
+                <TextView
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
-            </RadioGroup>
+                    android:layout_height="wrap_content"
+                    android:text="aspect ratio："
+                    android:visibility="gone"/>
+
+                <RadioGroup
+                    android:id="@+id/rg_ra"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <RadioButton
+                        android:id="@+id/rb_fill_parent"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="fill parent"/>
+
+                    <RadioButton
+                        android:id="@+id/rb_fit_parent"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:checked="true"
+                        android:text="fit parent"/>
+
+                    <RadioButton
+                        android:id="@+id/rb_wrap_content"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="wrap content"/>
+
+                    <RadioButton
+                        android:id="@+id/rb_match_parent"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="match parent"/>
+
+                    <RadioButton
+                        android:id="@+id/rb_16_9"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="16:9"/>
+
+                    <RadioButton
+                        android:id="@+id/rb_4_3"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="4:3"/>
+                </RadioGroup>
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/btn_list"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="video in list example"
+                android:textAllCaps="false"/>
+
         </LinearLayout>
 
+    </ScrollView>
 
 
-
-
-    </LinearLayout>
-
-    <Button
-        android:id="@+id/btn_list"
-        android:textAllCaps="false"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="video in list example"/>
 </LinearLayout>

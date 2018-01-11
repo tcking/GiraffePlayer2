@@ -14,6 +14,7 @@ import android.view.ViewParent;
 import android.widget.AbsListView;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.ScrollView;
 
 import com.github.tcking.giraffeplayer2.R;
 
@@ -125,7 +126,7 @@ public class VideoView extends FrameLayout{
      */
     public boolean inListView() {
         for (ViewParent vp = getParent(); vp != null; vp = vp.getParent()) {
-            if (vp instanceof AbsListView || vp instanceof ScrollingView) {
+            if (vp instanceof AbsListView || vp instanceof ScrollingView || vp instanceof ScrollView) {
                 return true;
             }
         }
