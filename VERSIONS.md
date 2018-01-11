@@ -1,3 +1,6 @@
+# 0.1.14 (to release)
+1.  fix [#35](https://github.com/tcking/GiraffePlayer2/issues/35)
+
 # 0.1.13
 1. fix [#28](https://github.com/tcking/GiraffePlayer2/issues/28)
 1. fix [#32](https://github.com/tcking/GiraffePlayer2/issues/32)
