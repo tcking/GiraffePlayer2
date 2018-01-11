@@ -61,11 +61,11 @@ public class UIHelper {
         if (fullScreen) {
             attrs.flags |= WindowManager.LayoutParams.FLAG_FULLSCREEN;
             activity.getWindow().setAttributes(attrs);
-            activity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
+//            activity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
         } else {
             attrs.flags &= (~WindowManager.LayoutParams.FLAG_FULLSCREEN);
             activity.getWindow().setAttributes(attrs);
-            activity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
+//            activity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
         }
         return this;
     }
