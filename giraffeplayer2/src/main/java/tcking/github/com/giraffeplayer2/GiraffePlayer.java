@@ -919,10 +919,16 @@ public class GiraffePlayer implements MediaController.MediaPlayerControl {
         ViewGroup floatBox = (ViewGroup) LayoutInflater.from(topActivity.getApplication()).inflate(R.layout.giraffe_float_box, null);
         floatBox.setBackgroundColor(videoInfo.getBgColor());
 
-        FrameLayout.LayoutParams floatBoxParams = new FrameLayout.LayoutParams(400,300);
-        floatBoxParams.gravity = Gravity.BOTTOM | Gravity.END;
-        floatBoxParams.bottomMargin = 20;
-        floatBoxParams.rightMargin = 20;
+        FrameLayout.LayoutParams floatBoxParams = new FrameLayout.LayoutParams(VideoInfo.floatView_width,VideoInfo.floatView_height);
+        if (VideoInfo.floatView_x == Integer.MAX_VALUE || VideoInfo.floatView_y == Integer.MAX_VALUE) {
+            floatBoxParams.gravity = Gravity.BOTTOM | Gravity.END;
+            floatBoxParams.bottomMargin = 20;
+            floatBoxParams.rightMargin = 20;
+        } else {
+            floatBoxParams.gravity = Gravity.TOP | Gravity.START;
+            floatBoxParams.leftMargin = (int) VideoInfo.floatView_x;
+            floatBoxParams.topMargin = (int) VideoInfo.floatView_y;
+        }
         topActivityBox.addView(floatBox,floatBoxParams);
 
         floatBox.setOnTouchListener(new View.OnTouchListener() {
@@ -948,13 +954,13 @@ public class GiraffePlayer implements MediaController.MediaPlayerControl {
                     case MotionEvent.ACTION_MOVE:
                         float y = oy + event.getRawY() - ry;
                         if (y > 0) {
-                            y = 0;
+//                            y = 0;
                         }
                         v.setTranslationY(y);
 
                         float x = ox + event.getRawX() - rx;
                         if (x > 0) {
-                            x = 0;
+//                            x = 0;
                         }
                         v.setTranslationX(x);
                         break;
@@ -969,6 +975,11 @@ public class GiraffePlayer implements MediaController.MediaPlayerControl {
         Activity activity = getActivity();
         if (activity != null) {
             View floatBox = activity.findViewById(R.id.player_display_float_box);
+            if (floatBox != null) {
+                ViewGroup.MarginLayoutParams layoutParams = (ViewGroup.MarginLayoutParams) floatBox.getLayoutParams();
+                VideoInfo.floatView_x = floatBox.getX();
+                VideoInfo.floatView_y = floatBox.getY();
+            }
             removeFromParent(floatBox);
         }
     }

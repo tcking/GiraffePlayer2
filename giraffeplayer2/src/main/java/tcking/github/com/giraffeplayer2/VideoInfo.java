@@ -22,6 +22,12 @@ public class VideoInfo implements Parcelable {
     public static final String PLAYER_IMPL_IJK = "ijk";
     public static final String PLAYER_IMPL_SYSTEM = "system";
 
+    public static int floatView_width = 400;
+    public static int floatView_height = 300;
+
+    public static float floatView_x = Integer.MAX_VALUE; //max_value means unset
+    public static float floatView_y = Integer.MAX_VALUE;
+
     private HashSet<Option> options = new HashSet<>();
     private boolean showTopBar = false;
     private Uri uri;
