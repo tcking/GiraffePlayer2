@@ -1,5 +1,6 @@
 package tcking.github.com.giraffeplayer2;
 
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
@@ -103,7 +104,7 @@ public class GiraffePlayer implements MediaController.MediaPlayerControl {
     private volatile int startPosition = -1;
     private boolean mute = false;
     private WeakReference<? extends ViewGroup> displayBoxRef;
-    private int ignoreOrientation=-100;
+    private int ignoreOrientation = -100;
 
     public int getDisplayModel() {
         return displayModel;
@@ -125,7 +126,7 @@ public class GiraffePlayer implements MediaController.MediaPlayerControl {
         this.videoInfo = videoInfo;
         log("new GiraffePlayer");
         VideoView videoView = PlayerManager.getInstance().getVideoView(videoInfo);
-        boxContainerRef = new WeakReference<>(videoView!=null?videoView.getContainer():null);
+        boxContainerRef = new WeakReference<>(videoView != null ? videoView.getContainer() : null);
         if (boxContainerRef.get() != null) {
             boxContainerRef.get().setBackgroundColor(videoInfo.getBgColor());
         }
@@ -211,7 +212,7 @@ public class GiraffePlayer implements MediaController.MediaPlayerControl {
                         break;
                     case MSG_CTRL_SET_VOLUME:
                         Map<String, Float> pram = (Map<String, Float>) msg.obj;
-                        mediaPlayer.setVolume(pram.get("left"),pram.get("right"));
+                        mediaPlayer.setVolume(pram.get("left"), pram.get("right"));
                         break;
 
                     default:
@@ -608,10 +609,11 @@ public class GiraffePlayer implements MediaController.MediaPlayerControl {
 
     /**
      * isolate display box from parent
+     *
      * @return
      */
     private GiraffePlayer isolateDisplayBoxContainer() {
-        if (boxContainerRef!=null) {
+        if (boxContainerRef != null) {
             ViewGroup box = boxContainerRef.get();
             removeFromParent(box);
         }
@@ -620,10 +622,11 @@ public class GiraffePlayer implements MediaController.MediaPlayerControl {
 
     /**
      * isolate display box from parent
+     *
      * @return
      */
     private GiraffePlayer isolateDisplayBox() {
-        if (displayBoxRef!=null) {
+        if (displayBoxRef != null) {
             ViewGroup box = displayBoxRef.get();
             removeFromParent(box);
         }
@@ -712,7 +715,7 @@ public class GiraffePlayer implements MediaController.MediaPlayerControl {
     }
 
     @TargetApi(Build.VERSION_CODES.KITKAT)
-    public GiraffePlayer setDisplayModel(int targetDisplayModel){
+    public GiraffePlayer setDisplayModel(int targetDisplayModel) {
         if (targetDisplayModel == displayModel) {
             return this;
         }
@@ -723,7 +726,6 @@ public class GiraffePlayer implements MediaController.MediaPlayerControl {
         }
         lastDisplayModel = displayModel;
 
-        removeFloatContainer();
         final ViewGroup displayBoxContainer = boxContainerRef.get();
         final boolean usingAnim = usingAnim();
 
@@ -740,151 +742,56 @@ public class GiraffePlayer implements MediaController.MediaPlayerControl {
                 uiHelper.requestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
                 ignoreOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE;
             }
-            uiHelper.showActionBar(false).fullScreen(true);
-
-            //isolate display box
-            isolateDisplayBoxContainer();
-
-            //add to activity's content layout
             ViewGroup activityBox = (ViewGroup) activity.findViewById(android.R.id.content);
-            if (usingAnim) {
-                VideoView videoView = PlayerManager.getInstance().getVideoView(videoInfo);
-                FrameLayout.LayoutParams videoViewLayoutParams = new FrameLayout.LayoutParams(videoView.getLayoutParams());
-                int[] xy = new int[]{0, 0};
-                videoView.getLocationOnScreen(xy);
-                videoViewLayoutParams.leftMargin = xy[0];
-                videoViewLayoutParams.topMargin = xy[1];
 
-                activityBox.addView(displayBoxContainer, videoViewLayoutParams);
+            animateIntoContainerAndThen(activityBox, new VideoViewAnimationListener() {
 
-                final Transition transition = new ChangeBounds();
-                transition.setStartDelay(200);
-                transition.addListener(new Transition.TransitionListener() {
+                @Override
+                public void onStart(ViewGroup src, ViewGroup target) {
+                    removeFloatContainer();
+                }
 
-                    private void afterTransition() {
-                        //fire listener
-                        proxyListener().onDisplayModelChange(displayModel, DISPLAY_FULL_WINDOW);
-                        displayModel = DISPLAY_FULL_WINDOW;
-                    }
+                @Override
+                public void onEnd(ViewGroup src, ViewGroup target) {
+                    proxyListener().onDisplayModelChange(displayModel, DISPLAY_FULL_WINDOW);
+                    displayModel = DISPLAY_FULL_WINDOW;
+                }
 
-                    @Override
-                    public void onTransitionStart(Transition transition) {
-                    }
+            });
 
 
-
-                    @Override
-                    public void onTransitionEnd(Transition transition) {
-                        afterTransition();
-                    }
-
-                    @Override
-                    public void onTransitionCancel(Transition transition) {
-                        afterTransition();
-                    }
-
-                    @Override
-                    public void onTransitionPause(Transition transition) {
-
-                    }
-
-                    @Override
-                    public void onTransitionResume(Transition transition) {
-
-                    }
-                });
-
-                //must put the action to queue so the beginDelayedTransition can take effect
-                uiHandler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        TransitionManager.beginDelayedTransition(displayBoxContainer, transition);
-                        displayBoxContainer.setLayoutParams(new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT));
-                    }
-                });
-
-
-            } else {
-                activityBox.addView(displayBoxContainer);
-                //fire listener
-                proxyListener().onDisplayModelChange(displayModel, DISPLAY_FULL_WINDOW);
-                displayModel = DISPLAY_FULL_WINDOW;
-            }
-        }else if (targetDisplayModel == DISPLAY_NORMAL){
-            Activity activity = getActivity();
+        } else if (targetDisplayModel == DISPLAY_NORMAL) {
+            final Activity activity = getActivity();
             if (activity == null) {
                 return this;
             }
             final VideoView videoView = PlayerManager.getInstance().getVideoView(videoInfo);
-            if (videoView==null) {
+            if (videoView == null) {
                 return this;
             }
-
             //change orientation & action bar
             UIHelper uiHelper = UIHelper.with(activity);
             if (videoInfo.isPortraitWhenFullScreen()) {
                 uiHelper.requestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
                 ignoreOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
-
             }
             uiHelper.showActionBar(true).fullScreen(false);
 
-            //
 
-            if (usingAnim) {
-                final FrameLayout.LayoutParams videoViewLayoutParams = new FrameLayout.LayoutParams(videoView.getLayoutParams());
-                int[] xy = new int[]{0, 0};
-                videoView.getLocationOnScreen(xy);
-                videoViewLayoutParams.leftMargin = xy[0];
-                videoViewLayoutParams.topMargin = xy[1];
+            animateIntoContainerAndThen(videoView, new VideoViewAnimationListener() {
 
-                final Transition transition = new ChangeBounds();
-                transition.addListener(new Transition.TransitionListener() {
-                    private void afterTransition() {
-                        isolateDisplayBoxContainer();
-                        videoView.addView(displayBoxContainer, 0, new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT));
-                        proxyListener().onDisplayModelChange(displayModel, DISPLAY_NORMAL);
-                        displayModel = DISPLAY_NORMAL;
-                    }
+                @Override
+                public void onStart(ViewGroup src, ViewGroup target) {
+                    removeFloatContainer();
+                }
 
-                    @Override
-                    public void onTransitionStart(Transition transition) {
-                    }
+                @Override
+                public void onEnd(ViewGroup src, ViewGroup target) {
+                    proxyListener().onDisplayModelChange(displayModel, DISPLAY_NORMAL);
+                    displayModel = DISPLAY_NORMAL;
+                }
 
-
-                    @Override
-                    public void onTransitionEnd(Transition transition) {
-                        afterTransition();
-                    }
-
-                    @Override
-                    public void onTransitionCancel(Transition transition) {
-                        afterTransition();
-                    }
-
-                    @Override
-                    public void onTransitionPause(Transition transition) {
-
-                    }
-
-                    @Override
-                    public void onTransitionResume(Transition transition) {
-
-                    }
-                });
-                uiHandler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        TransitionManager.beginDelayedTransition(displayBoxContainer, transition);
-                        displayBoxContainer.setLayoutParams(videoViewLayoutParams);
-                    }
-                });
-            } else {
-                isolateDisplayBoxContainer();
-                videoView.addView(displayBoxContainer, 0, new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT));
-                proxyListener().onDisplayModelChange(displayModel, DISPLAY_NORMAL);
-                displayModel = DISPLAY_NORMAL;
-            }
+            });
         } else if (targetDisplayModel == DISPLAY_FLOAT) {
             Activity activity = getActivity();
             if (activity == null) {
@@ -899,18 +806,135 @@ public class GiraffePlayer implements MediaController.MediaPlayerControl {
             }
             uiHelper.showActionBar(true).fullScreen(false);
 
-            ViewGroup floatBox=createFloatBox();
-            isolateDisplayBoxContainer();
-            floatBox.addView(displayBoxContainer, 0, new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT));
-
-            proxyListener().onDisplayModelChange(displayModel, DISPLAY_FLOAT);
-            displayModel = DISPLAY_FLOAT;
-
+            final ViewGroup floatBox = createFloatBox();
+            floatBox.setVisibility(View.INVISIBLE);
+            animateIntoContainerAndThen(floatBox, new VideoViewAnimationListener() {
+                @Override
+                void onEnd(ViewGroup src, ViewGroup target) {
+                    floatBox.setVisibility(View.VISIBLE);
+                    proxyListener().onDisplayModelChange(displayModel, DISPLAY_FLOAT);
+                    displayModel = DISPLAY_FLOAT;
+                }
+            });
 
         }
         return this;
     }
 
+    class VideoViewAnimationListener {
+        void onStart(ViewGroup src, ViewGroup target) {
+        }
+
+        void onEnd(ViewGroup src, ViewGroup target) {
+        }
+    }
+
+    @SuppressLint("NewApi")
+    private void animateIntoContainerAndThen(final ViewGroup container, final VideoViewAnimationListener listener) {
+        final ViewGroup displayBoxContainer = boxContainerRef.get();
+
+        boolean usingAnim = usingAnim();
+
+        if (!usingAnim) {//no animation
+            listener.onStart(displayBoxContainer, container);
+            if (displayBoxContainer.getParent() != container) {
+                isolateDisplayBoxContainer();
+                container.addView(displayBoxContainer, 0, new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT));
+            }
+            listener.onEnd(displayBoxContainer, container);
+            return;
+        }
+
+        final Activity activity = getActivity();
+        if (activity == null) {
+            return;
+        }
+
+        //这里用post确保在调用此函数之前的ui操作都已经ok
+        uiHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                ViewGroup activityBox = (ViewGroup) activity.findViewById(android.R.id.content);
+
+
+                int[] targetXY = new int[]{0, 0};
+                int[] activityBoxXY = new int[]{0, 0};
+
+                //set src LayoutParams
+                activityBox.getLocationInWindow(activityBoxXY);
+
+
+                if (displayBoxContainer.getParent() != activityBox) {
+                    int[] srcXY = new int[]{0, 0};
+                    FrameLayout.LayoutParams srcLayoutParams = new FrameLayout.LayoutParams(displayBoxContainer.getWidth(), displayBoxContainer.getHeight());
+                    displayBoxContainer.getLocationInWindow(srcXY);
+                    srcLayoutParams.leftMargin = srcXY[0] - activityBoxXY[0];
+                    srcLayoutParams.topMargin = srcXY[1] - activityBoxXY[1];
+                    isolateDisplayBoxContainer();
+                    activityBox.addView(displayBoxContainer, srcLayoutParams);
+                }
+
+                //2.set target LayoutParams
+                final FrameLayout.LayoutParams targetLayoutParams = new FrameLayout.LayoutParams(container.getLayoutParams());
+                container.getLocationInWindow(targetXY);
+                targetLayoutParams.leftMargin = targetXY[0] - activityBoxXY[0];
+                targetLayoutParams.topMargin = targetXY[1] - activityBoxXY[1];
+
+
+                final Transition transition = new ChangeBounds();
+                transition.setStartDelay(200);
+                transition.addListener(new Transition.TransitionListener() {
+
+                    private void afterTransition() {
+                        //fire listener
+                        if (displayBoxContainer.getParent() != container) {
+                            isolateDisplayBoxContainer();
+                            container.addView(displayBoxContainer,new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT));
+                        }
+                        listener.onEnd(displayBoxContainer, container);
+                    }
+
+                    @Override
+                    public void onTransitionStart(Transition transition) {
+
+                    }
+
+
+                    @Override
+                    public void onTransitionEnd(Transition transition) {
+                        afterTransition();
+                    }
+
+                    @Override
+                    public void onTransitionCancel(Transition transition) {
+                        afterTransition();
+                    }
+
+                    @Override
+                    public void onTransitionPause(Transition transition) {
+
+                    }
+
+                    @Override
+                    public void onTransitionResume(Transition transition) {
+
+                    }
+                });
+
+//                    must put the action to queue so the beginDelayedTransition can take effect
+                uiHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        listener.onStart(displayBoxContainer, container);
+                        TransitionManager.beginDelayedTransition(displayBoxContainer, transition);
+                        displayBoxContainer.setLayoutParams(targetLayoutParams);
+                    }
+                });
+            }
+        });
+
+
+    }
 
 
     private ViewGroup createFloatBox() {
@@ -919,7 +943,7 @@ public class GiraffePlayer implements MediaController.MediaPlayerControl {
         ViewGroup floatBox = (ViewGroup) LayoutInflater.from(topActivity.getApplication()).inflate(R.layout.giraffe_float_box, null);
         floatBox.setBackgroundColor(videoInfo.getBgColor());
 
-        FrameLayout.LayoutParams floatBoxParams = new FrameLayout.LayoutParams(VideoInfo.floatView_width,VideoInfo.floatView_height);
+        FrameLayout.LayoutParams floatBoxParams = new FrameLayout.LayoutParams(VideoInfo.floatView_width, VideoInfo.floatView_height);
         if (VideoInfo.floatView_x == Integer.MAX_VALUE || VideoInfo.floatView_y == Integer.MAX_VALUE) {
             floatBoxParams.gravity = Gravity.BOTTOM | Gravity.END;
             floatBoxParams.bottomMargin = 20;
@@ -929,7 +953,7 @@ public class GiraffePlayer implements MediaController.MediaPlayerControl {
             floatBoxParams.leftMargin = (int) VideoInfo.floatView_x;
             floatBoxParams.topMargin = (int) VideoInfo.floatView_y;
         }
-        topActivityBox.addView(floatBox,floatBoxParams);
+        topActivityBox.addView(floatBox, floatBoxParams);
 
         floatBox.setOnTouchListener(new View.OnTouchListener() {
             float ry;
@@ -976,7 +1000,6 @@ public class GiraffePlayer implements MediaController.MediaPlayerControl {
         if (activity != null) {
             View floatBox = activity.findViewById(R.id.player_display_float_box);
             if (floatBox != null) {
-                ViewGroup.MarginLayoutParams layoutParams = (ViewGroup.MarginLayoutParams) floatBox.getLayoutParams();
                 VideoInfo.floatView_x = floatBox.getX();
                 VideoInfo.floatView_y = floatBox.getY();
             }
@@ -1090,7 +1113,7 @@ public class GiraffePlayer implements MediaController.MediaPlayerControl {
     public void aspectRatio(int aspectRatio) {
         log("aspectRatio:" + aspectRatio);
         videoInfo.setAspectRatio(aspectRatio);
-        ScalableDisplay display=getCurrentDisplay();
+        ScalableDisplay display = getCurrentDisplay();
         if (display != null) {
             display.setAspectRatio(aspectRatio);
         }
@@ -1147,7 +1170,8 @@ public class GiraffePlayer implements MediaController.MediaPlayerControl {
 
     /**
      * set volume
-     * @param left [0,1]
+     *
+     * @param left  [0,1]
      * @param right [0,1]
      * @return GiraffePlayer
      */
@@ -1159,27 +1183,29 @@ public class GiraffePlayer implements MediaController.MediaPlayerControl {
         pram.put("left", left);
         pram.put("right", right);
         handler.removeMessages(MSG_CTRL_SET_VOLUME);
-        handler.obtainMessage(MSG_CTRL_SET_VOLUME,pram).sendToTarget();
+        handler.obtainMessage(MSG_CTRL_SET_VOLUME, pram).sendToTarget();
         return this;
     }
 
     /**
      * set mute
+     *
      * @param mute
      * @return GiraffePlayer
      */
-    public GiraffePlayer setMute(boolean mute){
+    public GiraffePlayer setMute(boolean mute) {
         this.mute = mute;
         AudioManager audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
-        audioManager.setStreamMute(AudioManager.STREAM_MUSIC,true);
+        audioManager.setStreamMute(AudioManager.STREAM_MUSIC, true);
         return this;
     }
 
     /**
      * is mute
+     *
      * @return true if mute
      */
-    public boolean isMute(){
+    public boolean isMute() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             AudioManager audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
             return audioManager.isStreamMute(AudioManager.STREAM_MUSIC);
