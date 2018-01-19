@@ -1,5 +1,8 @@
-# 0.1.14 (to release)
-1.  fix [#35](https://github.com/tcking/GiraffePlayer2/issues/35)
+# 0.1.14
+1. fix [#35](https://github.com/tcking/GiraffePlayer2/issues/35)
+1. support looping
+1. cover scale type follow video aspect ratio
+1. VideoInfo add config:set current video as cover image when player released (setCurrentVideoAsCover)
 
 # 0.1.13
 1. fix [#28](https://github.com/tcking/GiraffePlayer2/issues/28)
