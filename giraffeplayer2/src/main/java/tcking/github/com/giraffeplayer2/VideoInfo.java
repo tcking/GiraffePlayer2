@@ -41,6 +41,8 @@ public class VideoInfo implements Parcelable {
     private int bgColor = Color.DKGRAY;
     private String playerImpl = PLAYER_IMPL_IJK;
     private boolean fullScreenAnimation = true;
+    private boolean looping = false;
+    private boolean currentVideoAsCover = true;
 
     public VideoInfo(VideoInfo defaultVideoInfo) {
         title = defaultVideoInfo.title;
@@ -58,6 +60,8 @@ public class VideoInfo implements Parcelable {
         bgColor = defaultVideoInfo.bgColor;
         playerImpl = defaultVideoInfo.playerImpl;
         fullScreenAnimation = defaultVideoInfo.fullScreenAnimation;
+        looping = defaultVideoInfo.looping;
+        currentVideoAsCover = defaultVideoInfo.currentVideoAsCover;
     }
 
     public boolean isFullScreenAnimation() {
@@ -195,6 +199,8 @@ public class VideoInfo implements Parcelable {
         bgColor = in.readInt();
         playerImpl = in.readString();
         fullScreenAnimation = in.readByte() != 0;
+        looping = in.readByte() != 0;
+        currentVideoAsCover = in.readByte() != 0;
     }
 
     public static final Creator<VideoInfo> CREATOR = new Creator<VideoInfo>() {
@@ -269,9 +275,31 @@ public class VideoInfo implements Parcelable {
         dest.writeInt(bgColor);
         dest.writeString(playerImpl);
         dest.writeByte((byte) (fullScreenAnimation ? 1 : 0));
+        dest.writeByte((byte) (looping ? 1 : 0));
+        dest.writeByte((byte) (currentVideoAsCover ? 1 : 0));
     }
 
     public static VideoInfo createFromDefault(){
         return new VideoInfo(PlayerManager.getInstance().getDefaultVideoInfo());
+    }
+
+    public boolean isLooping() {
+        return looping;
+    }
+
+    public void setLooping(boolean looping) {
+        this.looping = looping;
+    }
+
+    public boolean isCurrentVideoAsCover() {
+        return currentVideoAsCover;
+    }
+
+    /**
+     * set current video as cover image when player released
+     * @param currentVideoAsCover
+     */
+    public void setCurrentVideoAsCover(boolean currentVideoAsCover) {
+        this.currentVideoAsCover = currentVideoAsCover;
     }
 }

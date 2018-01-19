@@ -380,6 +380,7 @@ public class GiraffePlayer implements MediaController.MediaPlayerControl {
         setOptions();
         released = false;
         mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+        mediaPlayer.setLooping(videoInfo.isLooping());
         mediaPlayer.setOnPreparedListener(new IMediaPlayer.OnPreparedListener() {
             @Override
             public void onPrepared(IMediaPlayer iMediaPlayer) {
@@ -1212,6 +1213,28 @@ public class GiraffePlayer implements MediaController.MediaPlayerControl {
         } else {
             return mute;
         }
+    }
+
+    /**
+     * set looping play
+     * @param looping
+     * @return
+     */
+    public GiraffePlayer setLooping(boolean looping){
+        if (mediaPlayer!=null && !released) {
+            mediaPlayer.setLooping(looping);
+        }
+        return this;
+    }
+
+    /**
+     * @return is looping play
+     */
+    public boolean isLooping(){
+        if (mediaPlayer!=null && !released) {
+            return mediaPlayer.isLooping();
+        }
+        return false;
     }
 
 }

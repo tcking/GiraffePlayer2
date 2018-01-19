@@ -14,6 +14,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.ImageView;
 import android.widget.SeekBar;
 
 import com.github.tcking.giraffeplayer2.R;
@@ -183,7 +184,7 @@ public class DefaultMediaController extends BaseMediaController {
 
 
     protected void showBottomControl(boolean show) {
-        if (displayModel==GiraffePlayer.DISPLAY_FLOAT) {
+        if (displayModel == GiraffePlayer.DISPLAY_FLOAT) {
             show = false;
         }
 //        $.id(R.id.app_video_play).visibility(show ? View.VISIBLE : View.GONE);
@@ -238,7 +239,7 @@ public class DefaultMediaController extends BaseMediaController {
                 if (!player.onBackPressed()) {
                     ((Activity) videoView.getContext()).finish();
                 }
-            }   else if (v.getId() == R.id.app_video_float_close) {
+            } else if (v.getId() == R.id.app_video_float_close) {
                 player.stop();
                 player.setDisplayModel(GiraffePlayer.DISPLAY_NORMAL);
             } else if (v.getId() == R.id.app_video_float_full) {
@@ -280,7 +281,7 @@ public class DefaultMediaController extends BaseMediaController {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
 
-                if (displayModel==GiraffePlayer.DISPLAY_FLOAT) {
+                if (displayModel == GiraffePlayer.DISPLAY_FLOAT) {
                     return false;
                 }
 
@@ -364,10 +365,26 @@ public class DefaultMediaController extends BaseMediaController {
         //1.set the cover view visible
         $.id(R.id.app_video_cover).visible();
         //2.set current view as cover
-        if (giraffePlayer.getCurrentState()!=GiraffePlayer.STATE_ERROR) {
-            ScalableTextureView currentDisplay = giraffePlayer.getCurrentDisplay();
-            if (currentDisplay!=null) {
-                $.id(R.id.app_video_cover).imageView().setImageBitmap(currentDisplay.getBitmap());
+        VideoInfo videoInfo = videoView.getVideoInfo();
+        if (videoInfo.isCurrentVideoAsCover()) {
+            if (giraffePlayer.getCurrentState() != GiraffePlayer.STATE_ERROR) {
+                ScalableTextureView currentDisplay = giraffePlayer.getCurrentDisplay();
+                if (currentDisplay != null) {
+                    ImageView imageView = $.id(R.id.app_video_cover).imageView();
+                    if (imageView != null) {
+                        int aspectRatio = videoInfo.getAspectRatio();
+                        if (aspectRatio == VideoInfo.AR_ASPECT_FILL_PARENT) {
+                            imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                        } else if (aspectRatio == VideoInfo.AR_MATCH_PARENT) {
+                            imageView.setScaleType(ImageView.ScaleType.FIT_XY);
+                        } else if (aspectRatio == VideoInfo.AR_ASPECT_WRAP_CONTENT) {
+                            imageView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+                        } else {
+                            imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
+                        }
+                        imageView.setImageBitmap(currentDisplay.getBitmap());
+                    }
+                }
             }
         }
 
@@ -438,7 +455,7 @@ public class DefaultMediaController extends BaseMediaController {
                 }
             } else {
                 //if player in list controllerView,ignore
-                if (displayModel==GiraffePlayer.DISPLAY_NORMAL && videoView.inListView()) {
+                if (displayModel == GiraffePlayer.DISPLAY_NORMAL && videoView.inListView()) {
                     return true;
                 }
                 float percent = deltaY / videoView.getHeight();
@@ -579,7 +596,7 @@ public class DefaultMediaController extends BaseMediaController {
 
     @Override
     public void onCurrentStateChange(int oldState, int newState) {
-        if (context instanceof  Activity) {
+        if (context instanceof Activity) {
             if (newState == GiraffePlayer.STATE_PLAYING) {
                 //set SCREEN_ON
                 ((Activity) context).getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
