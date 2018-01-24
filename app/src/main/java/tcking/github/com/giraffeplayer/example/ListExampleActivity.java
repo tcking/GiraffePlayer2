@@ -23,6 +23,9 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 import rx.schedulers.Schedulers;
 import tcking.github.com.giraffeplayer2.BasePlayerActivity;
+import tcking.github.com.giraffeplayer2.VideoView;
+
+import static android.support.v7.widget.RecyclerView.SCROLL_STATE_IDLE;
 
 /**
  * Created by tcking on 2017
@@ -38,15 +41,72 @@ public class ListExampleActivity extends BasePlayerActivity {
 
         $ = new ViewQuery(this);
 
-        RecyclerView recyclerView= $.id(R.id.list).view();
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        final RecyclerView recyclerView= $.id(R.id.list).view();
+        final LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        recyclerView.setLayoutManager(layoutManager);
         final VideoAdapter videoAdapter = new VideoAdapter();
         recyclerView.setAdapter(videoAdapter);
+
+        //auto stop & play after recyclerView scroll
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                if (newState == SCROLL_STATE_IDLE) {
+                    int playPosition = layoutManager.findFirstVisibleItemPosition();
+                    if (playPosition == -1) {//no visible item
+                        return;
+                    }
+                    int firstCompletelyVisibleItemPosition = layoutManager.findFirstCompletelyVisibleItemPosition();
+                    int lastCompletelyVisibleItemPosition = layoutManager.findLastCompletelyVisibleItemPosition();
+                    for (int i = firstCompletelyVisibleItemPosition; i <=lastCompletelyVisibleItemPosition; i++) {
+                        VideoView videoView = (VideoView) layoutManager.findViewByPosition(i).findViewById(R.id.video_view);
+                        if (videoView.isCurrentActivePlayer()) {
+                            return;//current active player is visible,do nothing
+                        }
+                    }
+
+
+                    //try find first visible item (visible part > 50%)
+                    if (firstCompletelyVisibleItemPosition >= 0 && playPosition != firstCompletelyVisibleItemPosition) {
+                        int[] recyclerView_xy = new int[2];
+                        int[] f_xy = new int[2];
+
+                        VideoView videoView = (VideoView) layoutManager.findViewByPosition(playPosition).findViewById(R.id.video_view);
+                        videoView.getLocationInWindow(f_xy);
+                        recyclerView.getLocationInWindow(recyclerView_xy);
+                        int unVisibleY = f_xy[1] - recyclerView_xy[1];
+
+                        if (unVisibleY < 0 && Math.abs(unVisibleY) * 1.0 / videoView.getHeight() > 0.5) {//No visible part > 50%,play next
+                            playPosition = firstCompletelyVisibleItemPosition;
+                        }
+                    }
+                    VideoView videoView = (VideoView) layoutManager.findViewByPosition(playPosition).findViewById(R.id.video_view);
+                    if (videoView != null) {
+                        videoView.getPlayer().start();
+                    }
+
+                }
+
+            }
+
+        });
 
         getSampleData().observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<List<VideoAdapter.VideoItem>>() {
             @Override
             public void call(List<VideoAdapter.VideoItem> videoItems) {
                 videoAdapter.load(videoItems);
+
+                //play first video
+                recyclerView.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        VideoView videoView = (VideoView) layoutManager.findViewByPosition(0).findViewById(R.id.video_view);
+                        if (videoView != null) {
+                            videoView.getPlayer().start();
+                        }
+                    }
+                });
+
             }
         });
 
