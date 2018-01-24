@@ -727,10 +727,6 @@ public class GiraffePlayer implements MediaController.MediaPlayerControl {
         }
         lastDisplayModel = displayModel;
 
-        final ViewGroup displayBoxContainer = boxContainerRef.get();
-        final boolean usingAnim = usingAnim();
-
-
         if (targetDisplayModel == DISPLAY_FULL_WINDOW) {
             Activity activity = getActivity();
             if (activity == null) {
@@ -743,6 +739,7 @@ public class GiraffePlayer implements MediaController.MediaPlayerControl {
                 uiHelper.requestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
                 ignoreOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE;
             }
+            uiHelper.showActionBar(false).fullScreen(true);
             ViewGroup activityBox = (ViewGroup) activity.findViewById(android.R.id.content);
 
             animateIntoContainerAndThen(activityBox, new VideoViewAnimationListener() {
@@ -840,7 +837,7 @@ public class GiraffePlayer implements MediaController.MediaPlayerControl {
             listener.onStart(displayBoxContainer, container);
             if (displayBoxContainer.getParent() != container) {
                 isolateDisplayBoxContainer();
-                container.addView(displayBoxContainer, 0, new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT));
+                container.addView(displayBoxContainer, new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT));
             }
             listener.onEnd(displayBoxContainer, container);
             return;
