@@ -1,3 +1,6 @@
+# 0.1.15
+1. bug fix when set full screen model
+
 # 0.1.14
 1. fix [#35](https://github.com/tcking/GiraffePlayer2/issues/35)
 1. support looping
