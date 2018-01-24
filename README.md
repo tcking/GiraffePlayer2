@@ -197,13 +197,6 @@ void onDisplayModelChange(int oldModel, int newModel);
 ```
 
 # screenshot
-![](https://raw.githubusercontent.com/tcking/GiraffePlayer2/master/screencap/s1.gif)
-![](https://raw.githubusercontent.com/tcking/GiraffePlayer2/master/screencap/s2.gif)
-![](https://raw.githubusercontent.com/tcking/GiraffePlayer2/master/screencap/s4.gif)
-![](https://raw.githubusercontent.com/tcking/GiraffePlayer2/master/screencap/device-2017-11-23-202731.png)
-![](https://raw.githubusercontent.com/tcking/GiraffePlayer2/master/screencap/device-2017-09-13-174907.png)
-![](https://raw.githubusercontent.com/tcking/GiraffePlayer2/master/screencap/device-2017-09-13-175035.png)
-![](https://raw.githubusercontent.com/tcking/GiraffePlayer2/master/screencap/device-2017-09-13-180141.png)
-![](https://raw.githubusercontent.com/tcking/GiraffePlayer2/master/screencap/device-2017-09-13-180334.png)
+![](https://raw.githubusercontent.com/tcking/GiraffePlayer2/master/screencap/s6.gif)
 
 # TODO
