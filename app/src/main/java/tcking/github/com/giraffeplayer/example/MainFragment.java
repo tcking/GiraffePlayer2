@@ -52,7 +52,6 @@ public class MainFragment extends Fragment {
 //        testUrl = "https://tungsten.aaplimg.com/VOD/bipbop_adv_example_v2/master.m3u8"; //test live stream;
 //        testUrl = "http://playertest.longtailvideo.com/adaptive/oceans_aes/oceans_aes.m3u8"; //test live stream;
         testUrl = "http://live.hkstv.hk.lxdns.com/live/hks/playlist.m3u8"; //test live stream;
-        testUrl = "http://103.60.97.10/vod/_definst_/mp4:tv/mobile/edu.stream-2018-01-21-22-55-00.mp4/playlist.m3u8?t=7241ee616482a60192d3217fd1c04578"; //test live stream;
 
         final VideoView videoView = $.id(R.id.video_view).view();
         videoView.setVideoPath(testUrl);
