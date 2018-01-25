@@ -70,7 +70,7 @@ public class DefaultMediaController extends BaseMediaController {
             }
             $.id(R.id.app_video_status).gone();//移动时隐藏掉状态image
             GiraffePlayer player = videoView.getPlayer();
-            int newPosition = (int) ((player.getDuration() * progress * 1.0) / 1000);
+            int newPosition = (int) (player.getDuration() * (progress * 1.0 / 1000));
             String time = generateTime(newPosition);
             if (instantSeeking) {
                 player.seekTo(newPosition);
