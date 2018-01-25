@@ -1,3 +1,6 @@
+# 0.1.16
+1. fix [#42](https://github.com/tcking/GiraffePlayer2/issues/42)
+
 # 0.1.15
 1. bug fix when set full screen model
 
