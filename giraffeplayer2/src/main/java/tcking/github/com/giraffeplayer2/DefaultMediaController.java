@@ -96,7 +96,7 @@ public class DefaultMediaController extends BaseMediaController {
             }
             GiraffePlayer player = videoView.getPlayer();
             if (!instantSeeking) {
-                player.seekTo((int) ((player.getDuration() * seekBar.getProgress() * 1.0) / 1000));
+                player.seekTo((int) (player.getDuration() * (seekBar.getProgress() * 1.0 / 1000)));
             }
             show(defaultTimeout);
             handler.removeMessages(MESSAGE_SHOW_PROGRESS);
