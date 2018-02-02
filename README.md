@@ -196,6 +196,14 @@ void onDisplayModelChange(int oldModel, int newModel);
 
 ```
 
+# Proguard Configuration
+
+```
+-dontwarn tv.danmaku.ijk.media.player.**
+-keep class tv.danmaku.ijk.media.player.** { *; }
+-keep interface tv.danmaku.ijk.media.player.* { *; }
+```
+
 # screenshot
 ![](https://raw.githubusercontent.com/tcking/GiraffePlayer2/master/screencap/s6.gif)
 
