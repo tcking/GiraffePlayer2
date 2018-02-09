@@ -1,0 +1,54 @@
+[
+  {
+    "name": "hkstv",
+    "uri": "http://live.hkstv.hk.lxdns.com/live/hks/playlist.m3u8"
+  },
+  {
+    "name": "comment1",
+    "type": 1
+  },
+  {
+    "name": "comment2",
+    "type": 1
+  },
+  {
+    "name": "comment3",
+    "type": 1
+  },
+  {
+    "name": "comment4",
+    "type": 1
+  },
+  {
+    "name": "comment5",
+    "type": 1
+  },
+  {
+    "name": "comment6",
+    "type": 1
+  },
+  {
+    "name": "comment7",
+    "type": 1
+  },
+  {
+    "name": "comment8",
+    "type": 1
+  },
+  {
+    "name": "comment9",
+    "type": 1
+  },
+  {
+    "name": "comment10",
+    "type": 1
+  },
+  {
+    "name": "comment11",
+    "type": 1
+  },
+  {
+    "name": "comment12",
+    "type": 1
+  }
+]
