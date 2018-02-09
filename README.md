@@ -29,9 +29,9 @@ this project is total refactor of [GiraffePlayer](https://github.com/tcking/Gira
     }
 
     //step 2: add dependency
-    compile 'com.github.tcking:giraffeplayer2:0.1.16'
+    compile 'com.github.tcking:giraffeplayer2:0.1.17'
 
-    // if need more decoder using: compile 'com.github.tcking:giraffeplayer2:0.1.16-full'
+    // if need more decoder using: compile 'com.github.tcking:giraffeplayer2:0.1.17-full'
 
 
  ```
@@ -206,5 +206,6 @@ void onDisplayModelChange(int oldModel, int newModel);
 
 # screenshot
 ![](https://raw.githubusercontent.com/tcking/GiraffePlayer2/master/screencap/s6.gif)
+![](https://raw.githubusercontent.com/tcking/GiraffePlayer2/master/screencap/s7.gif)
 
 # TODO

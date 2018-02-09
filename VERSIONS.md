@@ -1,3 +1,6 @@
+# 0.1.17
+1. bug fix: controller status error  when player was released
+
 # 0.1.16
 1. fix [#42](https://github.com/tcking/GiraffePlayer2/issues/42)
 
