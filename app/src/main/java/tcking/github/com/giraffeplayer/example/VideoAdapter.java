@@ -23,24 +23,26 @@ import tcking.github.com.giraffeplayer2.VideoView;
 public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoItemHolder> {
     private List<VideoItem> data = new LinkedList<>();
     private Context context;
-    private PlayerListener playerListener=new DefaultPlayerListener(){//example of using playerListener
+    private PlayerListener playerListener = new DefaultPlayerListener() {//example of using playerListener
         @Override
         public void onPreparing(GiraffePlayer giraffePlayer) {
-            Toast.makeText(context, "start playing:"+giraffePlayer.getVideoInfo().getUri(),Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, "start playing:" + giraffePlayer.getVideoInfo().getUri(), Toast.LENGTH_SHORT).show();
         }
 
         @Override
         public void onCompletion(GiraffePlayer giraffePlayer) {
-            Toast.makeText(context, "play completion:"+giraffePlayer.getVideoInfo().getUri(),Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, "play completion:" + giraffePlayer.getVideoInfo().getUri(), Toast.LENGTH_SHORT).show();
         }
     };
 
     @Override
     public VideoItemHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        context=parent.getContext();
-        if (viewType == VideoItem.TYPE_EMBED) {
-            return new VideoItemHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.item_embed,parent,false));
-        }else {
+        context = parent.getContext();
+        if (viewType == VideoItem.TYPE_VIDEO) {
+            return new VideoItemHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.item_video, parent, false));
+        } else if (viewType == VideoItem.TYPE_COMMENT) {
+            return new VideoItemHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.item_comment, parent, false));
+        } else {
             throw new RuntimeException("unknown type:" + viewType);
         }
     }
@@ -48,12 +50,16 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoItemHol
     @Override
     public void onBindViewHolder(VideoItemHolder holder, int position) {
         VideoItem videoItem = data.get(position);
-        if (videoItem.type == VideoItem.TYPE_EMBED) {
+        if (videoItem.type == VideoItem.TYPE_VIDEO) {
             holder.name.setText(videoItem.name);
             holder.url.setText(videoItem.uri);
-            holder.videoView.getCoverView().setImageResource(R.drawable.cover1);
+            if (holder.videoView.getCoverView() != null) {
+                holder.videoView.getCoverView().setImageResource(R.drawable.cover1);
+            }
             holder.videoView.getVideoInfo().setPortraitWhenFullScreen(false);
             holder.videoView.setVideoPath(videoItem.uri).setFingerprint(position);
+        } else if (videoItem.type == VideoItem.TYPE_COMMENT) {
+            holder.name.setText(videoItem.name);
         }
     }
 
@@ -73,21 +79,25 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoItemHol
         notifyDataSetChanged();
     }
 
-    class VideoItemHolder extends RecyclerView.ViewHolder{
+    class VideoItemHolder extends RecyclerView.ViewHolder {
         TextView name;
         TextView url;
         VideoView videoView;
+
         public VideoItemHolder(View itemView) {
             super(itemView);
             name = (TextView) itemView.findViewById(R.id.tv_name);
             url = (TextView) itemView.findViewById(R.id.tv_url);
             videoView = (VideoView) itemView.findViewById(R.id.video_view);
-            videoView.setPlayerListener(playerListener);
+            if (videoView != null) {
+                videoView.setPlayerListener(playerListener);
+            }
         }
     }
 
     static class VideoItem {
-        public static final int TYPE_EMBED = 0;
+        public static final int TYPE_VIDEO = 0;
+        public static final int TYPE_COMMENT = 1;
         int type;
         String name;
         String uri;

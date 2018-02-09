@@ -116,6 +116,8 @@ public class DefaultMediaController extends BaseMediaController {
             }
         } else {
             $.id(R.id.app_video_play).image(R.drawable.ic_play_arrow_white_24dp);
+            $.id(R.id.app_video_currentTime).text("");
+            $.id(R.id.app_video_endTime).text("");
         }
     }
 
@@ -362,6 +364,11 @@ public class DefaultMediaController extends BaseMediaController {
     @Override
     public void onRelease(GiraffePlayer giraffePlayer) {
         handler.removeCallbacksAndMessages(null);
+
+        $.id(R.id.app_video_play).image(R.drawable.ic_play_arrow_white_24dp);
+        $.id(R.id.app_video_currentTime).text("");
+        $.id(R.id.app_video_endTime).text("");
+
         //1.set the cover view visible
         $.id(R.id.app_video_cover).visible();
         //2.set current view as cover

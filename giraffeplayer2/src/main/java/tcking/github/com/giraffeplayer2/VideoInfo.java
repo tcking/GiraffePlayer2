@@ -217,11 +217,12 @@ public class VideoInfo implements Parcelable {
 
 
     public VideoInfo setFingerprint(Object fingerprint) {
-        if (lastFingerprint!=null && !lastFingerprint.equals(fingerprint)) {
+        String fp = "" + fingerprint;//to string first
+        if (lastFingerprint!=null && !lastFingerprint.equals(fp)) {
             //different from last setFingerprint, release last
             PlayerManager.getInstance().releaseByFingerprint(lastFingerprint);
         }
-        this.fingerprint = ""+fingerprint;
+        this.fingerprint = fp;
         lastFingerprint = this.fingerprint;
         return this;
     }

@@ -936,6 +936,7 @@ public class GiraffePlayer implements MediaController.MediaPlayerControl {
 
 
     private ViewGroup createFloatBox() {
+        removeFloatContainer();
         Activity topActivity = PlayerManager.getInstance().getTopActivity();
         ViewGroup topActivityBox = (ViewGroup) topActivity.findViewById(android.R.id.content);
         ViewGroup floatBox = (ViewGroup) LayoutInflater.from(topActivity.getApplication()).inflate(R.layout.giraffe_float_box, null);

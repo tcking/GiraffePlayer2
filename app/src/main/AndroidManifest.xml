@@ -25,6 +25,11 @@
             android:name=".ListExampleActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="sensor"/>
+
+        <activity
+            android:name=".ListExample2Activity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:screenOrientation="sensor"/>
     </application>
 
 </manifest>

@@ -32,15 +32,19 @@ import static android.support.v7.widget.RecyclerView.SCROLL_STATE_IDLE;
  */
 
 public class ListExampleActivity extends BasePlayerActivity {
-    private ViewQuery $;
+    protected ViewQuery $;
+    protected String  fileName = "sample.json";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list);
-
         $ = new ViewQuery(this);
+        init();
 
+    }
+
+    protected void init() {
         final RecyclerView recyclerView= $.id(R.id.list).view();
         final LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
@@ -109,16 +113,15 @@ public class ListExampleActivity extends BasePlayerActivity {
 
             }
         });
-
     }
 
     @NonNull
-    private Observable<List<VideoAdapter.VideoItem>> getSampleData() {
+    protected Observable<List<VideoAdapter.VideoItem>> getSampleData() {
         return Observable.create(new Observable.OnSubscribe<List<VideoAdapter.VideoItem>>() {
             @Override
             public void call(Subscriber<? super List<VideoAdapter.VideoItem>> subscriber) {
                 try {
-                    InputStream open = getAssets().open("sample.json");
+                    InputStream open = getAssets().open(fileName);
                     byte[] buf = new byte[open.available()];
                     open.read(buf);
                     JSONArray ja = new JSONArray(new String(buf, "UTF-8"));

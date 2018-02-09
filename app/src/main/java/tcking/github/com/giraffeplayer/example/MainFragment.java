@@ -103,6 +103,8 @@ public class MainFragment extends Fragment {
                     videoView.getPlayer().setDisplayModel(GiraffePlayer.DISPLAY_FLOAT);
                 } else if (v.getId() == R.id.btn_list) {
                     startActivity(new Intent(getActivity(), ListExampleActivity.class));
+                } else if (v.getId() == R.id.btn_list2) {
+                    startActivity(new Intent(getActivity(), ListExample2Activity.class));
                 } else if (v.getId() == R.id.btn_play_in_standalone) {
                     VideoInfo videoInfo = new VideoInfo(Uri.parse($.id(R.id.et_url).text()))
                             .setTitle("test video")
@@ -129,6 +131,7 @@ public class MainFragment extends Fragment {
         $.id(R.id.btn_full).view().setOnClickListener(onClickListener);
         $.id(R.id.btn_play_in_standalone).view().setOnClickListener(onClickListener);
         $.id(R.id.btn_list).view().setOnClickListener(onClickListener);
+        $.id(R.id.btn_list2).view().setOnClickListener(onClickListener);
 
 
     }
