@@ -206,6 +206,8 @@ void onDisplayModelChange(int oldModel, int newModel);
 
 # screenshot
 ![](https://raw.githubusercontent.com/tcking/GiraffePlayer2/master/screencap/s6.gif)
+
+
 ![](https://raw.githubusercontent.com/tcking/GiraffePlayer2/master/screencap/s7.gif)
 
 # TODO
