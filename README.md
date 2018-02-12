@@ -133,12 +133,10 @@ public void onBindViewHolder(VideoItemHolder holder, int position) {
 
 lazy load
 
-![](https://raw.githubusercontent.com/tcking/GiraffePlayer2/master/screencap/s5.gif)
+![](https://raw.githubusercontent.com/tcking/GiraffePlayer2/master/screencap/s10.gif)
 
 
 ![](https://raw.githubusercontent.com/tcking/GiraffePlayer2/master/screencap/s6.gif)
 
 
 ![](https://raw.githubusercontent.com/tcking/GiraffePlayer2/master/screencap/s7.gif)
-
-# TODO
