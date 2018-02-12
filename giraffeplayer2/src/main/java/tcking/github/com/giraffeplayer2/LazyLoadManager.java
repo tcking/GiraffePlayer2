@@ -268,7 +268,7 @@ public class LazyLoadManager extends IntentService {
     }
 
     public static File getPlayerSoDir(Context context) {
-        return new File(getPlayerRootDir(context).getAbsolutePath()+File.pathSeparator+soVersion+File.pathSeparator+"so");
+        return new File(getPlayerRootDir(context).getAbsolutePath()+File.separator+soVersion+File.separator+"so");
 
     }
 
