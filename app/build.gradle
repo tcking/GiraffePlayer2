@@ -43,3 +43,23 @@ dependencies {
 
     testCompile 'junit:junit:4.12'
 }
+
+
+task depsize {
+    group 'Help'
+    description 'show dependencies aars size'
+    doLast {
+        final formatStr = "%,10.2f"
+        final conf = configurations._releaseApk
+        final size = conf.collect { it.length() / (1024 * 1024) }.sum()
+        final out = new StringBuffer()
+        out << 'Total dependencies size:'.padRight(50)
+        out << "${String.format(formatStr, size)} Mb\n\n"
+        conf.sort { -it.length() }
+                .each {
+            out << "${it.name}".padRight(50)
+            out << "${String.format(formatStr, (it.length() / 1024))} kb\n"
+        }
+        println(out)
+    }
+}
