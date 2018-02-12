@@ -162,6 +162,24 @@ public class ProxyPlayerListener implements PlayerListener {
         outerListener().onTimedText(giraffePlayer,text);
     }
 
+    @Override
+    public void onLazyLoadProgress(GiraffePlayer giraffePlayer,int progress) {
+        if (GiraffePlayer.debug) {
+            log("onLazyLoadProgress:"+progress);
+        }
+        listener().onLazyLoadProgress(giraffePlayer,progress);
+        outerListener().onLazyLoadProgress(giraffePlayer,progress);
+    }
+
+    @Override
+    public void onLazyLoadError(GiraffePlayer giraffePlayer, String message) {
+        if (GiraffePlayer.debug) {
+            log("onLazyLoadError:"+message);
+        }
+        listener().onLazyLoadError(giraffePlayer,message);
+        outerListener().onLazyLoadError(giraffePlayer,message);
+    }
+
     private void log(String msg) {
         if (GiraffePlayer.debug) {
             Log.d(TAG, String.format("[fingerprint:%s] %s", videoInfo.getFingerprint(), msg));

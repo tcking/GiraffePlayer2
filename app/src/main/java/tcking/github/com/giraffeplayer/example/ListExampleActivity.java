@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
 
 import com.github.tcking.viewquery.ViewQuery;
 
@@ -62,10 +63,14 @@ public class ListExampleActivity extends BasePlayerActivity {
                     }
                     int firstCompletelyVisibleItemPosition = layoutManager.findFirstCompletelyVisibleItemPosition();
                     int lastCompletelyVisibleItemPosition = layoutManager.findLastCompletelyVisibleItemPosition();
+
                     for (int i = firstCompletelyVisibleItemPosition; i <=lastCompletelyVisibleItemPosition; i++) {
-                        VideoView videoView = (VideoView) layoutManager.findViewByPosition(i).findViewById(R.id.video_view);
-                        if (videoView.isCurrentActivePlayer()) {
-                            return;//current active player is visible,do nothing
+                        View viewByPosition = layoutManager.findViewByPosition(i);
+                        if (viewByPosition != null) {
+                            VideoView videoView = (VideoView) viewByPosition.findViewById(R.id.video_view);
+                            if (videoView!=null && videoView.isCurrentActivePlayer()) {
+                                return;//current active player is visible,do nothing
+                            }
                         }
                     }
 

@@ -18,6 +18,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 
 public class PlayerManager {
+
     public static final String TAG = "GiraffePlayerManager";
     private volatile String currentPlayerFingerprint;
     private Application.ActivityLifecycleCallbacks activityLifecycleCallbacks;

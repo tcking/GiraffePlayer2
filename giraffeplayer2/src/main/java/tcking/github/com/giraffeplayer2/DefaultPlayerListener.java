@@ -79,4 +79,14 @@ public class DefaultPlayerListener implements PlayerListener {
     public void onTimedText(GiraffePlayer giraffePlayer, IjkTimedText text) {
 
     }
+
+    @Override
+    public void onLazyLoadError(GiraffePlayer giraffePlayer, String message) {
+
+    }
+
+    @Override
+    public void onLazyLoadProgress(GiraffePlayer giraffePlayer,int progress) {
+
+    }
 }

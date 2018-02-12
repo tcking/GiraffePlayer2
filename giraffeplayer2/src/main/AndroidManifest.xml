@@ -16,6 +16,8 @@
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="fullSensor"
             />
+
+        <service android:name="tcking.github.com.giraffeplayer2.LazyLoadManager"/>
     </application>
 
 </manifest>

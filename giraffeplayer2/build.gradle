@@ -1,15 +1,18 @@
 apply plugin: 'com.android.library'
-
+def bType = "" //lazyLoad,full, blank is normal
+def version = "0.1.18"
+def ijkVersion = "0.8.4"
 
 android {
     compileSdkVersion COMPILESDKVERSION
     buildToolsVersion BUILDTOOLSVERSION
 
     defaultConfig {
+        buildConfigField 'boolean', 'lazyLoad', "" + ("lazyLoad" == bType)
         minSdkVersion MINSDKVERSION
         targetSdkVersion TARGETSDKVERSION
-        versionCode 27
-        versionName "0.1.17-full"
+        versionCode 28
+        versionName version + bType
     }
     buildTypes {
         release {
@@ -24,8 +27,12 @@ dependencies {
     testCompile 'junit:junit:4.12'
     compile 'com.android.support:appcompat-v7:25.3.1'
     compile 'com.github.tcking:viewquery:1.5'
+    compile 'com.github.tcking:ijkplayer-java:0.8.4'
 
-    compile 'com.github.tcking:ijkplayer-java:0.8.4-full'
-    compile 'com.github.tcking:ijkplayer-armv7a:0.8.4-full'
+    if ("" == bType) {
+        compile "com.github.tcking:ijkplayer-armv7a:${ijkVersion}"
+    } else if ("full" == bType) {
+        compile "com.github.tcking:ijkplayer-armv7a:${ijkVersion}-full"
+    }
 }
 apply from: new File(projectDir, "gradle-on-demand.gradle")

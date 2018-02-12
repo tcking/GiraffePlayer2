@@ -604,6 +604,12 @@ public class DefaultMediaController extends BaseMediaController {
     @Override
     public void onCurrentStateChange(int oldState, int newState) {
         if (context instanceof Activity) {
+            if (newState == GiraffePlayer.STATE_LAZYLOADING) {
+                $.id(R.id.app_video_loading).gone();
+                $.id(R.id.app_video_status).visible()
+                        .id(R.id.app_video_status_text)
+                        .text(context.getString(R.string.giraffe_player_lazy_loading, 0));
+            }
             if (newState == GiraffePlayer.STATE_PLAYING) {
                 //set SCREEN_ON
                 ((Activity) context).getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
@@ -633,7 +639,7 @@ public class DefaultMediaController extends BaseMediaController {
                 $.id(R.id.app_video_status).gone();
                 break;
             case STATUS_ERROR:
-                $.id(R.id.app_video_status).visible().text("something error");
+                $.id(R.id.app_video_status).visible().id(R.id.app_video_status_text).text(R.string.small_problem);
                 handler.removeMessages(MESSAGE_SHOW_PROGRESS);
                 $.id(R.id.app_video_loading).gone();
                 break;
@@ -701,5 +707,21 @@ public class DefaultMediaController extends BaseMediaController {
         } else {
             $.id(R.id.app_video_subtitle).visible().text(text.getText());
         }
+    }
+
+    @Override
+    public void onLazyLoadProgress(GiraffePlayer giraffePlayer, int progress) {
+        $.id(R.id.app_video_loading).gone();
+        $.id(R.id.app_video_status).visible();
+        $.id(R.id.app_video_status_text)
+                .text(context.getString(R.string.giraffe_player_lazy_loading, progress));
+    }
+
+    @Override
+    public void onLazyLoadError(GiraffePlayer giraffePlayer, String message) {
+        $.id(R.id.app_video_loading).gone();
+        $.id(R.id.app_video_status).visible();
+        $.id(R.id.app_video_status_text)
+                .text(context.getString(R.string.giraffe_player_lazy_loading_error, message));
     }
 }

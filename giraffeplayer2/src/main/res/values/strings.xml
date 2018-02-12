@@ -10,4 +10,6 @@
     <string name="giraffe_player_live">live</string>
     <string name="giraffe_player_track_type_subtitle">subtitle</string>
     <string name="giraffe_player_track_type_timed_text">timed text</string>
+    <string name="giraffe_player_lazy_loading">downloading player:%1$d%%</string>
+    <string name="giraffe_player_lazy_loading_error">loading player error:%1$s</string>
 </resources>

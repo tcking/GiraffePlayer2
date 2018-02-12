@@ -45,4 +45,8 @@ public interface PlayerListener {
      * @param text
      */
     void onTimedText(GiraffePlayer giraffePlayer,IjkTimedText text);
+
+    void onLazyLoadProgress(GiraffePlayer giraffePlayer,int progress);
+
+    void onLazyLoadError(GiraffePlayer giraffePlayer, String message);
 }

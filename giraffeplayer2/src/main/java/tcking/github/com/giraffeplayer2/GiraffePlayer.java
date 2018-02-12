@@ -5,6 +5,7 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.graphics.SurfaceTexture;
@@ -52,7 +53,9 @@ import tv.danmaku.ijk.media.player.misc.ITrackInfo;
 
 public class GiraffePlayer implements MediaController.MediaPlayerControl {
     public static final String TAG = "GiraffePlayer";
+    public static final String ACTION = "tcking.github.com.giraffeplayer2.action";
     public static boolean debug = false;
+    public static boolean nativeDebug = false;
     // Internal messages
     private static final int MSG_CTRL_PLAYING = 1;
 
@@ -77,7 +80,10 @@ public class GiraffePlayer implements MediaController.MediaPlayerControl {
     public static final int STATE_PAUSED = 4;
     public static final int STATE_PLAYBACK_COMPLETED = 5;
     public static final int STATE_RELEASE = 6;
+    public static final int STATE_LAZYLOADING = 7;
     private final HandlerThread internalPlaybackThread;
+    private final IntentFilter intentFilter = new IntentFilter(ACTION);
+    ;
 
     private int currentBufferPercentage = 0;
     private boolean canPause = true;
@@ -121,7 +127,7 @@ public class GiraffePlayer implements MediaController.MediaPlayerControl {
     }
 
 
-    private GiraffePlayer(Context context, VideoInfo videoInfo) {
+    private GiraffePlayer(final Context context, final VideoInfo videoInfo) {
         this.context = context.getApplicationContext();
         this.videoInfo = videoInfo;
         log("new GiraffePlayer");
@@ -148,8 +154,14 @@ public class GiraffePlayer implements MediaController.MediaPlayerControl {
                 }
                 if (mediaPlayer == null || released) {
                     handler.removeCallbacks(null);
-                    init(true);
-                    handler.sendMessage(Message.obtain(msg));
+                    try {
+                        init(true);
+                        handler.sendMessage(Message.obtain(msg));
+                    } catch (UnsatisfiedLinkError e) {
+                        log("UnsatisfiedLinkError:" + e);
+                        currentState(STATE_LAZYLOADING);
+                        LazyLoadManager.Load(context, videoInfo.getFingerprint(), Message.obtain(msg));
+                    }
                     return true;
                 }
                 switch (msg.what) {
@@ -375,7 +387,7 @@ public class GiraffePlayer implements MediaController.MediaPlayerControl {
         releaseMediaPlayer();
         mediaPlayer = createMediaPlayer();
         if (mediaPlayer instanceof IjkMediaPlayer) {
-            IjkMediaPlayer.native_setLogLevel(debug ? IjkMediaPlayer.IJK_LOG_DEBUG : IjkMediaPlayer.IJK_LOG_ERROR);
+            IjkMediaPlayer.native_setLogLevel(nativeDebug ? IjkMediaPlayer.IJK_LOG_DEBUG : IjkMediaPlayer.IJK_LOG_ERROR);
         }
         setOptions();
         released = false;
@@ -819,6 +831,30 @@ public class GiraffePlayer implements MediaController.MediaPlayerControl {
         return this;
     }
 
+    GiraffePlayer doMessage(Message message) {
+        handler.sendMessage(message);
+        return this;
+    }
+
+
+    void lazyLoadProgress(final int progress) {
+        uiHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                proxyListener().onLazyLoadProgress(GiraffePlayer.this,progress);
+            }
+        });
+    }
+
+    public void lazyLoadError(final String message) {
+        uiHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                proxyListener().onLazyLoadError(GiraffePlayer.this,message);
+            }
+        });
+    }
+
     class VideoViewAnimationListener {
         void onStart(ViewGroup src, ViewGroup target) {
         }
@@ -887,7 +923,7 @@ public class GiraffePlayer implements MediaController.MediaPlayerControl {
                         //fire listener
                         if (displayBoxContainer.getParent() != container) {
                             isolateDisplayBoxContainer();
-                            container.addView(displayBoxContainer,new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT));
+                            container.addView(displayBoxContainer, new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT));
                         }
                         listener.onEnd(displayBoxContainer, container);
                     }
@@ -1076,6 +1112,9 @@ public class GiraffePlayer implements MediaController.MediaPlayerControl {
 
     public void onActivityPaused() {
         log("onActivityPaused");
+        if (mediaPlayer == null) {
+            return;
+        }
         if (targetState == STATE_PLAYING
                 || currentState == STATE_PLAYING
                 || targetState == STATE_PAUSED
@@ -1215,11 +1254,12 @@ public class GiraffePlayer implements MediaController.MediaPlayerControl {
 
     /**
      * set looping play
+     *
      * @param looping
      * @return
      */
-    public GiraffePlayer setLooping(boolean looping){
-        if (mediaPlayer!=null && !released) {
+    public GiraffePlayer setLooping(boolean looping) {
+        if (mediaPlayer != null && !released) {
             mediaPlayer.setLooping(looping);
         }
         return this;
@@ -1228,8 +1268,8 @@ public class GiraffePlayer implements MediaController.MediaPlayerControl {
     /**
      * @return is looping play
      */
-    public boolean isLooping(){
-        if (mediaPlayer!=null && !released) {
+    public boolean isLooping() {
+        if (mediaPlayer != null && !released) {
             return mediaPlayer.isLooping();
         }
         return false;
