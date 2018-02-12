@@ -119,7 +119,7 @@ public void onBindViewHolder(VideoItemHolder holder, int position) {
         holder.videoView.getVideoInfo().setBgColor(Color.GRAY).setAspectRatio(VideoInfo.AR_MATCH_PARENT);//config player
         holder.videoView.setVideoPath(videoItem.uri).setFingerprint(position);
     }
-
+```
 
 # Proguard Configurationr
 
