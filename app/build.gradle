@@ -23,9 +23,20 @@ android {
             abiFilters "armeabi-v7a","x86"
         }
     }
+    signingConfigs {
+        release {
+            storeFile file("../../mykeystore")
+            storePassword "123456"
+            keyAlias "os"
+            keyPassword "123456"
+        }
+    }
+
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
+            shrinkResources true
+            signingConfig signingConfigs.release
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
@@ -33,12 +44,9 @@ android {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.android.support:appcompat-v7:25.3.1'
-    compile 'com.android.support:recyclerview-v7:25.3.1'
-    compile 'io.reactivex:rxjava:1.2.6'
-    compile 'io.reactivex:rxandroid:1.2.1'
+    compile("com.android.support:recyclerview-v7:25.3.1")
 
-//    compile 'com.github.tcking:giraffeplayer2:0.1.11'
+//    compile 'com.github.tcking:giraffeplayer2:0.1.18-lazyload'
     compile project(':giraffeplayer2')
 
     testCompile 'junit:junit:4.12'

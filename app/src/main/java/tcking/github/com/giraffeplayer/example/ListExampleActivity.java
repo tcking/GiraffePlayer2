@@ -1,11 +1,14 @@
 package tcking.github.com.giraffeplayer.example;
 
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.Toast;
 
 import com.github.tcking.viewquery.ViewQuery;
 
@@ -18,11 +21,6 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import rx.Observable;
-import rx.Subscriber;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
-import rx.schedulers.Schedulers;
 import tcking.github.com.giraffeplayer2.BasePlayerActivity;
 import tcking.github.com.giraffeplayer2.VideoView;
 
@@ -42,8 +40,9 @@ public class ListExampleActivity extends BasePlayerActivity {
         setContentView(R.layout.activity_list);
         $ = new ViewQuery(this);
         init();
-
     }
+
+
 
     protected void init() {
         final RecyclerView recyclerView= $.id(R.id.list).view();
@@ -100,11 +99,10 @@ public class ListExampleActivity extends BasePlayerActivity {
 
         });
 
-        getSampleData().observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<List<VideoAdapter.VideoItem>>() {
+        getSampleData(new Tom() {
             @Override
-            public void call(List<VideoAdapter.VideoItem> videoItems) {
-                videoAdapter.load(videoItems);
-
+            public void onNext(List<VideoAdapter.VideoItem> items) {
+                videoAdapter.load(items);
                 //play first video
                 recyclerView.post(new Runnable() {
                     @Override
@@ -115,22 +113,21 @@ public class ListExampleActivity extends BasePlayerActivity {
                         }
                     }
                 });
-
             }
         });
     }
 
     @NonNull
-    protected Observable<List<VideoAdapter.VideoItem>> getSampleData() {
-        return Observable.create(new Observable.OnSubscribe<List<VideoAdapter.VideoItem>>() {
+    protected void getSampleData(final Tom tom) {
+        new Thread(new Runnable() {
             @Override
-            public void call(Subscriber<? super List<VideoAdapter.VideoItem>> subscriber) {
+            public void run() {
                 try {
                     InputStream open = getAssets().open(fileName);
                     byte[] buf = new byte[open.available()];
                     open.read(buf);
                     JSONArray ja = new JSONArray(new String(buf, "UTF-8"));
-                    List<VideoAdapter.VideoItem> sample = new ArrayList<>(ja.length());
+                    final List<VideoAdapter.VideoItem> sample = new ArrayList<>(ja.length());
                     for (int i = 0; i < ja.length(); i++) {
                         JSONObject jb = ja.optJSONObject(i);
                         VideoAdapter.VideoItem videoItem = new VideoAdapter.VideoItem();
@@ -138,14 +135,22 @@ public class ListExampleActivity extends BasePlayerActivity {
                         videoItem.name = jb.optString("name");
                         videoItem.uri = jb.optString("uri");
                         sample.add(videoItem);
-                        subscriber.onNext(sample);
-                        subscriber.onCompleted();
                     }
+                    new Handler(Looper.getMainLooper()).post(new Runnable() {
+                        @Override
+                        public void run() {
+                            tom.onNext(sample);
+                        }
+                    });
                 } catch (IOException | JSONException e) {
                     e.printStackTrace();
-                    subscriber.onError(e);
+                    Toast.makeText(getApplicationContext(),"load data error:"+e,Toast.LENGTH_SHORT).show();
                 }
             }
-        }).subscribeOn(Schedulers.io());
+        }).start();
+    }
+
+    interface Tom{
+        void onNext(List<VideoAdapter.VideoItem> items);
     }
 }

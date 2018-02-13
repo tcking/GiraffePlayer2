@@ -7,8 +7,6 @@ import android.support.v7.widget.RecyclerView;
 
 import java.util.List;
 
-import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
 import tcking.github.com.giraffeplayer2.GiraffePlayer;
 import tcking.github.com.giraffeplayer2.VideoView;
 
@@ -60,11 +58,10 @@ public class ListExample2Activity extends ListExampleActivity {
 
         });
 
-        getSampleData().observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<List<VideoAdapter.VideoItem>>() {
+        getSampleData(new Tom() {
             @Override
-            public void call(List<VideoAdapter.VideoItem> videoItems) {
-                videoAdapter.load(videoItems);
-
+            public void onNext(List<VideoAdapter.VideoItem> items) {
+                videoAdapter.load(items);
                 //play first video
                 recyclerView.post(new Runnable() {
                     @Override
@@ -76,7 +73,6 @@ public class ListExample2Activity extends ListExampleActivity {
                         }
                     }
                 });
-
             }
         });
     }
