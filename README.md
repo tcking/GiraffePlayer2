@@ -32,14 +32,14 @@ this project is total refactor of [GiraffePlayer](https://github.com/tcking/Gira
     }
 
     //step 2: add dependency,there are 3 type of aar,see the flow table
-    compile 'com.github.tcking:giraffeplayer2:0.1.18-lazyload'
+    compile 'com.github.tcking:giraffeplayer2:0.1.18-lazyLoad'
 
  ```
 
 aar type|aar size|decoders|support abi
 ----|-----|-----|----
 `compile 'com.github.tcking:giraffeplayer2:0.1.18'`| 2.2M |common decoders|default armeabi，can add manually
-`compile 'com.github.tcking:giraffeplayer2:0.1.18-lazyload'`| 180K| all decoders|download player(so files) on demand by device abi
+`compile 'com.github.tcking:giraffeplayer2:0.1.18-lazyLoad'`| 180K| all decoders|download player(so files) on demand by device abi
 `compile 'com.github.tcking:giraffeplayer2:0.1.18-full'`| 5.4M | all decoders|default armeabi，can add manually
 
 
