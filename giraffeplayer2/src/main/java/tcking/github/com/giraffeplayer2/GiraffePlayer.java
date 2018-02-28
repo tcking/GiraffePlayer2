@@ -246,6 +246,9 @@ public class GiraffePlayer implements MediaController.MediaPlayerControl {
 
     @Override
     public void start() {
+        if (currentState == STATE_PLAYBACK_COMPLETED && !canSeekForward) {
+            releaseMediaPlayer();
+        }
         targetState(STATE_PLAYING);
         handler.sendEmptyMessage(MSG_CTRL_PLAYING);
         proxyListener().onStart(this);
