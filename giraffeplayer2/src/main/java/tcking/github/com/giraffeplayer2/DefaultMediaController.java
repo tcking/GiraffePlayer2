@@ -3,10 +3,12 @@ package tcking.github.com.giraffeplayer2;
 import android.app.Activity;
 import android.content.Context;
 import android.media.AudioManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Message;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
@@ -18,6 +20,8 @@ import android.widget.ImageView;
 import android.widget.SeekBar;
 
 import com.github.tcking.giraffeplayer2.R;
+
+import java.util.Locale;
 
 import tcking.github.com.giraffeplayer2.trackselector.TrackSelectorFragment;
 import tv.danmaku.ijk.media.player.IMediaPlayer;
@@ -266,14 +270,13 @@ public class DefaultMediaController extends BaseMediaController {
         seekBar = $.id(R.id.app_video_seekBar).view();
         seekBar.setMax(1000);
         seekBar.setOnSeekBarChangeListener(seekListener);
-        $.id(R.id.app_video_play).clicked(onClickListener);
+        $.id(R.id.app_video_play).clicked(onClickListener).imageView().setRotation(isRtl()?180:0);
         $.id(R.id.app_video_fullscreen).clicked(onClickListener);
-        $.id(R.id.app_video_finish).clicked(onClickListener);
-        $.id(R.id.app_video_replay_icon).clicked(onClickListener);
+        $.id(R.id.app_video_finish).clicked(onClickListener).imageView().setRotation(isRtl()?180:0);
+        $.id(R.id.app_video_replay_icon).clicked(onClickListener).imageView().setRotation(isRtl()?180:0);
         $.id(R.id.app_video_clarity).clicked(onClickListener);
         $.id(R.id.app_video_float_close).clicked(onClickListener);
         $.id(R.id.app_video_float_full).clicked(onClickListener);
-//
 
 
         final GestureDetector gestureDetector = new GestureDetector(context, createGestureListener());
@@ -529,7 +532,9 @@ public class DefaultMediaController extends BaseMediaController {
         long duration = player.getDuration();
         long deltaMax = Math.min(100 * 1000, duration - position);
         long delta = (long) (deltaMax * percent);
-
+        if (isRtl()) {
+            delta = -1 * delta;
+        }
 
         newPosition = delta + position;
         if (newPosition > duration) {
@@ -723,5 +728,12 @@ public class DefaultMediaController extends BaseMediaController {
         $.id(R.id.app_video_status).visible();
         $.id(R.id.app_video_status_text)
                 .text(context.getString(R.string.giraffe_player_lazy_loading_error, message));
+    }
+
+    private boolean isRtl() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            return TextUtils.getLayoutDirectionFromLocale(Locale.getDefault()) == View.LAYOUT_DIRECTION_RTL;
+        }
+        return false;
     }
 }

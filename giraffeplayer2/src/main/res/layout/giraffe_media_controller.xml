@@ -180,7 +180,9 @@
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:padding="8dp"
-                android:src="@drawable/ic_play_arrow_white_24dp"/>
+                android:src="@drawable/ic_play_arrow_white_24dp"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentLeft="true"/>
 
             <TextView
                 android:text=""
@@ -192,7 +194,8 @@
                 android:layout_toRightOf="@+id/app_video_play"
                 android:textColor="@android:color/white"
                 android:textSize="12dp"
-                />
+                android:layout_toEndOf="@+id/app_video_play"
+                android:layout_marginStart="5dp"/>
 
             <SeekBar
                 android:id="@+id/app_video_seekBar"
@@ -203,7 +206,8 @@
                 android:layout_marginRight="3dp"
                 android:layout_toLeftOf="@+id/app_video_endTime"
                 android:layout_toRightOf="@+id/app_video_currentTime"
-                />
+                android:layout_toStartOf="@+id/app_video_endTime"
+                android:layout_toEndOf="@+id/app_video_currentTime"/>
 
             <TextView
                 android:id="@+id/app_video_endTime"
@@ -214,7 +218,7 @@
                 android:text=""
                 android:textColor="@android:color/white"
                 android:textSize="12dp"
-                />
+                android:layout_toStartOf="@+id/app_video_clarity"/>
 
             <ImageView
                 android:id="@+id/app_video_clarity"
@@ -224,7 +228,9 @@
                 android:src="@drawable/ic_setting_white_24dp"
                 android:layout_centerVertical="true"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content"
+                android:layout_toStartOf="@+id/app_video_fullscreen"
+                android:paddingStart="8dp"/>
 
             <ImageView
                 android:layout_centerVertical="true"
@@ -233,7 +239,9 @@
                 android:layout_alignParentRight="true"
                 android:src="@drawable/ic_fullscreen_white_24dp"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:paddingStart="8dp"/>
 
         </RelativeLayout>
 
@@ -283,7 +291,8 @@
         android:id="@+id/app_video_float_close"
         android:src="@drawable/ic_close_white_24dp"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"/>
 
     <ImageView
         android:visibility="gone"
@@ -293,5 +302,6 @@
         android:id="@+id/app_video_float_full"
         android:src="@drawable/ic_fullscreen_white_24dp"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"/>
 </RelativeLayout>
