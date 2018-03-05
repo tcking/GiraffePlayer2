@@ -27,7 +27,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        GiraffePlayer.debug = true;//show logs
+        GiraffePlayer.debug = true;//show java logs
+        GiraffePlayer.nativeDebug = false;//not show native logs
 
         getSupportFragmentManager().beginTransaction().add(android.R.id.content, new MainFragment()).commit();
 
