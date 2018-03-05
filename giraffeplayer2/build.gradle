@@ -1,7 +1,7 @@
 apply plugin: 'com.android.library'
 def bType = "lazyLoad" //lazyLoad,full, blank is normal
-def version = "0.1.18"
-def ijkVersion = "0.8.4"
+def version = "0.1.19"
+def ijkVersion = "0.8.8"
 
 android {
     compileSdkVersion COMPILESDKVERSION

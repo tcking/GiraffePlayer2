@@ -1,6 +1,6 @@
 # GiraffePlayer2
 
-Out of the box android video player base on [ijkplayer 0.8.4](https://github.com/Bilibili/ijkplayer)
+Out of the box android video player base on [ijkplayer 0.8.8](https://github.com/Bilibili/ijkplayer)
 
 this project is total refactor of [GiraffePlayer](https://github.com/tcking/GiraffePlayer/) to support in ListView/RecyclerView and improve the performance，all player tasks do in worker thread.
 
@@ -32,32 +32,32 @@ this project is total refactor of [GiraffePlayer](https://github.com/tcking/Gira
     }
 
     //step 2: add dependency,there are 3 type of aar,see the flow table
-    compile 'com.github.tcking:giraffeplayer2:0.1.18-lazyLoad'
+    compile 'com.github.tcking:giraffeplayer2:0.1.19-lazyLoad'
 
  ```
 
 aar type|aar size|decoders|support abi
 ----|-----|-----|----
-`compile 'com.github.tcking:giraffeplayer2:0.1.18'`| 2.2M |common decoders|default armeabi，can add manually
-`compile 'com.github.tcking:giraffeplayer2:0.1.18-lazyLoad'`| 180K| all decoders|download player(so files) on demand by device abi
-`compile 'com.github.tcking:giraffeplayer2:0.1.18-full'`| 5.4M | all decoders|default armeabi，can add manually
+`compile 'com.github.tcking:giraffeplayer2:0.1.19'`| 2.2M |common decoders|default armeabi，can add manually
+`compile 'com.github.tcking:giraffeplayer2:0.1.19-lazyLoad'`| 180K| all decoders|download player(so files) on demand by device abi
+`compile 'com.github.tcking:giraffeplayer2:0.1.19-full'`| 5.4M | all decoders|default armeabi，can add manually
 
 
-if you using `compile 'com.github.tcking:giraffeplayer2:0.1.18'` or `compile 'com.github.tcking:giraffeplayer2:0.1.18-full'` and want to support more ABI:
+if you using `compile 'com.github.tcking:giraffeplayer2:0.1.19'` or `compile 'com.github.tcking:giraffeplayer2:0.1.19-full'` and want to support more ABI:
 
 
 ``` gradle
     //for common decoders
-    compile 'com.github.tcking:ijkplayer-arm64:0.8.4' //support arm64
-    compile 'com.github.tcking:ijkplayer-armv5:0.8.4' //support armv5
-    compile 'com.github.tcking:ijkplayer-x86:0.8.4' //support x86
-    compile 'com.github.tcking:ijkplayer-x86_64:0.8.4' //support x86_64
+    compile 'com.github.tcking:ijkplayer-arm64:0.8.8' //support arm64
+    compile 'com.github.tcking:ijkplayer-armv5:0.8.8' //support armv5
+    compile 'com.github.tcking:ijkplayer-x86:0.8.8' //support x86
+    compile 'com.github.tcking:ijkplayer-x86_64:0.8.8' //support x86_64
 
     //for all decoders
-    compile 'com.github.tcking:ijkplayer-arm64:0.8.4-full' //support arm64
-    compile 'com.github.tcking:ijkplayer-armv5:0.8.4-full' //support armv5
-    compile 'com.github.tcking:ijkplayer-x86:0.8.4-full' //support x86
-    compile 'com.github.tcking:ijkplayer-x86_64:0.8.4-full' //support x86_64
+    compile 'com.github.tcking:ijkplayer-arm64:0.8.8-full' //support arm64
+    compile 'com.github.tcking:ijkplayer-armv5:0.8.8-full' //support armv5
+    compile 'com.github.tcking:ijkplayer-x86:0.8.8-full' //support x86
+    compile 'com.github.tcking:ijkplayer-x86_64:0.8.8-full' //support x86_64
 
 ```
 

@@ -1,3 +1,10 @@
+# 0.1.19
+1.ijkplayer update to 0.8.8
+2.support right-to-left
+
+# 0.1.18
+1. support lazy load
+
 # 0.1.17
 1. bug fix: controller status error  when player was released
 

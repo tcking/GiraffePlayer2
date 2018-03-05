@@ -36,7 +36,7 @@ public class LazyLoadManager extends IntentService {
     private static int loadStatus = STATUS_IDLE;
     private static String lastFingprint;
     private static Message lastMessage;
-    private static final String soVersion = "0.8.4";
+    private static final String soVersion = "0.8.8";
     private static String abi;
     private int progress = -1;
 
