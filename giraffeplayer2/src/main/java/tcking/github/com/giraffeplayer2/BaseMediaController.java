@@ -15,7 +15,7 @@ import com.github.tcking.viewquery.ViewQuery;
  * Created by tcking on 2017.
  */
 
-public abstract class BaseMediaController extends DefaultPlayerListener implements MediaController,Handler.Callback {
+public abstract class BaseMediaController extends DefaultPlayerListener implements MediaController, Handler.Callback {
 
     protected static final int MESSAGE_SHOW_PROGRESS = 1;
     protected static final int MESSAGE_FADE_OUT = 2;
@@ -49,6 +49,11 @@ public abstract class BaseMediaController extends DefaultPlayerListener implemen
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT);
         this.videoView.getContainer().addView(controllerView, layoutParams);
+    }
+
+    @Override
+    public void unbind() {
+        this.videoView.getContainer().removeView(controllerView);
     }
 
     protected abstract View makeControllerView();

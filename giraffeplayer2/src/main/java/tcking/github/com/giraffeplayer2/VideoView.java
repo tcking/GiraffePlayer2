@@ -140,4 +140,10 @@ public class VideoView extends FrameLayout{
     public ImageView getCoverView() {
         return (ImageView) findViewById(R.id.app_video_cover);
     }
+
+    public void setMediaController(MediaController mediaController) {
+        if (this.mediaController != null) this.mediaController.unbind();
+        this.mediaController = mediaController;
+        this.mediaController.bind(this);
+    }
 }
