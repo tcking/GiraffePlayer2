@@ -1237,7 +1237,7 @@ public class GiraffePlayer implements MediaController.MediaPlayerControl {
     public GiraffePlayer setMute(boolean mute) {
         this.mute = mute;
         AudioManager audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
-        audioManager.setStreamMute(AudioManager.STREAM_MUSIC, true);
+        audioManager.setStreamMute(AudioManager.STREAM_MUSIC, mute);
         return this;
     }
 
