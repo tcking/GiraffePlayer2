@@ -86,8 +86,13 @@ public class VideoView extends FrameLayout{
 
 
     private void initMediaController() {
-        mediaController = new DefaultMediaController(getContext());
+        mediaController = createMediaController();
         mediaController.bind(this);
+    }
+
+    @NonNull
+    protected MediaController createMediaController() {
+        return new DefaultMediaController(getContext());
     }
 
 
