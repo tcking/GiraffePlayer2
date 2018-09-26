@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <item name="player_display" type="id">player_display</item>
-    <item name="player_display_box" type="id">player_display_box</item>
-    <item name="player_display_float_box" type="id">player_display_float_box</item>
+    <item name="player_display" type="id"/>
+    <item name="player_display_box" type="id"/>
+    <item name="player_display_float_box" type="id"/>
 </resources>
