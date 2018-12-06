@@ -23,11 +23,11 @@ android {
 }
 
 dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')
-    testCompile 'junit:junit:4.12'
-    compile 'com.github.tcking:viewquery:1.6'
-    compile 'com.android.support:appcompat-v7:25.3.1'
-    compile "com.github.tcking:ijkplayer-java:${ijkVersion}"
+    api fileTree(include: ['*.jar'], dir: 'libs')
+    testImplementation 'junit:junit:4.12'
+    api 'com.github.tcking:viewquery:1.6'
+    api 'com.android.support:appcompat-v7:25.3.1'
+    api "com.github.tcking:ijkplayer-java:${ijkVersion}"
 
     if ("" == bType) {
         compile "com.github.tcking:ijkplayer-armv7a:${ijkVersion}"
