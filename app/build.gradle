@@ -47,7 +47,7 @@ dependencies {
     implementation("com.android.support:recyclerview-v7:25.3.1")
 
 //    compile 'com.github.tcking:giraffeplayer2:0.1.18-lazyload'
-    implementation project(':giraffeplayer2')
+    api project(':giraffeplayer2')
 
     testImplementation 'junit:junit:4.12'
 }

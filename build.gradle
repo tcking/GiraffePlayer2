@@ -20,10 +20,11 @@ allprojects {
     repositories {
         mavenLocal()
         jcenter()
+        google()
     }
 
     ext {
-        COMPILESDKVERSION = 25
+        COMPILESDKVERSION = 27
         BUILDTOOLSVERSION = "27.0.3"
         TARGETSDKVERSION = 25
         MINSDKVERSION = 16
@@ -36,5 +37,5 @@ task clean(type: Delete) {
 
 
 wrapper {
-    gradleVersion = "3.5"
+    gradleVersion = "4.4"
 }

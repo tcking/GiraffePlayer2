@@ -26,13 +26,13 @@ dependencies {
     api fileTree(include: ['*.jar'], dir: 'libs')
     testImplementation 'junit:junit:4.12'
     api 'com.github.tcking:viewquery:1.6'
-    api 'com.android.support:appcompat-v7:25.3.1'
+    api 'com.android.support:appcompat-v7:27.0.2'
     api "com.github.tcking:ijkplayer-java:${ijkVersion}"
 
     if ("" == bType) {
-        compile "com.github.tcking:ijkplayer-armv7a:${ijkVersion}"
+        api "com.github.tcking:ijkplayer-armv7a:${ijkVersion}"
     } else if ("full" == bType) {
-        compile "com.github.tcking:ijkplayer-armv7a:${ijkVersion}-full"
+        api "com.github.tcking:ijkplayer-armv7a:${ijkVersion}-full"
     }
 }
 apply from: new File(projectDir, "gradle-on-demand.gradle")
