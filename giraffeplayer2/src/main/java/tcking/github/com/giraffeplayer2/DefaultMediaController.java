@@ -34,12 +34,12 @@ import tv.danmaku.ijk.media.player.IjkTimedText;
 
 public class DefaultMediaController extends BaseMediaController {
 
-    private static final int STATUS_ERROR = -1;
-    private static final int STATUS_IDLE = 0;
-    private static final int STATUS_LOADING = 1;
-    private static final int STATUS_PLAYING = 2;
-    private static final int STATUS_PAUSE = 3;
-    private static final int STATUS_COMPLETED = 4;
+    protected static final int STATUS_ERROR = -1;
+    protected static final int STATUS_IDLE = 0;
+    protected static final int STATUS_LOADING = 1;
+    protected static final int STATUS_PLAYING = 2;
+    protected static final int STATUS_PAUSE = 3;
+    protected static final int STATUS_COMPLETED = 4;
 
     protected long newPosition = -1;
     protected boolean isShowing;
@@ -404,6 +404,7 @@ public class DefaultMediaController extends BaseMediaController {
     public void onStart(GiraffePlayer giraffePlayer) {
         $.id(R.id.app_video_replay).gone();
         show(defaultTimeout);
+        statusChange(STATUS_PLAYING);
     }
 
 
@@ -624,7 +625,7 @@ public class DefaultMediaController extends BaseMediaController {
         }
     }
 
-    private void statusChange(int status) {
+    protected void statusChange(int status) {
         this.status = status;
 
         switch (status) {
@@ -728,6 +729,11 @@ public class DefaultMediaController extends BaseMediaController {
         $.id(R.id.app_video_status).visible();
         $.id(R.id.app_video_status_text)
                 .text(context.getString(R.string.giraffe_player_lazy_loading_error, message));
+    }
+
+    @Override
+    public void onPause(GiraffePlayer giraffePlayer) {
+        statusChange(STATUS_PAUSE);
     }
 
     private boolean isRtl() {

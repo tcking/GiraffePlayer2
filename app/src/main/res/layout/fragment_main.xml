@@ -125,12 +125,41 @@
                 </RadioGroup>
             </LinearLayout>
 
-            <Button
-                android:id="@+id/btn_list"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="video in list example"
-                android:textAllCaps="false"/>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <Button
+                    android:id="@+id/btn_list"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="video in list example"
+                    android:textAllCaps="false"/>
+
+
+                <RadioGroup
+                    android:id="@+id/rg_mc"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <RadioButton
+                        android:id="@+id/rb_mc_default"
+                        android:checked="true"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="default media controller"/>
+
+                    <RadioButton
+                        android:id="@+id/rb_mc_simple"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="simple media controller"/>
+
+                </RadioGroup>
+
+
+            </LinearLayout>
+
 
             <Button
                 android:id="@+id/btn_list2"

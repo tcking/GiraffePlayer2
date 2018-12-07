@@ -22,7 +22,7 @@ import com.github.tcking.giraffeplayer2.R;
  * Created by tcking on 2017
  */
 
-public class VideoView extends FrameLayout{
+public class VideoView extends FrameLayout {
 
 
     private MediaController mediaController;
@@ -76,18 +76,19 @@ public class VideoView extends FrameLayout{
     private Activity activity;
 
     private void init(Context context) {
-        activity= (Activity) context;
+        activity = (Activity) context;
         container = new FrameLayout(context);
-        addView(container,new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        addView(container, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         initMediaController();
         setBackgroundColor(videoInfo.getBgColor());
     }
 
 
-
     private void initMediaController() {
-        mediaController = new DefaultMediaController(getContext());
-        mediaController.bind(this);
+        mediaController = PlayerManager.getInstance().getMediaControllerGenerator().create(getContext(), videoInfo);
+        if (mediaController != null) {
+            mediaController.bind(this);
+        }
     }
 
 
@@ -110,6 +111,7 @@ public class VideoView extends FrameLayout{
 
     /**
      * is current active player (in list controllerView there are many players)
+     *
      * @return boolean
      */
     public boolean isCurrentActivePlayer() {
@@ -122,6 +124,7 @@ public class VideoView extends FrameLayout{
 
     /**
      * is video controllerView in 'list' controllerView
+     *
      * @return
      */
     public boolean inListView() {

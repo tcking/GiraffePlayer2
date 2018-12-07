@@ -33,13 +33,29 @@ public class PlayerManager {
      */
     private final VideoInfo defaultVideoInfo = new VideoInfo();
 
+
+    public PlayerManager.MediaControllerGenerator getMediaControllerGenerator() {
+        return MediaControllerGenerator;
+    }
+
+    public void setMediaControllerGenerator(PlayerManager.MediaControllerGenerator mediaControllerGenerator) {
+        MediaControllerGenerator = mediaControllerGenerator;
+    }
+
+    private MediaControllerGenerator MediaControllerGenerator = new MediaControllerGenerator() {
+
+        @Override
+        public MediaController create(Context context, VideoInfo videoInfo) {
+            return new DefaultMediaController(context);
+        }
+    };
+
     private WeakHashMap<String, VideoView> videoViewsRef = new WeakHashMap<>();
     private Map<String, GiraffePlayer> playersRef = new ConcurrentHashMap<>();
     private WeakHashMap<Context, String> activity2playersRef = new WeakHashMap<>();
 
 
-
-    public static final PlayerManager instance = new PlayerManager();
+    private static final PlayerManager instance = new PlayerManager();
 
 
     public static PlayerManager getInstance() {
@@ -75,13 +91,13 @@ public class PlayerManager {
 
             @Override
             public void onActivityStarted(Activity activity) {
-                System.out.println("======onActivityStarted============"+activity);
+//                System.out.println("======onActivityStarted============"+activity);
 
             }
 
             @Override
             public void onActivityResumed(Activity activity) {
-                System.out.println("======onActivityResumed============"+activity);
+//                System.out.println("======onActivityResumed============"+activity);
 
                 GiraffePlayer currentPlayer = getPlayerByFingerprint(activity2playersRef.get(activity));
                 if (currentPlayer != null) {
@@ -92,19 +108,19 @@ public class PlayerManager {
 
             @Override
             public void onActivityPaused(Activity activity) {
-                System.out.println("======onActivityPaused============"+activity);
+//                System.out.println("======onActivityPaused============"+activity);
                 GiraffePlayer currentPlayer = getPlayerByFingerprint(activity2playersRef.get(activity));
                 if (currentPlayer != null) {
                     currentPlayer.onActivityPaused();
                 }
-                if (topActivityRef!=null && topActivityRef.get() == activity) {
+                if (topActivityRef != null && topActivityRef.get() == activity) {
                     topActivityRef.clear();
                 }
             }
 
             @Override
             public void onActivityStopped(Activity activity) {
-                System.out.println("======onActivityStopped============"+activity);
+//                System.out.println("======onActivityStopped============"+activity);
 
             }
 
@@ -164,13 +180,13 @@ public class PlayerManager {
 
     public void setCurrentPlayer(GiraffePlayer giraffePlayer) {
         VideoInfo videoInfo = giraffePlayer.getVideoInfo();
-        log(videoInfo.getFingerprint(),"setCurrentPlayer");
+        log(videoInfo.getFingerprint(), "setCurrentPlayer");
 
         //if choose a new playerRef
-        String fingerprint=videoInfo.getFingerprint();
+        String fingerprint = videoInfo.getFingerprint();
         if (!isCurrentPlayer(fingerprint)) {
             try {
-                log(videoInfo.getFingerprint(),"not same release before one:"+currentPlayerFingerprint);
+                log(videoInfo.getFingerprint(), "not same release before one:" + currentPlayerFingerprint);
                 releaseCurrent();
                 currentPlayerFingerprint = fingerprint;
             } catch (Exception e) {
@@ -178,12 +194,12 @@ public class PlayerManager {
                 throw new RuntimeException(e);
             }
         } else {
-            log(videoInfo.getFingerprint(),"is currentPlayer");
+            log(videoInfo.getFingerprint(), "is currentPlayer");
         }
     }
 
     public GiraffePlayer getPlayer(VideoView videoView) {
-        VideoInfo videoInfo=videoView.getVideoInfo();
+        VideoInfo videoInfo = videoView.getVideoInfo();
         GiraffePlayer player = playersRef.get(videoInfo.getFingerprint());
         if (player == null) {
             player = createPlayer(videoView);
@@ -210,13 +226,27 @@ public class PlayerManager {
         playersRef.remove(fingerprint);
     }
 
-    private void log(String fingerprint,String msg) {
+    private void log(String fingerprint, String msg) {
         if (GiraffePlayer.debug) {
-            Log.d(TAG, String.format("[setFingerprint:%s] %s",fingerprint,msg));
+            Log.d(TAG, String.format("[setFingerprint:%s] %s", fingerprint, msg));
         }
     }
 
     public Activity getTopActivity() {
         return topActivityRef.get();
+    }
+
+
+    /**
+     * to create a custom MediaController
+     */
+    public interface MediaControllerGenerator {
+        /**
+         * called when VideoView need a MediaController
+         * @param context
+         * @param videoInfo
+         * @return
+         */
+        MediaController create(Context context, VideoInfo videoInfo);
     }
 }

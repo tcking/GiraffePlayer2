@@ -8,4 +8,10 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="CustomLoading">
+        <item name="android:indeterminateDrawable">@drawable/progress_loading</item>
+        <item name="android:width">120px</item>
+        <item name="android:height">120px</item>
+    </style>
+
 </resources>

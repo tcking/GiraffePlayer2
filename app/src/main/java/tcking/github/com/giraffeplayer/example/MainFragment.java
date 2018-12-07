@@ -1,5 +1,6 @@
 package tcking.github.com.giraffeplayer.example;
 
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -15,7 +16,9 @@ import android.widget.RadioGroup;
 
 import com.github.tcking.viewquery.ViewQuery;
 
+import tcking.github.com.giraffeplayer2.DefaultMediaController;
 import tcking.github.com.giraffeplayer2.GiraffePlayer;
+import tcking.github.com.giraffeplayer2.MediaController;
 import tcking.github.com.giraffeplayer2.Option;
 import tcking.github.com.giraffeplayer2.PlayerManager;
 import tcking.github.com.giraffeplayer2.VideoInfo;
@@ -35,6 +38,7 @@ public class MainFragment extends Fragment {
         super.onCreate(savedInstanceState);
         //set global configuration: turn on multiple_requests
         PlayerManager.getInstance().getDefaultVideoInfo().addOption(Option.create(IjkMediaPlayer.OPT_CATEGORY_FORMAT, "multiple_requests", 1L));
+
     }
 
     @Nullable
@@ -84,6 +88,19 @@ public class MainFragment extends Fragment {
                 }
                 videoView.getPlayer().aspectRatio(aspectRatio);
 
+            }
+        });
+
+        RadioGroup rb2 = $.id(R.id.rg_mc).view();
+        rb2.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, @IdRes final int checkedId) {
+                PlayerManager.getInstance().setMediaControllerGenerator(new PlayerManager.MediaControllerGenerator() {
+                    @Override
+                    public MediaController create(Context context, VideoInfo videoInfo) {
+                        return checkedId == R.id.rb_mc_default ? new DefaultMediaController(context) : new SimpleMediaController(context);
+                    }
+                });
             }
         });
 
