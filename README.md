@@ -22,6 +22,7 @@ this project is total refactor of [GiraffePlayer](https://github.com/tcking/Gira
 10. support select track
 11. support float window
 12. support lazy load (download player on demand,increase apk size only about 180K)
+13. easy to custom media controller (without change this project source code)
 
 # how to import library
  ``` gradle
@@ -32,15 +33,15 @@ this project is total refactor of [GiraffePlayer](https://github.com/tcking/Gira
     }
 
     //step 2: add dependency,there are 3 type of aar,see the flow table
-    compile 'com.github.tcking:giraffeplayer2:0.1.19-lazyLoad'
+    compile 'com.github.tcking:giraffeplayer2:0.1.20-lazyLoad'
 
  ```
 
 aar type|aar size|decoders|support abi
 ----|-----|-----|----
-`compile 'com.github.tcking:giraffeplayer2:0.1.19'`| 2.2M |common decoders|default armeabi，can add manually
-`compile 'com.github.tcking:giraffeplayer2:0.1.19-lazyLoad'`| 180K| all decoders|download player(so files) on demand by device abi
-`compile 'com.github.tcking:giraffeplayer2:0.1.19-full'`| 5.4M | all decoders|default armeabi，can add manually
+`compile 'com.github.tcking:giraffeplayer2:0.1.20'`| 2.2M |common decoders|default armeabi，can add manually
+`compile 'com.github.tcking:giraffeplayer2:0.1.20-lazyLoad'`| 180K| all decoders|download player(so files) on demand by device abi
+`compile 'com.github.tcking:giraffeplayer2:0.1.20-full'`| 5.4M | all decoders|default armeabi，can add manually
 
 
 if you using `compile 'com.github.tcking:giraffeplayer2:0.1.19'` or `compile 'com.github.tcking:giraffeplayer2:0.1.19-full'` and want to support more ABI:
