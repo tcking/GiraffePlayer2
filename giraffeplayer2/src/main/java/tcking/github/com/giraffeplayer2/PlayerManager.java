@@ -131,7 +131,7 @@ public class PlayerManager {
 
             @Override
             public void onActivityDestroyed(Activity activity) {
-                GiraffePlayer currentPlayer = getCurrentPlayer();
+                GiraffePlayer currentPlayer = getPlayerByFingerprint(activity2playersRef.get(activity));
                 if (currentPlayer != null) {
                     currentPlayer.onActivityDestroyed();
                 }
