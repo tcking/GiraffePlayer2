@@ -38,7 +38,7 @@ public class MainFragment extends Fragment {
         super.onCreate(savedInstanceState);
         //set global configuration: turn on multiple_requests
         PlayerManager.getInstance().getDefaultVideoInfo().addOption(Option.create(IjkMediaPlayer.OPT_CATEGORY_FORMAT, "multiple_requests", 1L));
-
+//        PlayerManager.getInstance().getDefaultVideoInfo().addOptions(Option.preset4Realtime());
     }
 
     @Nullable

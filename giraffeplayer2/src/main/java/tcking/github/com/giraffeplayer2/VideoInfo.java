@@ -6,7 +6,9 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.ColorInt;
 
+import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 
 /**
  * Created by tcking on 2017
@@ -124,6 +126,16 @@ public class VideoInfo implements Parcelable {
      */
     public VideoInfo addOption(Option option) {
         this.options.add(option);
+        return this;
+    }
+
+    /**
+     * add player init option
+     * @param option option
+     * @return VideoInfo
+     */
+    public VideoInfo addOptions(Collection<Option> options) {
+        this.options.addAll(options);
         return this;
     }
 
