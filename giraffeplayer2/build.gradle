@@ -1,6 +1,6 @@
 apply plugin: 'com.android.library'
 def bType = "" //lazyLoad,full, blank is normal
-def version = "0.1.24"
+def version = "0.1.25"
 def ijkVersion = "0.8.8"
 
 android {

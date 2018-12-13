@@ -33,18 +33,18 @@ this project is total refactor of [GiraffePlayer](https://github.com/tcking/Gira
     }
 
     //step 2: add dependency,there are 3 type of aar,see the flow table
-    api 'com.github.tcking:giraffeplayer2:0.1.24-lazyLoad'
+    api 'com.github.tcking:giraffeplayer2:0.1.25-lazyLoad'
 
  ```
 
 aar type|aar size|decoders|support abi
 ----|-----|-----|----
-`api 'com.github.tcking:giraffeplayer2:0.1.24'`| 2.2M |common decoders|default armeabi，can add manually
-`api 'com.github.tcking:giraffeplayer2:0.1.24-lazyLoad'`| 180K| all decoders|download player(so files) on demand by device abi
-`api 'com.github.tcking:giraffeplayer2:0.1.24-full'`| 5.4M | all decoders|default armeabi，can add manually
+`api 'com.github.tcking:giraffeplayer2:0.1.25'`| 2.2M |common decoders|default armeabi，can add manually
+`api 'com.github.tcking:giraffeplayer2:0.1.25-lazyLoad'`| 180K| all decoders|download player(so files) on demand by device abi
+`api 'com.github.tcking:giraffeplayer2:0.1.25-full'`| 5.4M | all decoders|default armeabi，can add manually
 
 
-if you using `compile 'com.github.tcking:giraffeplayer2:0.1.19'` or `compile 'com.github.tcking:giraffeplayer2:0.1.19-full'` and want to support more ABI:
+if you using `compile 'com.github.tcking:giraffeplayer2:0.1.25'` or `compile 'com.github.tcking:giraffeplayer2:0.1.25-full'` and want to support more ABI:
 
 
 ``` gradle
