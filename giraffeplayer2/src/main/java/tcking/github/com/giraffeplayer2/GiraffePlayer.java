@@ -1091,6 +1091,9 @@ public class GiraffePlayer implements MediaController.MediaPlayerControl {
 
     public boolean onBackPressed() {
         log("onBackPressed");
+        if(videoInfo.isFullScreenOnly()){
+            return false;
+        }
         if (displayModel == DISPLAY_FULL_WINDOW) {
             setDisplayModel(lastDisplayModel);
             return true;

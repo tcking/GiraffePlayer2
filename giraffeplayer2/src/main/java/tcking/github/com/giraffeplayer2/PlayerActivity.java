@@ -1,6 +1,7 @@
 package tcking.github.com.giraffeplayer2;
 
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 
@@ -26,10 +27,14 @@ public class PlayerActivity extends BasePlayerActivity {
             finish();
             return;
         }
+        if(videoInfo.isFullScreenOnly()){
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);
+        }
         PlayerManager.getInstance().releaseByFingerprint(videoInfo.getFingerprint());
-        VideoView videoView = (VideoView) findViewById(R.id.video_view);
+        VideoView videoView = findViewById(R.id.video_view);
         videoView.videoInfo(videoInfo);
         PlayerManager.getInstance().getPlayer(videoView).start();
     }
+
 
 }

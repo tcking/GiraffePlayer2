@@ -8,7 +8,6 @@ import android.support.annotation.ColorInt;
 
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
 
 /**
  * Created by tcking on 2017
@@ -45,6 +44,7 @@ public class VideoInfo implements Parcelable {
     private boolean fullScreenAnimation = true;
     private boolean looping = false;
     private boolean currentVideoAsCover = true;
+    private boolean fullScreenOnly = false;
 
     public VideoInfo(VideoInfo defaultVideoInfo) {
         title = defaultVideoInfo.title;
@@ -64,6 +64,17 @@ public class VideoInfo implements Parcelable {
         fullScreenAnimation = defaultVideoInfo.fullScreenAnimation;
         looping = defaultVideoInfo.looping;
         currentVideoAsCover = defaultVideoInfo.currentVideoAsCover;
+        fullScreenOnly = defaultVideoInfo.fullScreenOnly;
+
+    }
+
+    public boolean isFullScreenOnly() {
+        return fullScreenOnly;
+    }
+
+    public VideoInfo setFullScreenOnly(boolean fullScreenOnly) {
+        this.fullScreenOnly = fullScreenOnly;
+        return this;
     }
 
     public boolean isFullScreenAnimation() {
@@ -197,6 +208,10 @@ public class VideoInfo implements Parcelable {
         this.uri = uri;
     }
 
+    public VideoInfo(String uri) {
+        this.uri = Uri.parse(uri);
+    }
+
     protected VideoInfo(Parcel in) {
         fingerprint = in.readString();
         uri = in.readParcelable(Uri.class.getClassLoader());
@@ -213,6 +228,8 @@ public class VideoInfo implements Parcelable {
         fullScreenAnimation = in.readByte() != 0;
         looping = in.readByte() != 0;
         currentVideoAsCover = in.readByte() != 0;
+        fullScreenOnly = in.readByte() != 0;
+
     }
 
     public static final Creator<VideoInfo> CREATOR = new Creator<VideoInfo>() {
@@ -290,6 +307,7 @@ public class VideoInfo implements Parcelable {
         dest.writeByte((byte) (fullScreenAnimation ? 1 : 0));
         dest.writeByte((byte) (looping ? 1 : 0));
         dest.writeByte((byte) (currentVideoAsCover ? 1 : 0));
+        dest.writeByte((byte) (fullScreenOnly ? 1 : 0));
     }
 
     public static VideoInfo createFromDefault(){

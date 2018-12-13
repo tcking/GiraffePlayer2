@@ -126,6 +126,7 @@ public class MainFragment extends Fragment {
                     VideoInfo videoInfo = new VideoInfo(Uri.parse($.id(R.id.et_url).text()))
                             .setTitle("test video")
                             .setAspectRatio(aspectRatio)
+//                            .setFullScreenOnly(true)
 //                            .addOption(Option.create(IjkMediaPlayer.OPT_CATEGORY_FORMAT, "timeout", 30000000L))
 //                            .addOption(Option.create(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "mediacodec", 1L))
                             .addOption(Option.create(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "infbuf", 1L))
