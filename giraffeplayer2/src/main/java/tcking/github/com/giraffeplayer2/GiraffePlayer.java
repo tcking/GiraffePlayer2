@@ -10,6 +10,7 @@ import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.graphics.SurfaceTexture;
 import android.media.AudioManager;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
@@ -95,7 +96,7 @@ public class GiraffePlayer implements MediaController.MediaPlayerControl {
     private int currentState = STATE_IDLE;
     private int targetState = STATE_IDLE;
     private Uri uri;
-    private Map<String, String> headers;
+    private Map<String, String> headers = new HashMap<>();
     private Context context;
 
     private IMediaPlayer mediaPlayer;
@@ -374,7 +375,8 @@ public class GiraffePlayer implements MediaController.MediaPlayerControl {
      */
     private GiraffePlayer setVideoURI(Uri uri, Map<String, String> headers) throws IOException {
         this.uri = uri;
-        this.headers = headers;
+        this.headers.clear();
+        this.headers.putAll(headers);
         seekWhenPrepared = 0;
         return this;
     }
@@ -442,13 +444,32 @@ public class GiraffePlayer implements MediaController.MediaPlayerControl {
     }
 
     private void setOptions() {
-        if (mediaPlayer instanceof IjkMediaPlayer && videoInfo.getOptions().size() > 0) {
+        headers.clear();
+        if (videoInfo.getOptions().size() <= 0) {
+            return;
+        }
+        //https://ffmpeg.org/ffmpeg-protocols.html#http
+        if (mediaPlayer instanceof IjkMediaPlayer) {
             IjkMediaPlayer ijkMediaPlayer = (IjkMediaPlayer) mediaPlayer;
             for (Option option : videoInfo.getOptions()) {
                 if (option.getValue() instanceof String) {
                     ijkMediaPlayer.setOption(option.getCategory(), option.getName(), ((String) option.getValue()));
                 } else if (option.getValue() instanceof Long) {
                     ijkMediaPlayer.setOption(option.getCategory(), option.getName(), ((Long) option.getValue()));
+                }
+            }
+        } else if (mediaPlayer instanceof AndroidMediaPlayer) {
+            for (Option option : videoInfo.getOptions()) {
+                if (IjkMediaPlayer.OPT_CATEGORY_FORMAT == option.getCategory() && "headers".equals(option.getName())) {
+                    String h = "" + option.getValue();
+                    String[] hs = h.split("\r\n");
+                    for (String hd : hs) {
+                        String[] kv = hd.split(":");
+                        String v = kv.length >= 2 ? kv[1] : "";
+                        headers.put(kv[0], v);
+                        log("add header " + kv[0] + ":" + v);
+                    }
+                    break;
                 }
             }
         }
@@ -844,7 +865,7 @@ public class GiraffePlayer implements MediaController.MediaPlayerControl {
         uiHandler.post(new Runnable() {
             @Override
             public void run() {
-                proxyListener().onLazyLoadProgress(GiraffePlayer.this,progress);
+                proxyListener().onLazyLoadProgress(GiraffePlayer.this, progress);
             }
         });
     }
@@ -853,7 +874,7 @@ public class GiraffePlayer implements MediaController.MediaPlayerControl {
         uiHandler.post(new Runnable() {
             @Override
             public void run() {
-                proxyListener().onLazyLoadError(GiraffePlayer.this,message);
+                proxyListener().onLazyLoadError(GiraffePlayer.this, message);
             }
         });
     }
@@ -1091,7 +1112,7 @@ public class GiraffePlayer implements MediaController.MediaPlayerControl {
 
     public boolean onBackPressed() {
         log("onBackPressed");
-        if(videoInfo.isFullScreenOnly()){
+        if (videoInfo.isFullScreenOnly()) {
             return false;
         }
         if (displayModel == DISPLAY_FULL_WINDOW) {
