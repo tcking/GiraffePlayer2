@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">GiraffePlayer</string>
+    <string name="giraffe_player_url_empty">Lütfen video adresini belirtin</string>
+    <string name="small_problem">hata</string>
+    <string name="can_not_play">bu video oynatılamaz</string>
+    <string name="not_support">medya oynatıcı bu cihazı desteklemiyor</string>
+    <string name="giraffe_player_track_type_unknown">bilinmeyen</string>
+    <string name="giraffe_player_track_type_audio">ses</string>
+    <string name="giraffe_player_track_type_video">video</string>
+    <string name="giraffe_player_live">canlı</string>
+    <string name="giraffe_player_track_type_subtitle">altyazı</string>
+    <string name="giraffe_player_track_type_timed_text">zamanlanmış</string>
+    <string name="giraffe_player_lazy_loading">oynatıcı indiriliyor:%1$d%%</string>
+    <string name="giraffe_player_lazy_loading_error">oynatıcı yüklenirken hata:%1$s</string>
+</resources>
