@@ -777,6 +777,18 @@ public class GiraffePlayer implements MediaController.MediaPlayerControl {
             }
             uiHelper.showActionBar(false).fullScreen(true);
             ViewGroup activityBox = (ViewGroup) activity.findViewById(android.R.id.content);
+			
+			View decorView = activity.getWindow().getDecorView();
+            decorView.setSystemUiVisibility(
+							View.SYSTEM_UI_FLAG_IMMERSIVE
+                            // Set the content to appear under the system bars so that the
+                            // content doesn't resize when the system bars hide and show.
+                            | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                            | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                            | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                            // Hide the nav bar and status bar
+                            | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                            | View.SYSTEM_UI_FLAG_FULLSCREEN);
 
             animateIntoContainerAndThen(activityBox, new VideoViewAnimationListener() {
 
@@ -810,7 +822,9 @@ public class GiraffePlayer implements MediaController.MediaPlayerControl {
                 ignoreOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
             }
             uiHelper.showActionBar(true).fullScreen(false);
-
+			
+			View decorView = activity.getWindow().getDecorView();
+            decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
 
             animateIntoContainerAndThen(videoView, new VideoViewAnimationListener() {
 
