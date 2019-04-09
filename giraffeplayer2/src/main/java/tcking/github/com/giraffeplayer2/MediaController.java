@@ -10,4 +10,6 @@ public interface MediaController extends PlayerListener {
      * bind this media controller to video controllerView
      */
     void bind(VideoView videoView);
+
+    void unbind();
 }
