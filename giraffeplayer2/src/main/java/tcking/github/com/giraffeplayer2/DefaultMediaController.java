@@ -27,6 +27,9 @@ import tcking.github.com.giraffeplayer2.trackselector.TrackSelectorFragment;
 import tv.danmaku.ijk.media.player.IMediaPlayer;
 import tv.danmaku.ijk.media.player.IjkTimedText;
 
+import static tcking.github.com.giraffeplayer2.GiraffePlayer.DISPLAY_FULL_WINDOW;
+import static tcking.github.com.giraffeplayer2.GiraffePlayer.DISPLAY_NORMAL;
+
 /**
  * media controller for ListView or RecyclerView
  * Created by tcking on 2017
@@ -229,6 +232,16 @@ public class DefaultMediaController extends BaseMediaController {
             GiraffePlayer player = videoView.getPlayer();
             if (v.getId() == R.id.app_video_fullscreen) {
                 player.toggleFullScreen();
+
+                ImageView zoom = $.id(R.id.app_video_fullscreen).view();
+                int model = player.getDisplayModel();
+
+                if (model == DISPLAY_FULL_WINDOW){
+                    zoom.setImageResource(R.drawable.ic_fullscreen_exit_white_24dp);
+                }else if (model == DISPLAY_NORMAL){
+                    zoom.setImageResource(R.drawable.ic_fullscreen_white_24dp);
+                }
+
             } else if (v.getId() == R.id.app_video_play) {
                 if (player.isPlaying()) {
                     player.pause();
