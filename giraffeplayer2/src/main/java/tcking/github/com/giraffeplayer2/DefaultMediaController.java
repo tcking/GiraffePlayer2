@@ -27,6 +27,8 @@ import tcking.github.com.giraffeplayer2.trackselector.TrackSelectorFragment;
 import tv.danmaku.ijk.media.player.IMediaPlayer;
 import tv.danmaku.ijk.media.player.IjkTimedText;
 
+import static tcking.github.com.giraffeplayer2.GiraffePlayer.DISPLAY_FULL_WINDOW;
+
 /**
  * media controller for ListView or RecyclerView
  * Created by tcking on 2017
@@ -170,7 +172,7 @@ public class DefaultMediaController extends BaseMediaController {
 
     protected void show(int timeout) {
         if (!isShowing) {
-            if (videoView.getVideoInfo().isShowTopBar() || displayModel == GiraffePlayer.DISPLAY_FULL_WINDOW) {
+            if (videoView.getVideoInfo().isShowTopBar() || displayModel == DISPLAY_FULL_WINDOW) {
                 $.id(R.id.app_video_top_box).visible();
                 $.id(R.id.app_video_title).text(videoView.getVideoInfo().getTitle());
             } else {
@@ -249,7 +251,7 @@ public class DefaultMediaController extends BaseMediaController {
                 player.stop();
                 player.setDisplayModel(GiraffePlayer.DISPLAY_NORMAL);
             } else if (v.getId() == R.id.app_video_float_full) {
-                player.setDisplayModel(GiraffePlayer.DISPLAY_FULL_WINDOW);
+                player.setDisplayModel(DISPLAY_FULL_WINDOW);
             } else if (v.getId() == R.id.app_video_clarity) {
                 Activity activity = (Activity) videoView.getContext();
                 if (activity instanceof AppCompatActivity) {
@@ -696,6 +698,15 @@ public class DefaultMediaController extends BaseMediaController {
 //        } else if (newModel == GiraffePlayer.DISPLAY_NORMAL) {
 //            videoView.addView(controllerView);
 //        }
+
+        ImageView zoom = $.id(R.id.app_video_fullscreen).view();
+        int model = displayModel;
+
+        if (model == DISPLAY_FULL_WINDOW){
+            zoom.setImageResource(R.drawable.ic_fullscreen_exit_white_24dp);
+        }else{
+            zoom.setImageResource(R.drawable.ic_fullscreen_white_24dp);
+        }
     }
 
     @Override
